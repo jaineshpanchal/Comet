@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+  # Backend Services
+  api-gateway:
+    build: ./backend/api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/comet_dev
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - comet-network
+
+  pipeline-service:
+    build: ./backend/services/pipeline-orchestration
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/comet_dev
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - comet-network
+
+  testing-service:
+    build: ./backend/services/testing-automation
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/comet_dev
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - comet-network
+
+  # AI Services
+  ai-service:
+    build: ./ai-services
+    ports:
+      - "8001:8000"
+    environment:
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/comet_dev
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - comet-network
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "3030:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api-gateway:3000
+      - NEXT_PUBLIC_AI_SERVICE_URL=http://ai-service:8000
+    depends_on:
+      - api-gateway
+    networks:
+      - comet-network
+
+  # Databases
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=comet_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - comet-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - comet-network
+
+  # Monitoring & Logging
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - comet-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - comet-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infrastructure/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - comet-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infrastructure/monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+    networks:
+      - comet-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  elasticsearch_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  comet-network:
+    driver: bridge

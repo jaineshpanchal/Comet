@@ -1,0 +1,62 @@
+{
+  "name": "comet-devops-platform",
+  "version": "1.0.0",
+  "description": "Flagship enterprise DevOps platform with AI-powered automation",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:ai\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:ai": "cd ai-services && python -m uvicorn main:app --reload --port 8001",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend && npm run test:integration",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "test:integration": "cd testing-framework && npm test",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "setup": "npm run setup:backend && npm run setup:frontend && npm run setup:ai",
+    "setup:backend": "cd backend && npm install",
+    "setup:frontend": "cd frontend && npm install",
+    "setup:ai": "cd ai-services && pip install -r requirements.txt"
+  },
+  "workspaces": [
+    "backend",
+    "frontend",
+    "testing-framework",
+    "integrations/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.1.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/comet-devops-platform.git"
+  },
+  "keywords": [
+    "devops",
+    "ci/cd",
+    "testing",
+    "automation",
+    "ai",
+    "enterprise",
+    "platform"
+  ],
+  "author": "Comet DevOps Team",
+  "license": "MIT"
+}
