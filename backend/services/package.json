@@ -4,30 +4,33 @@
   "description": "Comet DevOps Platform Microservices",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:user\" \"npm run dev:project\" \"npm run dev:pipeline\" \"npm run dev:testing\" \"npm run dev:quality\"",
+    "dev": "concurrently \"npm run dev:user\" \"npm run dev:project\" \"npm run dev:pipeline\" \"npm run dev:testing\" \"npm run dev:quality\" \"npm run dev:metrics\"",
     "dev:user": "ts-node-dev --respawn user-service.ts",
     "dev:project": "ts-node-dev --respawn project-service.ts",
     "dev:pipeline": "ts-node-dev --respawn pipeline-service.ts",
     "dev:testing": "ts-node-dev --respawn testing-service.ts",
     "dev:quality": "ts-node-dev --respawn quality-service.ts",
+    "dev:metrics": "ts-node-dev --respawn metrics-service.ts",
     "build": "tsc",
     "test": "jest"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "helmet": "^7.1.0",
     "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/cors": "^2.8.17",
     "@types/compression": "^1.7.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
+    "@types/ws": "^8.18.1",
+    "concurrently": "^8.2.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3",
-    "concurrently": "^8.2.2"
+    "typescript": "^5.3.3"
   }
 }

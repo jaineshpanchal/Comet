@@ -49,8 +49,13 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <BoltIcon className="h-8 w-8" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-900 relative overflow-hidden">
+              {/* Your exact comet logo - login page */}
+              <img 
+                src="/Comet.png" 
+                alt="Comet Logo" 
+                className="w-10 h-10 object-contain"
+              />
             </div>
           </div>
           <div className="space-y-2">

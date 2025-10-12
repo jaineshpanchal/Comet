@@ -12,10 +12,13 @@ export default function HomePage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" />
-                  </svg>
+                <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center relative overflow-hidden">
+                  {/* Your exact comet logo - landing page */}
+                  <img 
+                    src="/Comet.png" 
+                    alt="Comet Logo" 
+                    className="w-7 h-7 object-contain"
+                  />
                 </div>
                 <div>
                   <h1 className="text-xl font-semibold text-gray-900">Comet</h1>
