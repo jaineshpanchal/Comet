@@ -1,0 +1,186 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  username        String   @unique
+  firstName       String
+  lastName        String
+  password        String
+  avatar          String?
+  role            UserRole @default(DEVELOPER)
+  isActive        Boolean  @default(true)
+  isEmailVerified Boolean  @default(false)
+  lastLoginAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  profile         UserProfile?
+  teamMemberships TeamMember[]
+  refreshTokens   RefreshToken[]
+
+  @@map("users")
+}
+
+// User Profile model
+model UserProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  bio         String?
+  timezone    String?
+  language    String?
+  phoneNumber String?
+  company     String?
+  position    String?
+  location    String?
+  linkedinUrl String?
+  githubUrl   String?
+  skills      Json     @default("[]")
+  preferences Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// Team model
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  avatar      String?
+  settings    Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  members   TeamMember[]
+  pipelines Pipeline[]
+
+  @@map("teams")
+}
+
+// Team Member model (Junction table)
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String
+  role     TeamRole @default(MEMBER)
+  joinedAt DateTime @default(now())
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@map("team_members")
+}
+
+// Pipeline model
+model Pipeline {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  teamId      String
+  config      Json          @default("{}")
+  status      PipelineStatus @default(DRAFT)
+  lastRunAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  runs PipelineRun[]
+
+  @@unique([teamId, slug])
+  @@map("pipelines")
+}
+
+// Pipeline Run model
+model PipelineRun {
+  id         String           @id @default(cuid())
+  pipelineId String
+  status     PipelineRunStatus @default(PENDING)
+  startedAt  DateTime         @default(now())
+  finishedAt DateTime?
+  logs       Json             @default("[]")
+  artifacts  Json             @default("[]")
+  metadata   Json             @default("{}")
+
+  // Relations
+  pipeline Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+
+  @@map("pipeline_runs")
+}
+
+// Refresh Token model
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// Enums
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  LEAD
+  SENIOR_DEVELOPER
+  DEVELOPER
+  JUNIOR_DEVELOPER
+  TESTER
+  DESIGNER
+  DEVOPS
+  SECURITY
+  ANALYST
+  VIEWER
+}
+
+enum TeamRole {
+  OWNER
+  ADMIN
+  MAINTAINER
+  MEMBER
+  VIEWER
+}
+
+enum PipelineStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum PipelineRunStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+  TIMEOUT
+}

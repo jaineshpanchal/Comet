@@ -1,0 +1,356 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  username    String   @unique
+  firstName   String
+  lastName    String
+  password    String
+  avatar      String?
+  role        UserRole @default(DEVELOPER)
+  isActive    Boolean  @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ownedProjects    Project[]      @relation("ProjectOwner")
+  teamMemberships  TeamMember[]
+  refreshTokens    RefreshToken[]
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  DEVELOPER
+  TESTER
+  VIEWER
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  members  TeamMember[]
+  projects Project[]
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id     String @id @default(uuid())
+  userId String
+  teamId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+  @@map("team_members")
+}
+
+model Project {
+  id            String        @id @default(uuid())
+  name          String
+  description   String?
+  repositoryUrl String
+  branch        String        @default("main")
+  framework     String
+  language      String
+  ownerId       String
+  teamId        String?
+  isActive      Boolean       @default(true)
+  settings      String        @default("{}") // JSON as string for SQLite
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  owner       User         @relation("ProjectOwner", fields: [ownerId], references: [id])
+  team        Team?        @relation(fields: [teamId], references: [id])
+  pipelines   Pipeline[]
+  testSuites  TestSuite[]
+  deployments Deployment[]
+
+  @@map("projects")
+}
+
+model Pipeline {
+  id        String         @id @default(uuid())
+  projectId String
+  name      String
+  trigger   PipelineTrigger
+  stages    String           @default("[]")
+  status    PipelineStatus @default(IDLE)
+  lastRunAt DateTime?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  // Relations
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  pipelineRuns PipelineRun[]
+
+  @@map("pipelines")
+}
+
+enum PipelineTrigger {
+  MANUAL
+  GIT_PUSH
+  GIT_PR
+  SCHEDULE
+  WEBHOOK
+}
+
+enum PipelineStatus {
+  IDLE
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+  PENDING
+}
+
+model PipelineRun {
+  id         String             @id @default(uuid())
+  pipelineId String
+  status     PipelineRunStatus
+  triggeredBy String?
+  startedAt  DateTime           @default(now())
+  finishedAt DateTime?
+  duration   Int?               // Duration in seconds
+  logs       String?
+  metadata   String               @default("{}")
+
+  // Relations
+  pipeline Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  stages   StageRun[]
+
+  @@map("pipeline_runs")
+}
+
+enum PipelineRunStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+model StageRun {
+  id            String            @id @default(uuid())
+  pipelineRunId String
+  stageName     String
+  stageType     StageType
+  status        StageRunStatus
+  startedAt     DateTime?
+  finishedAt    DateTime?
+  duration      Int?              // Duration in seconds
+  logs          String?
+  artifacts     String              @default("[]")
+  metadata      String              @default("{}")
+
+  // Relations
+  pipelineRun PipelineRun @relation(fields: [pipelineRunId], references: [id], onDelete: Cascade)
+
+  @@map("stage_runs")
+}
+
+enum StageType {
+  BUILD
+  TEST
+  SECURITY_SCAN
+  CODE_ANALYSIS
+  DEPLOY
+  NOTIFICATION
+  APPROVAL
+}
+
+enum StageRunStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+  SKIPPED
+}
+
+model TestSuite {
+  id          String   @id @default(uuid())
+  projectId   String
+  name        String
+  description String?
+  framework   String
+  configuration String   @default("{}")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project  Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  testRuns TestRun[]
+
+  @@map("test_suites")
+}
+
+model TestRun {
+  id          String        @id @default(uuid())
+  testSuiteId String
+  status      TestRunStatus
+  startedAt   DateTime      @default(now())
+  finishedAt  DateTime?
+  duration    Int?          // Duration in seconds
+  totalTests  Int           @default(0)
+  passedTests Int           @default(0)
+  failedTests Int           @default(0)
+  skippedTests Int          @default(0)
+  coverage    Float?        // Coverage percentage
+  results     String          @default("{}")
+
+  // Relations
+  testSuite TestSuite @relation(fields: [testSuiteId], references: [id], onDelete: Cascade)
+
+  @@map("test_runs")
+}
+
+enum TestRunStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+model Deployment {
+  id          String           @id @default(uuid())
+  projectId   String
+  environment String
+  version     String
+  status      DeploymentStatus
+  deployedBy  String
+  deployedAt  DateTime         @default(now())
+  finishedAt  DateTime?
+  duration    Int?             // Duration in seconds
+  logs        String?
+  rollbackId  String?          // Reference to previous deployment for rollback
+  metadata    String             @default("{}")
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("deployments")
+}
+
+enum DeploymentStatus {
+  PENDING
+  DEPLOYING
+  SUCCESS
+  FAILED
+  ROLLED_BACK
+}
+
+model Integration {
+  id            String          @id @default(uuid())
+  name          String
+  type          IntegrationType
+  configuration String            @default("{}")
+  isActive      Boolean         @default(true)
+  lastSyncAt    DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@map("integrations")
+}
+
+enum IntegrationType {
+  GITHUB
+  GITLAB
+  BITBUCKET
+  JENKINS
+  JIRA
+  SLACK
+  SONARQUBE
+  AWS
+  AZURE
+  GCP
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  resource  String
+  resourceId String?
+  metadata  String     @default("{}")
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model SystemMetric {
+  id        String   @id @default(uuid())
+  name      String
+  value     Float
+  unit      String
+  tags      String     @default("{}")
+  timestamp DateTime @default(now())
+
+  @@index([name, timestamp])
+  @@map("system_metrics")
+}
+
+model SystemLog {
+  id        String   @id @default(uuid())
+  level     LogLevel
+  message   String
+  service   String
+  requestId String?
+  userId    String?
+  metadata  String     @default("{}")
+  timestamp DateTime @default(now())
+
+  @@index([level, timestamp])
+  @@index([service, timestamp])
+  @@map("system_logs")
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+}

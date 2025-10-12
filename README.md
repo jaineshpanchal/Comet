@@ -50,43 +50,43 @@ Comet revolutionizes DevOps by providing an all-in-one platform that's powerful 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Comet DevOps Platform                     │
+│                    Comet DevOps Platform                    │
 ├─────────────────────────────────────────────────────────────┤
 │  Frontend (React/Next.js)                                   │
 │  ├─ Dashboard & Analytics                                   │
-│  ├─ Pipeline Builder (Visual)                              │
+│  ├─ Pipeline Builder (Visual)                               │
 │  ├─ Test Management                                         │
 │  ├─ AI Assistant Chat                                       │
 │  └─ Admin Panel                                             │
 ├─────────────────────────────────────────────────────────────┤
-│  API Gateway & Load Balancer                               │
+│  API Gateway & Load Balancer                                │
 ├─────────────────────────────────────────────────────────────┤
-│  Microservices Backend (Node.js/TypeScript)                │
-│  ├─ Pipeline Orchestration Service                         │
-│  ├─ Testing Automation Service                             │
-│  ├─ Integration Management Service                         │
+│  Microservices Backend (Node.js/TypeScript)                 │
+│  ├─ Pipeline Orchestration Service                          │
+│  ├─ Testing Automation Service                              │
+│  ├─ Integration Management Service                          │
 │  ├─ Code Analysis Service                                   │
-│  ├─ Logging & Monitoring Service                           │
-│  └─ User Management & Auth Service                         │
+│  ├─ Logging & Monitoring Service                            │
+│  └─ User Management & Auth Service                          │
 ├─────────────────────────────────────────────────────────────┤
-│  AI Agent Services (Python)                                │
+│  AI Agent Services (Python)                                 │
 │  ├─ Test Generation AI                                      │
 │  ├─ Error Resolution AI                                     │
 │  ├─ Code Quality AI                                         │
-│  └─ Natural Language Processing                            │
+│  └─ Natural Language Processing                             │
 ├─────────────────────────────────────────────────────────────┤
 │  Data Layer                                                 │
-│  ├─ PostgreSQL (Primary)                                   │
-│  ├─ Redis (Caching)                                        │
-│  ├─ InfluxDB (Metrics)                                     │
-│  └─ ElasticSearch (Logs)                                   │
+│  ├─ PostgreSQL (Primary)                                    │
+│  ├─ Redis (Caching)                                         │
+│  ├─ InfluxDB (Metrics)                                      │
+│  └─ ElasticSearch (Logs)                                    │
 ├─────────────────────────────────────────────────────────────┤
 │  External Integrations                                      │
-│  ├─ Git Providers (GitHub, GitLab, etc.)                  │
+│  ├─ Git Providers (GitHub, GitLab, etc.)                    │
 │  ├─ Jenkins Integration                                     │
-│  ├─ JIRA/Confluence                                        │
-│  ├─ SonarQube                                             │
-│  └─ Cloud Providers (AWS, Azure, GCP)                     │
+│  ├─ JIRA/Confluence                                         │
+│  ├─ SonarQube                                               │
+│  └─ Cloud Providers (AWS, Azure, GCP)                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 

@@ -1,0 +1,282 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Colors */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+
+  /* DevOps specific colors */
+  --success: 142.1 76.2% 36.3%;
+  --success-foreground: 355.7 100% 97.3%;
+  --warning: 32.2 95% 44.1%;
+  --warning-foreground: 355.7 100% 97.3%;
+  --error: 0 84.2% 60.2%;
+  --error-foreground: 210 40% 98%;
+  --info: 221.2 83.2% 53.3%;
+  --info-foreground: 210 40% 98%;
+
+  /* Status colors */
+  --status-running: 221.2 83.2% 53.3%;
+  --status-success: 142.1 76.2% 36.3%;
+  --status-failed: 0 84.2% 60.2%;
+  --status-pending: 32.2 95% 44.1%;
+  --status-cancelled: 215.4 16.3% 46.9%;
+
+  /* Pipeline colors */
+  --pipeline-build: 221.2 83.2% 53.3%;
+  --pipeline-test: 142.1 76.2% 36.3%;
+  --pipeline-deploy: 32.2 95% 44.1%;
+  --pipeline-monitor: 262.1 83.3% 57.8%;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 84% 4.9%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 94.1%;
+
+  /* DevOps specific colors - dark mode */
+  --success: 142.1 70.6% 45.3%;
+  --warning: 32.2 95% 54.1%;
+  --error: 0 90.6% 70.8%;
+  --info: 217.2 91.2% 59.8%;
+
+  /* Status colors - dark mode */
+  --status-running: 217.2 91.2% 59.8%;
+  --status-success: 142.1 70.6% 45.3%;
+  --status-failed: 0 90.6% 70.8%;
+  --status-pending: 32.2 95% 54.1%;
+  --status-cancelled: 215 20.2% 65.1%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Focus styles */
+.focus-visible:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Animation utilities */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* Status indicators */
+.status-indicator {
+  @apply inline-flex items-center justify-center w-2 h-2 rounded-full;
+}
+
+.status-running {
+  @apply bg-blue-500 animate-pulse;
+}
+
+.status-success {
+  @apply bg-green-500;
+}
+
+.status-failed {
+  @apply bg-red-500;
+}
+
+.status-pending {
+  @apply bg-yellow-500;
+}
+
+.status-cancelled {
+  @apply bg-gray-500;
+}
+
+/* Pipeline step indicators */
+.pipeline-step {
+  @apply relative flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-200;
+}
+
+.pipeline-step.completed {
+  @apply bg-green-500 border-green-500 text-white;
+}
+
+.pipeline-step.active {
+  @apply bg-blue-500 border-blue-500 text-white animate-pulse;
+}
+
+.pipeline-step.pending {
+  @apply bg-gray-100 border-gray-300 text-gray-500;
+}
+
+.pipeline-step.failed {
+  @apply bg-red-500 border-red-500 text-white;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-200 hover:shadow-md hover:scale-[1.02];
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success) / 0.8) 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, hsl(var(--warning)) 0%, hsl(var(--warning) / 0.8) 100%);
+}
+
+.gradient-error {
+  background: linear-gradient(135deg, hsl(var(--error)) 0%, hsl(var(--error) / 0.8) 100%);
+}
+
+/* Loading states */
+.skeleton {
+  @apply animate-pulse bg-muted rounded;
+}
+
+.loading-dots {
+  @apply inline-flex space-x-1;
+}
+
+.loading-dots > div {
+  @apply w-2 h-2 bg-current rounded-full animate-bounce;
+}
+
+.loading-dots > div:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.loading-dots > div:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+/* Terminal styles */
+.terminal {
+  @apply bg-gray-900 text-green-400 font-mono text-sm p-4 rounded-lg overflow-auto;
+}
+
+.terminal .prompt {
+  @apply text-blue-400;
+}
+
+.terminal .output {
+  @apply text-gray-300;
+}
+
+.terminal .error {
+  @apply text-red-400;
+}
+
+.terminal .success {
+  @apply text-green-400;
+}
+
+/* Code syntax highlighting */
+.code-block {
+  @apply bg-gray-100 dark:bg-gray-800 rounded-lg p-4 font-mono text-sm overflow-auto;
+}
+
+.code-block .keyword {
+  @apply text-purple-600 dark:text-purple-400;
+}
+
+.code-block .string {
+  @apply text-green-600 dark:text-green-400;
+}
+
+.code-block .comment {
+  @apply text-gray-500 italic;
+}
+
+.code-block .number {
+  @apply text-orange-600 dark:text-orange-400;
+}
+
+/* Dashboard grid */
+.dashboard-grid {
+  @apply grid gap-6;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.dashboard-grid.dense {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
