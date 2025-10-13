@@ -6,6 +6,7 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
+import Table from 'cli-table3';
 import { APP_CONFIG } from './config/services';
 import { connectDatabase } from './config/database';
 import { redis, checkRedisConnection } from './config/redis';
@@ -344,6 +345,124 @@ class APIGateway {
     this.app.use(errorHandler);
   }
 
+  /**
+   * Creates a perfectly aligned ASCII table using character-precise calculations
+   */
+  private displayStartupTable(): void {
+    // Fixed table dimensions for perfect alignment
+    const INNER_WIDTH = 60;
+    const TOTAL_WIDTH = INNER_WIDTH + 4; // 2 borders + 2 spaces
+
+    // Box drawing characters
+    const BOX = {
+      TOP_LEFT: '╔',
+      TOP_RIGHT: '╗', 
+      BOTTOM_LEFT: '╚',
+      BOTTOM_RIGHT: '╝',
+      HORIZONTAL: '═',
+      VERTICAL: '║',
+      CROSS: '╬',
+      T_DOWN: '╦',
+      T_UP: '╩',
+      T_RIGHT: '╠',
+      T_LEFT: '╣'
+    };
+
+    // Precise line builders
+    const topBorder = BOX.TOP_LEFT + BOX.HORIZONTAL.repeat(INNER_WIDTH + 2) + BOX.TOP_RIGHT;
+    const middleBorder = BOX.T_RIGHT + BOX.HORIZONTAL.repeat(INNER_WIDTH + 2) + BOX.T_LEFT;
+    const bottomBorder = BOX.BOTTOM_LEFT + BOX.HORIZONTAL.repeat(INNER_WIDTH + 2) + BOX.BOTTOM_RIGHT;
+    const emptyLine = BOX.VERTICAL + ' '.repeat(INNER_WIDTH + 2) + BOX.VERTICAL;
+
+    // Text formatter with guaranteed precision
+    const formatLine = (text: string, align: 'center' | 'left' = 'left'): string => {
+      if (align === 'center') {
+        const spaces = Math.max(0, INNER_WIDTH - text.length);
+        const leftSpaces = Math.floor(spaces / 2);
+        const rightSpaces = spaces - leftSpaces;
+        return BOX.VERTICAL + ' ' + ' '.repeat(leftSpaces) + text + ' '.repeat(rightSpaces) + ' ' + BOX.VERTICAL;
+      } else {
+        const spaces = Math.max(0, INNER_WIDTH - text.length - 1); // -1 for initial space
+        return BOX.VERTICAL + ' ' + text + ' '.repeat(spaces) + ' ' + BOX.VERTICAL;
+      }
+    };
+
+    // Dynamic content
+    const port = this.port.toString();
+    const environment = APP_CONFIG.NODE_ENV.toUpperCase();
+    const version = process.env.APP_VERSION || '1.0.0';
+    
+    // Build table with precise formatting
+    const lines = [
+      topBorder,
+      formatLine('🚀 COMET DEVOPS PLATFORM', 'center'),
+      formatLine('API Gateway', 'center'),
+      middleBorder,
+      formatLine('Status: ✅ RUNNING'),
+      formatLine(`Port: ${port}`),
+      formatLine(`Environment: ${environment}`),
+      formatLine(`Version: ${version}`),
+      emptyLine,
+      formatLine(`📚 API Documentation: http://localhost:${port}/api/docs`),
+      formatLine(`🔍 Health Check: http://localhost:${port}/api/health`),
+      formatLine(`📊 Metrics: http://localhost:${port}/api/health/metrics`),
+      bottomBorder
+    ];
+
+    // Output with clean formatting
+    console.log('\n' + lines.join('\n') + '\n');
+  }
+
+  /**
+   * Alternative method using professional cli-table3 library for perfect alignment
+   */
+  private displayStartupTablePro(): void {
+    // Create a single table with custom border control
+    const table = new Table({
+      chars: {
+        'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+        'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+        'left': '║', 'left-mid': '', 'mid': '', 'mid-mid': '',
+        'right': '║', 'right-mid': '', 'middle': ''
+      },
+      style: {
+        head: [],
+        border: [],
+        'padding-left': 1,
+        'padding-right': 1
+      },
+      colWidths: [60],
+      wordWrap: false
+    });
+
+    // Dynamic content
+    const port = this.port.toString();
+    const environment = APP_CONFIG.NODE_ENV.toUpperCase();
+    const version = process.env.APP_VERSION || '1.0.0';
+
+    // Add all content
+    table.push([{ content: '🚀 COMET DEVOPS PLATFORM', hAlign: 'center' }]);
+    table.push([{ content: 'API Gateway', hAlign: 'center' }]);
+    table.push(['Status: ✅ RUNNING']);
+    table.push([`Port: ${port}`]);
+    table.push([`Environment: ${environment}`]);
+    table.push([`Version: ${version}`]);
+    table.push(['']); // Empty line
+    table.push([`📚 API Documentation: http://localhost:${port}/api/docs`]);
+    table.push([`🔍 Health Check: http://localhost:${port}/api/health`]);
+    table.push([`📊 Metrics: http://localhost:${port}/api/health/metrics`]);
+
+    // Get the table string and manually add the separator after the header
+    const tableStr = table.toString();
+    const lines = tableStr.split('\n');
+    
+    // Insert separator after the second content line (after "API Gateway")
+    const separatorLine = '╠' + '═'.repeat(60) + '╣';
+    lines.splice(3, 0, separatorLine); // Insert after line 2 (0-indexed, so after "API Gateway" line)
+
+    console.log('\n' + lines.join('\n') + '\n');
+  }
+
   public async start(): Promise<void> {
     try {
       // Skip database connection for now to get server running
@@ -367,21 +486,8 @@ class APIGateway {
           timestamp: new Date().toISOString()
         });
 
-        console.log(`
-╔══════════════════════════════════════════════════════════════╗
-║                   🚀 COMET DEVOPS PLATFORM                  ║
-║                        API Gateway                           ║
-╠══════════════════════════════════════════════════════════════╣
-║ Status: ✅ RUNNING                                           ║
-║ Port: ${this.port}                                                  ║
-║ Environment: ${APP_CONFIG.NODE_ENV.toUpperCase()}                                         ║
-║ Version: ${process.env.APP_VERSION || '1.0.0'}                                               ║
-║                                                              ║
-║ 📚 API Documentation: http://localhost:${this.port}/api/docs      ║
-║ 🔍 Health Check: http://localhost:${this.port}/api/health         ║
-║ 📊 Metrics: http://localhost:${this.port}/api/health/metrics      ║
-╚══════════════════════════════════════════════════════════════╝
-        `);
+        // Display perfectly aligned startup table using professional library
+        this.displayStartupTablePro();
       });
 
       // Graceful shutdown handlers

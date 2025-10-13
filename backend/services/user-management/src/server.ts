@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import Table from 'cli-table3';
 import { PrismaClient } from '@prisma/client';
 import { logger } from './utils/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -111,6 +112,51 @@ class UserManagementService {
     this.app.use(errorHandler);
   }
 
+  /**
+   * Creates a perfectly aligned startup table using cli-table3
+   */
+  private displayStartupTable(): void {
+    // Create a single table with custom border control
+    const table = new Table({
+      chars: {
+        'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+        'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+        'left': '║', 'left-mid': '', 'mid': '', 'mid-mid': '',
+        'right': '║', 'right-mid': '', 'middle': ''
+      },
+      style: {
+        head: [],
+        border: [],
+        'padding-left': 1,
+        'padding-right': 1
+      },
+      colWidths: [60],
+      wordWrap: false
+    });
+
+    // Add all content
+    table.push([{ content: '🎯 USER MANAGEMENT SERVICE', hAlign: 'center' }]);
+    table.push(['Status: ✅ RUNNING']);
+    table.push([`Port: ${this.port}`]);
+    table.push([`Environment: ${process.env.NODE_ENV || 'development'}`.toUpperCase()]);
+    table.push([`Version: ${process.env.APP_VERSION || '1.0.0'}`]);
+    table.push(['']); // Empty line
+    table.push([`🔍 Health Check: http://localhost:${this.port}/health`]);
+    table.push([`🔐 Auth API: http://localhost:${this.port}/api/v1/auth`]);
+    table.push([`👤 Users API: http://localhost:${this.port}/api/v1/users`]);
+    table.push([`👥 Teams API: http://localhost:${this.port}/api/v1/teams`]);
+
+    // Get the table string and manually add the separator after the header
+    const tableStr = table.toString();
+    const lines = tableStr.split('\n');
+    
+    // Insert separator after the first content line (after service name)
+    const separatorLine = '╠' + '═'.repeat(60) + '╣';
+    lines.splice(2, 0, separatorLine); // Insert after line 1 (0-indexed, after service name)
+
+    console.log('\n' + lines.join('\n') + '\n');
+  }
+
   public async start(): Promise<void> {
     try {
       // Connect to database
@@ -119,21 +165,8 @@ class UserManagementService {
 
       // Start server
       this.app.listen(this.port, () => {
-        logger.info(`
-╔══════════════════════════════════════════════════════════════╗
-║                🎯 USER MANAGEMENT SERVICE                    ║
-╠══════════════════════════════════════════════════════════════╣
-║ Status: ✅ RUNNING                                           ║
-║ Port: 3001                                                   ║
-║ Environment: DEVELOPMENT                                     ║
-║ Version: 1.0.0                                               ║
-║                                                              ║
-║ 🔍 Health Check: http://localhost:3001/health                ║
-║ 🔐 Auth API: http://localhost:3001/api/v1/auth               ║
-║ 👤 Users API: http://localhost:3001/api/v1/users             ║
-║ 👥 Teams API: http://localhost:3001/api/v1/teams             ║
-╚══════════════════════════════════════════════════════════════╝
-        `);
+        // Display perfectly aligned startup table
+        this.displayStartupTable();
       });
 
       // Graceful shutdown

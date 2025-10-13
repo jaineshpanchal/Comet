@@ -256,16 +256,20 @@ export function Sidebar({ children, className }: SidebarProps) {
             <>
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 flex-shrink-0 relative overflow-hidden">
-                  {/* Your exact comet logo */}
+                  {/* Your exact comet logo - background removed */}
                   <img 
                     src="/Comet.png" 
                     alt="Comet Logo" 
                     className="w-10 h-10 object-contain"
+                    style={{ 
+                      mixBlendMode: 'multiply',
+                      filter: 'brightness(0) invert(1)'
+                    }}
                   />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
                   <span className="text-sm font-bold tracking-tight text-slate-900 truncate">Comet DevOps</span>
-                  <span className="text-[10px] font-medium tracking-wide text-slate-500 uppercase truncate">DevOps Platform</span>
+                  <span className="text-[10px] font-medium tracking-wide text-slate-500 truncate">DEVOPS PLATFORM</span>
                 </div>
               </div>
               {/* Desktop collapse button */}

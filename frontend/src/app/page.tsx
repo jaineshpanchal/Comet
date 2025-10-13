@@ -13,16 +13,20 @@ export default function HomePage() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center relative overflow-hidden">
-                  {/* Your exact comet logo - landing page */}
+                  {/* Your exact comet logo - landing page, background removed */}
                   <img 
                     src="/Comet.png" 
                     alt="Comet Logo" 
                     className="w-7 h-7 object-contain"
+                    style={{ 
+                      mixBlendMode: 'multiply',
+                      filter: 'brightness(0) invert(1)'
+                    }}
                   />
                 </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-gray-900">Comet</h1>
-                  <p className="text-xs text-gray-500 -mt-1">DevOps Platform</p>
+                  <h1 className="text-sm font-bold tracking-tight text-slate-900">Comet DevOps</h1>
+                  <p className="text-[10px] font-medium tracking-wide text-slate-500 -mt-1">DEVOPS PLATFORM</p>
                 </div>
               </div>
             </div>

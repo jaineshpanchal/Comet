@@ -50,11 +50,15 @@ export default function LoginPage() {
         <div className="text-center space-y-4">
           <div className="flex justify-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-900 relative overflow-hidden">
-              {/* Your exact comet logo - login page */}
+              {/* Your exact comet logo - login page, background removed */}
               <img 
                 src="/Comet.png" 
                 alt="Comet Logo" 
                 className="w-10 h-10 object-contain"
+                style={{ 
+                  mixBlendMode: 'multiply',
+                  filter: 'brightness(0) invert(1)'
+                }}
               />
             </div>
           </div>

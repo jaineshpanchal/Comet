@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { WebSocketServer, WebSocket } from 'ws';
 import http from 'http';
+import Table from 'cli-table3';
 
 interface KPIMetric {
   id: string;
@@ -368,14 +369,55 @@ class MetricsService {
     });
   }
 
+  /**
+   * Creates a perfectly aligned startup table using cli-table3
+   */
+  private displayStartupTable(): void {
+    // Create a single table with custom border control
+    const table = new Table({
+      chars: {
+        'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+        'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+        'left': '║', 'left-mid': '', 'mid': '', 'mid-mid': '',
+        'right': '║', 'right-mid': '', 'middle': ''
+      },
+      style: {
+        head: [],
+        border: [],
+        'padding-left': 1,
+        'padding-right': 1
+      },
+      colWidths: [60],
+      wordWrap: false
+    });
+
+    // Add all content
+    table.push([{ content: '📊 METRICS & ANALYTICS SERVICE', hAlign: 'center' }]);
+    table.push(['Status: ✅ RUNNING']);
+    table.push([`Port: ${this.port}`]);
+    table.push([`Environment: ${process.env.NODE_ENV || 'development'}`.toUpperCase()]);
+    table.push([`Version: ${process.env.APP_VERSION || '1.0.0'}`]);
+    table.push(['']); // Empty line
+    table.push([`📊 KPIs API: http://localhost:${this.port}/api/metrics/kpis`]);
+    table.push([`🚀 Pipelines: http://localhost:${this.port}/api/metrics/pipelines`]);
+    table.push([`📈 Activities: http://localhost:${this.port}/api/metrics/activities`]);
+    table.push([`📡 WebSocket: ws://localhost:${this.port} (Real-time updates)`]);
+
+    // Get the table string and manually add the separator after the header
+    const tableStr = table.toString();
+    const lines = tableStr.split('\n');
+    
+    // Insert separator after the first content line (after service name)
+    const separatorLine = '╠' + '═'.repeat(60) + '╣';
+    lines.splice(2, 0, separatorLine); // Insert after line 1 (0-indexed, after service name)
+
+    console.log('\n' + lines.join('\n') + '\n');
+  }
+
   public start() {
     this.server.listen(this.port, () => {
-      console.log(`🚀 Metrics Service running on port ${this.port}`);
-      console.log(`📊 API endpoints:`);
-      console.log(`   GET /api/metrics/kpis`);
-      console.log(`   GET /api/metrics/pipelines`);
-      console.log(`   GET /api/metrics/activities`);
-      console.log(`📡 WebSocket server ready for real-time updates`);
+      // Display perfectly aligned startup table
+      this.displayStartupTable();
     });
   }
 }

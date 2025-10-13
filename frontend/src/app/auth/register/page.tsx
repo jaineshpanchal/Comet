@@ -128,11 +128,15 @@ export default function RegisterPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-full mb-4 shadow-lg relative overflow-hidden">
-            {/* Your exact comet logo - register page */}
+            {/* Your exact comet logo - register page, background removed */}
             <img 
               src="/Comet.png" 
               alt="Comet Logo" 
               className="w-12 h-12 object-contain"
+              style={{ 
+                mixBlendMode: 'multiply',
+                filter: 'brightness(0) invert(1)'
+              }}
             />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">

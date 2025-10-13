@@ -7,6 +7,7 @@ import axios from 'axios';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 import Joi from 'joi';
+import Table from 'cli-table3';
 
 const app = express();
 const PORT = process.env.API_TESTING_PORT || 8006;
@@ -461,8 +462,54 @@ async function generateTestData(schema: any, count: number, type: string) {
   return data;
 }
 
+/**
+ * Creates a perfectly aligned startup table using cli-table3
+ */
+function displayStartupTable(): void {
+  // Create a single table with custom border control
+  const table = new Table({
+    chars: {
+      'top': '═', 'top-mid': '╤', 'top-left': '╔', 'top-right': '╗',
+      'bottom': '═', 'bottom-mid': '╧', 'bottom-left': '╚', 'bottom-right': '╝',
+      'left': '║', 'left-mid': '', 'mid': '', 'mid-mid': '',
+      'right': '║', 'right-mid': '', 'middle': ''
+    },
+    style: {
+      head: [],
+      border: [],
+      'padding-left': 1,
+      'padding-right': 1
+    },
+    colWidths: [60],
+    wordWrap: false
+  });
+
+  // Add all content
+  table.push([{ content: '🧪 API TESTING SERVICE', hAlign: 'center' }]);
+  table.push(['Status: ✅ RUNNING']);
+  table.push([`Port: ${PORT}`]);
+  table.push([`Environment: ${process.env.NODE_ENV || 'development'}`.toUpperCase()]);
+  table.push([`Version: ${process.env.APP_VERSION || '1.0.0'}`]);
+  table.push(['']); // Empty line
+  table.push([`🔍 Test API: http://localhost:${PORT}/api/tests`]);
+  table.push([`📊 Results: http://localhost:${PORT}/api/results`]);
+  table.push([`🤖 AI Analysis: http://localhost:${PORT}/api/analyze`]);
+  table.push([`📈 Reports: http://localhost:${PORT}/api/reports`]);
+
+  // Get the table string and manually add the separator after the header
+  const tableStr = table.toString();
+  const lines = tableStr.split('\n');
+  
+  // Insert separator after the first content line (after service name)
+  const separatorLine = '╠' + '═'.repeat(60) + '╣';
+  lines.splice(2, 0, separatorLine); // Insert after line 1 (0-indexed, after service name)
+
+  console.log('\n' + lines.join('\n') + '\n');
+}
+
 app.listen(PORT, () => {
-  logger.info(`API Testing Service running on port ${PORT}`);
+  // Display perfectly aligned startup table
+  displayStartupTable();
 });
 
 export default app;

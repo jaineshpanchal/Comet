@@ -8,16 +8,20 @@ export function AppHeader() {
       <div className="mx-auto flex h-12 max-w-screen-2xl items-center justify-between px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 relative overflow-hidden">
-            {/* Your exact comet logo - compact header version */}
+            {/* Your exact comet logo - compact header version, background removed */}
             <img 
               src="/Comet.png" 
               alt="Comet Logo" 
               className="w-6 h-6 object-contain"
+              style={{ 
+                mixBlendMode: 'multiply',
+                filter: 'brightness(0) invert(1)'
+              }}
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold tracking-tight text-neutral-900">Comet</span>
-            <span className="text-[10px] font-medium tracking-wide text-neutral-500 uppercase">DevOps Platform</span>
+            <span className="text-sm font-bold tracking-tight text-slate-900">Comet DevOps</span>
+            <span className="text-[10px] font-medium tracking-wide text-slate-500">DEVOPS PLATFORM</span>
           </div>
         </div>
         
