@@ -11,11 +11,12 @@ export default function AppSectionLayout({
 }) {
   return (
     <div className="min-h-screen bg-neutral-50/50">
-      <Sidebar />
-      <main className="lg:pl-64">
-        <AppHeader />
-        <div className="px-6 py-8 lg:px-8">{children}</div>
-      </main>
+      <Sidebar>
+        <main className="pt-16">
+          <AppHeader />
+          <div className="px-6 py-8 lg:px-8">{children}</div>
+        </main>
+      </Sidebar>
     </div>
   );
 }

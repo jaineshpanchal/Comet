@@ -4,24 +4,27 @@ import * as React from "react";
 
 export function AppHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/95 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
-      <div className="mx-auto flex h-12 max-w-screen-2xl items-center justify-between px-6 lg:px-8">
+    <header className="fixed top-0 right-0 z-40 h-16 border-b border-slate-200/50 bg-gradient-to-r from-slate-50/50 to-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 box-border" 
+            style={{ 
+              left: 'var(--sidebar-width, 320px)',
+              transition: 'left 300ms ease-out'
+            }}>
+      <div className="flex h-16 items-center justify-between px-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 relative overflow-hidden">
-            {/* Your exact comet logo - compact header version, background removed */}
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 flex-shrink-0 relative overflow-hidden">
             <img 
               src="/Comet.png" 
               alt="Comet Logo" 
-              className="w-6 h-6 object-contain"
+              className="w-10 h-10 object-contain"
               style={{ 
                 mixBlendMode: 'multiply',
                 filter: 'brightness(0) invert(1)'
               }}
             />
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-bold tracking-tight text-slate-900">Comet DevOps</span>
-            <span className="text-[10px] font-medium tracking-wide text-slate-500">DEVOPS PLATFORM</span>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="text-sm font-bold tracking-tight text-slate-900 truncate">Comet DevOps</span>
+            <span className="text-[10px] font-medium tracking-wide text-slate-500 truncate">DEVOPS PLATFORM</span>
           </div>
         </div>
         

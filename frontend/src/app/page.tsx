@@ -1,9 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const router = useRouter();
+
+  // Removed automatic redirect - let users see the landing page first
+
   return (
     <div className="min-h-screen bg-white">
       {/* Professional Header */}
