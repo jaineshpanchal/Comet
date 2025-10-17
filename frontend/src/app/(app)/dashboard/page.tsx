@@ -1,15 +1,21 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { isAuthenticated, logout } from "@/lib/auth"
 import { KpiMetric } from "@/components/ui/kpi-metric"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { useMetrics } from "@/hooks/use-metrics"
 import { Skeleton } from "@/components/ui/skeleton"
-import { RefreshCw, Activity, Zap, TrendingUp, BarChart3, Target, Clock, Shield, Rocket, CheckCircle2, Timer, Users, Gauge, BarChart4, PieChart } from "lucide-react"
+import { ActivityFeed, useActivityFeed } from "@/components/ui/activity-feed"
+import { SimpleChart, PieChart } from "@/components/ui/simple-chart"
+import { RefreshCw, Activity, Zap, TrendingUp, BarChart3, Target, Clock, Shield, Rocket, CheckCircle2, Timer, Users, Gauge, BarChart4, PieChart as PieChartIcon } from "lucide-react"
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { kpis, pipelines, activities, isLoading, error, wsConnected, refresh } = useMetrics()
+  const activityFeed = useActivityFeed()
   const [selectedKpi, setSelectedKpi] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("overview")
   const [viewedSections, setViewedSections] = useState<Record<string, boolean>>({
@@ -18,12 +24,23 @@ export default function DashboardPage() {
     activity: false,
     analytics: false
   })
-
-  // Keep track of previous data counts to detect new updates
   const [previousCounts, setPreviousCounts] = useState<Record<string, number>>({
     pipelines: 0,
     activity: 0
   })
+
+  // Protect route: redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace("/auth/login");
+    }
+  }, []);
+
+  // Logout handler
+  const handleLogout = () => {
+    logout();
+    router.replace("/auth/login");
+  };
 
   // Effect to detect new data and show notifications
   useEffect(() => {
@@ -103,6 +120,14 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50 space-y-10 p-8 pb-12">
       {/* Header */}
       <div className="space-y-4">
+        <div className="flex justify-end">
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
         <div className="flex items-end justify-between">
           <div>
             <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-none mb-4">
@@ -210,7 +235,7 @@ export default function DashboardPage() {
             value="analytics" 
             className="group px-3 py-2.5 text-orange-600 hover:text-orange-700 hover:bg-orange-50/70 data-[state=active]:text-orange-800 data-[state=active]:bg-orange-100/80 data-[state=active]:shadow-sm data-[state=active]:shadow-orange-200/50 rounded-xl transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <PieChart className="h-5 w-5 text-orange-600 group-hover:text-orange-600 group-data-[state=active]:text-orange-700 transition-colors duration-200" strokeWidth={2.5} />
+            <PieChartIcon className="h-5 w-5 text-orange-600 group-hover:text-orange-600 group-data-[state=active]:text-orange-700 transition-colors duration-200" />
             <span className="text-sm font-medium">Analytics</span>
             {getNotificationCount('analytics') > 0 && (
               <div className="ml-2 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -394,84 +419,120 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-6">
-          <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-              Activity Feed
-            </h3>
-            <div className="space-y-4">
-              {isLoading ? (
-                Array.from({ length: 10 }).map((_, i) => (
-                  <Skeleton key={i} className="h-16 rounded-lg" />
-                ))
-              ) : (
-                activities.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-start space-x-4 p-4 rounded-lg hover:bg-neutral-50/50 transition-colors"
-                  >
-                    <div
-                      className={`w-3 h-3 rounded-full mt-2 flex-shrink-0 ${
-                        activity.severity === 'high'
-                          ? 'bg-red-500'
-                          : activity.severity === 'medium'
-                          ? 'bg-orange-500'
-                          : 'bg-green-500'
-                      }`}
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-neutral-900">
-                          {activity.title}
-                        </p>
-                        <Badge
-                          variant={
-                            activity.type === 'deployment'
-                              ? 'default'
-                              : activity.type === 'alert'
-                              ? 'destructive'
-                              : 'secondary'
-                          }
-                        >
-                          {activity.type}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-neutral-600 mt-1">
-                        {activity.description}
-                      </p>
-                      <div className="flex items-center justify-between mt-2">
-                        <p className="text-xs text-neutral-500">
-                          by {activity.user}
-                        </p>
-                        <p className="text-xs text-neutral-500">
-                          {activity.timestamp.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <ActivityFeed
+            activities={activityFeed}
+            maxItems={15}
+            showHeader={false}
+            compact={false}
+          />
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
-          <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-              Performance Analytics
-            </h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="p-4 rounded-lg bg-neutral-50/50">
-                <h4 className="font-medium text-neutral-900 mb-2">Deployment Trends</h4>
-                <p className="text-sm text-neutral-600">
-                  Real-time deployment analytics and trends will be displayed here.
-                </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Deployment Frequency Chart */}
+            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+                Deployment Frequency (Last 7 Days)
+              </h3>
+              <SimpleChart
+                type="area"
+                data={[
+                  { label: "Mon", value: 12 },
+                  { label: "Tue", value: 19 },
+                  { label: "Wed", value: 15 },
+                  { label: "Thu", value: 25 },
+                  { label: "Fri", value: 22 },
+                  { label: "Sat", value: 8 },
+                  { label: "Sun", value: 5 },
+                ]}
+                height={200}
+                showGrid={true}
+              />
+            </div>
+
+            {/* Pipeline Success Rate */}
+            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+                Pipeline Status Distribution
+              </h3>
+              <PieChart
+                data={[
+                  { label: "Success", value: 145, color: "#10b981" },
+                  { label: "Failed", value: 23, color: "#ef4444" },
+                  { label: "Running", value: 8, color: "#3b82f6" },
+                  { label: "Cancelled", value: 12, color: "#6b7280" },
+                ]}
+                size={220}
+                showLegend={true}
+              />
+            </div>
+
+            {/* Test Results Trend */}
+            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+                Test Pass Rate Trend
+              </h3>
+              <SimpleChart
+                type="line"
+                data={[
+                  { label: "Week 1", value: 78 },
+                  { label: "Week 2", value: 82 },
+                  { label: "Week 3", value: 85 },
+                  { label: "Week 4", value: 88 },
+                ]}
+                height={200}
+                showGrid={true}
+                showValues={true}
+              />
+            </div>
+
+            {/* Build Duration */}
+            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+                Average Build Duration (minutes)
+              </h3>
+              <SimpleChart
+                type="bar"
+                data={[
+                  { label: "Frontend", value: 4.2, color: "bg-blue-500" },
+                  { label: "Backend", value: 6.8, color: "bg-green-500" },
+                  { label: "Mobile", value: 8.5, color: "bg-purple-500" },
+                  { label: "Analytics", value: 5.3, color: "bg-orange-500" },
+                ]}
+                height={200}
+                showGrid={true}
+                showValues={true}
+              />
+            </div>
+          </div>
+
+          {/* Additional Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-gray-600">Avg Response Time</h4>
+                <Clock className="w-4 h-4 text-blue-500" />
               </div>
-              <div className="p-4 rounded-lg bg-neutral-50/50">
-                <h4 className="font-medium text-neutral-900 mb-2">Quality Metrics</h4>
-                <p className="text-sm text-neutral-600">
-                  Code quality and testing metrics visualization coming soon.
-                </p>
+              <p className="text-2xl font-bold text-gray-900">234ms</p>
+              <p className="text-xs text-green-600 mt-1">↓ 12% from last week</p>
+            </div>
+
+            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-gray-600">Code Coverage</h4>
+                <Shield className="w-4 h-4 text-green-500" />
               </div>
+              <p className="text-2xl font-bold text-gray-900">87.3%</p>
+              <p className="text-xs text-green-600 mt-1">↑ 3.2% from last week</p>
+            </div>
+
+            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-gray-600">Uptime</h4>
+                <Rocket className="w-4 h-4 text-purple-500" />
+              </div>
+              <p className="text-2xl font-bold text-gray-900">99.97%</p>
+              <p className="text-xs text-gray-600 mt-1">Last 30 days</p>
             </div>
           </div>
         </TabsContent>

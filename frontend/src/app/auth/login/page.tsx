@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { api } from "@/lib/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,16 +25,60 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+
+  const [error, setError] = useState<string | null>(null);
+  // Show session expired message if redirected from protected route
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('session') === 'expired') {
+        setError('Your session has expired. Please log in again.');
+      }
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
+    setError(null);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data?.error && data.error.toLowerCase().includes('expired')) {
+          setError('Your session has expired. Please log in again.');
+        } else {
+          setError(data?.error || "Login failed. Please check your credentials.");
+        }
+        setLoading(false);
+        return;
+      }
+      // Store JWT in localStorage (for demo; use httpOnly cookie for production)
+      if (data?.tokens?.accessToken) {
+        localStorage.setItem("comet_jwt", data.tokens.accessToken);
+           api.setToken(data.tokens.accessToken);
+      }
       setLoading(false);
       router.push("/dashboard");
-    }, 1500);
+    } catch (err) {
+  setError("Network error. Please try again.");
+      setLoading(false);
+    }
   };
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2 text-center">
+          {error}
+        </div>
+      )}
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;

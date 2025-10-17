@@ -7,7 +7,7 @@
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:ai\"",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:ai": "cd ai-services && python -m uvicorn main:app --reload --port 8001",
+    "dev:ai": "cd ai-services && ./venv/bin/python -m uvicorn main:app --reload --port 8001",
     "dev:metrics": "cd backend/services && npm run dev:metrics",
     "dev:services": "cd backend/services && npm run dev",
     "dev:dashboard": "concurrently \"npm run dev:metrics\" \"npm run dev:frontend\"",

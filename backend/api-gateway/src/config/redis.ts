@@ -3,6 +3,7 @@ import Redis from 'ioredis';
 
 // Redis client instance
 let redisClient: Redis | null = null;
+let redisEnabled = process.env.REDIS_ENABLED !== 'false'; // Disable Redis if explicitly set to false
 
 // Redis configuration options
 const redisConfig = {
@@ -11,37 +12,48 @@ const redisConfig = {
   password: process.env.REDIS_PASSWORD || undefined,
   retryDelayOnFailover: 100,
   enableReadyCheck: true,
-  maxRetriesPerRequest: 3,
+  maxRetriesPerRequest: 1, // Reduced retries
   lazyConnect: true,
-  connectTimeout: 10000,
-  commandTimeout: 5000,
+  connectTimeout: 2000, // Faster timeout
+  commandTimeout: 2000,
+  retryStrategy: () => null, // Don't retry connections
+  enableOfflineQueue: false, // Don't queue commands when offline
 };
 
 // Create Redis client
-export const createRedisClient = (): Redis => {
+export const createRedisClient = (): Redis | null => {
+  if (!redisEnabled) {
+    return null;
+  }
+
   if (!redisClient) {
     redisClient = new Redis(redisConfig);
 
+    // Suppress all error logging
     redisClient.on('connect', () => {
-      console.log('✅ Redis connected successfully');
+      // Silent
     });
 
-    redisClient.on('error', (error) => {
-      console.error('❌ Redis connection error:', error);
+    redisClient.on('error', () => {
+      // Silent - no logging
     });
 
     redisClient.on('ready', () => {
-      console.log('🚀 Redis is ready to accept commands');
+      // Silent
     });
 
     redisClient.on('close', () => {
-      console.log('📦 Redis connection closed');
+      // Silent
     });
 
     // Handle process termination
     process.on('SIGINT', async () => {
       if (redisClient) {
-        await redisClient.quit();
+        try {
+          await redisClient.quit();
+        } catch (e) {
+          // Silent
+        }
       }
       process.exit(0);
     });
@@ -53,8 +65,9 @@ export const createRedisClient = (): Redis => {
 // Export Redis instance
 export const redis = createRedisClient();
 
-// Redis utility functions
+// Redis utility functions (with graceful fallback if Redis is unavailable)
 export const setCache = async (key: string, value: any, expireInSeconds?: number): Promise<void> => {
+  if (!redis) return; // Redis disabled
   try {
     const serializedValue = JSON.stringify(value);
     if (expireInSeconds) {
@@ -63,34 +76,35 @@ export const setCache = async (key: string, value: any, expireInSeconds?: number
       await redis.set(key, serializedValue);
     }
   } catch (error) {
-    console.error('Redis set error:', error);
-    throw error;
+    // Silently fail if Redis is unavailable (development mode)
+    // In production, you'd want to handle this differently
   }
 };
 
 export const getCache = async (key: string): Promise<any> => {
+  if (!redis) return null; // Redis disabled
   try {
     const value = await redis.get(key);
     return value ? JSON.parse(value) : null;
   } catch (error) {
-    console.error('Redis get error:', error);
     return null;
   }
 };
 
 export const deleteCache = async (key: string): Promise<void> => {
+  if (!redis) return; // Redis disabled
   try {
     await redis.del(key);
   } catch (error) {
-    console.error('Redis delete error:', error);
-    throw error;
+    // Silently fail if Redis is unavailable (development mode)
   }
 };
 
 export const setCacheWithPattern = async (pattern: string, data: Record<string, any>, expireInSeconds?: number): Promise<void> => {
+  if (!redis) return; // Redis disabled
   try {
     const pipeline = redis.pipeline();
-    
+
     Object.entries(data).forEach(([key, value]) => {
       const fullKey = `${pattern}:${key}`;
       const serializedValue = JSON.stringify(value);
@@ -103,12 +117,12 @@ export const setCacheWithPattern = async (pattern: string, data: Record<string, 
 
     await pipeline.exec();
   } catch (error) {
-    console.error('Redis pattern set error:', error);
-    throw error;
+    // Silently fail if Redis is unavailable (development mode)
   }
 };
 
 export const getCacheByPattern = async (pattern: string): Promise<Record<string, any>> => {
+  if (!redis) return {}; // Redis disabled
   try {
     const keys = await redis.keys(`${pattern}:*`);
     if (keys.length === 0) return {};
@@ -124,18 +138,17 @@ export const getCacheByPattern = async (pattern: string): Promise<Record<string,
 
     return result;
   } catch (error) {
-    console.error('Redis pattern get error:', error);
     return {};
   }
 };
 
 // Redis health check
 export const checkRedisConnection = async (): Promise<boolean> => {
+  if (!redis) return false; // Redis disabled
   try {
     const pong = await redis.ping();
     return pong === 'PONG';
   } catch (error) {
-    console.error('Redis health check failed:', error);
     return false;
   }
 };

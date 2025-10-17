@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { isAuthenticated } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +49,12 @@ interface SystemHealth {
 }
 
 export default function MonitoringPage() {
+  const router = useRouter();
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace("/auth/login");
+    }
+  }, [router]);
   const [timeRange, setTimeRange] = useState<string>("24h");
   const [selectedMetric, setSelectedMetric] = useState<string>("overview");
 

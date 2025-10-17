@@ -8,11 +8,11 @@ console.log('⚠️  Note: This is a stub file. The full implementation is in th
 console.log('💡 To start the full service, run: cd user-management && npm run dev');
 console.log('');
 
-// Simple health check service on port 8001 for the gateway
+// Simple health check service on port 8002 for the gateway
 import express from 'express';
 
 const app = express();
-const PORT = process.env.USER_SERVICE_PORT || 8001;
+const PORT = process.env.USER_SERVICE_PORT || 8002;
 
 app.use(express.json());
 

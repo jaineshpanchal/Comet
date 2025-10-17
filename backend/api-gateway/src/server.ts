@@ -21,6 +21,11 @@ import { ApiResponse } from './types';
 import authRoutes from './routes/auth';
 import healthRoutes from './routes/health';
 import proxyRoutes from './routes/proxy';
+import projectRoutes from './routes/projects';
+import pipelineRoutes from './routes/pipelines';
+import testRoutes from './routes/tests';
+import deploymentRoutes from './routes/deployments';
+import metricsRoutes from './routes/metrics';
 
 class APIGateway {
   private app: Express;
@@ -54,6 +59,7 @@ class APIGateway {
         const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
           'http://localhost:3000',
           'http://localhost:3001',
+          'http://localhost:3030',
           'http://localhost:8080'
         ];
         
@@ -247,7 +253,12 @@ class APIGateway {
     // API routes
     this.app.use('/api/health', healthRoutes);
     this.app.use('/api/auth', authRoutes);
-    
+    this.app.use('/api/projects', projectRoutes);
+    this.app.use('/api/pipelines', pipelineRoutes);
+    this.app.use('/api/tests', testRoutes);
+    this.app.use('/api/deployments', deploymentRoutes);
+    this.app.use('/api/metrics', metricsRoutes);
+
     // Microservice proxy routes
     this.app.use('/', proxyRoutes);
 
@@ -269,29 +280,6 @@ class APIGateway {
   }
 
   private setupServiceProxyRoutes(): void {
-    // Pipeline Service routes
-    this.app.use('/api/pipelines', authenticateToken, (req: Request, res: Response, next) => {
-      // For now, return a placeholder response
-      res.json({
-        success: true,
-        message: 'Pipeline service proxy - Coming soon',
-        timestamp: new Date().toISOString(),
-        path: req.path,
-        statusCode: 200
-      });
-    });
-
-    // Testing Service routes  
-    this.app.use('/api/tests', authenticateToken, (req: Request, res: Response, next) => {
-      res.json({
-        success: true,
-        message: 'Testing service proxy - Coming soon',
-        timestamp: new Date().toISOString(),
-        path: req.path,
-        statusCode: 200
-      });
-    });
-
     // Integration Service routes
     this.app.use('/api/integrations', authenticateToken, (req: Request, res: Response, next) => {
       res.json({

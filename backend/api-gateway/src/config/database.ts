@@ -8,12 +8,7 @@ let prisma: PrismaClient;
 export const createPrismaClient = (): PrismaClient => {
   if (!prisma) {
     prisma = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
-      datasources: {
-        db: {
-          url: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?schema=public`
-        }
-      }
+      log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
     });
 
     // Handle process termination

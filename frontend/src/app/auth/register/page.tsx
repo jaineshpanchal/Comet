@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +32,11 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Only keep one set of error/success state
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -75,26 +81,57 @@ export default function RegisterPage() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Removed duplicate handleSubmit
+  // Removed duplicate error/success state
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
     setLoading(true);
-    
+    setError(null);
+    setSuccess(null);
     try {
-      // TODO: Implement actual registration logic
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log("Registration data:", formData);
-      // Redirect to login or dashboard
-    } catch (error) {
-      console.error("Registration failed:", error);
-    } finally {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          name: formData.firstName + ' ' + formData.lastName,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data?.error || "Registration failed");
+        setLoading(false);
+        return;
+      }
+      setSuccess("Registration successful! Redirecting to login...");
+       // If backend returns a token on registration, set it for api client
+       if (data?.tokens?.accessToken) {
+         localStorage.setItem("comet_jwt", data.tokens.accessToken);
+         api.setToken(data.tokens.accessToken);
+       }
+      setLoading(false);
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 1200);
+    } catch (err) {
+      setError("Network error. Please try again.");
       setLoading(false);
     }
   };
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2 text-center">
+          {error}
+        </div>
+      )}
+      {/* Success Message */}
+      {success && (
+        <div className="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded p-2 text-center">
+          {success}
+        </div>
+      )}
 
   const handleInputChange = (field: keyof RegisterFormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -156,6 +193,18 @@ export default function RegisterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2 text-center">
+                {error}
+              </div>
+            )}
+            {/* Success Message */}
+            {success && (
+              <div className="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded p-2 text-center">
+                {success}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">

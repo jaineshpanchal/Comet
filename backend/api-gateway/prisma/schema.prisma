@@ -29,6 +29,9 @@ model User {
   teamMemberships  TeamMember[]
   refreshTokens    RefreshToken[]
   auditLogs        AuditLog[]
+  triggeredPipelineRuns PipelineRun[] @relation("PipelineRunTriggeredBy")
+  triggeredTestRuns TestRun[]      @relation("TestRunTriggeredBy")
+  deployments      Deployment[]   @relation("DeploymentDeployedBy")
 
   @@map("users")
 }
@@ -112,6 +115,7 @@ model Pipeline {
   trigger   PipelineTrigger
   stages    String           @default("[]")
   status    PipelineStatus @default(IDLE)
+  isActive  Boolean        @default(true)
   lastRunAt DateTime?
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
@@ -153,6 +157,7 @@ model PipelineRun {
 
   // Relations
   pipeline Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  triggeredByUser User? @relation("PipelineRunTriggeredBy", fields: [triggeredBy], references: [id])
   stages   StageRun[]
 
   @@map("pipeline_runs")
@@ -209,7 +214,9 @@ model TestSuite {
   projectId   String
   name        String
   description String?
+  type        TestType @default(UNIT)
   framework   String
+  testFiles   String   @default("[]")
   configuration String   @default("{}")
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -222,10 +229,21 @@ model TestSuite {
   @@map("test_suites")
 }
 
+enum TestType {
+  UNIT
+  INTEGRATION
+  E2E
+  PERFORMANCE
+  SECURITY
+}
+
 model TestRun {
   id          String        @id @default(uuid())
   testSuiteId String
   status      TestRunStatus
+  triggeredBy String?
+  environment String        @default("development")
+  branch      String        @default("main")
   startedAt   DateTime      @default(now())
   finishedAt  DateTime?
   duration    Int?          // Duration in seconds
@@ -235,9 +253,13 @@ model TestRun {
   skippedTests Int          @default(0)
   coverage    Float?        // Coverage percentage
   results     String          @default("{}")
+  metadata    String          @default("{}")
+  errorMessage String?
+  errorStack   String?
 
   // Relations
   testSuite TestSuite @relation(fields: [testSuiteId], references: [id], onDelete: Cascade)
+  triggeredByUser User? @relation("TestRunTriggeredBy", fields: [triggeredBy], references: [id])
 
   @@map("test_runs")
 }
@@ -245,9 +267,9 @@ model TestRun {
 enum TestRunStatus {
   PENDING
   RUNNING
-  SUCCESS
+  PASSED
   FAILED
-  CANCELLED
+  SKIPPED
 }
 
 model Deployment {
@@ -255,6 +277,8 @@ model Deployment {
   projectId   String
   environment String
   version     String
+  branch      String           @default("main")
+  commitHash  String           @default("")
   status      DeploymentStatus
   deployedBy  String
   deployedAt  DateTime         @default(now())
@@ -262,18 +286,24 @@ model Deployment {
   duration    Int?             // Duration in seconds
   logs        String?
   rollbackId  String?          // Reference to previous deployment for rollback
-  metadata    String             @default("{}")
+  rollbackFromId String?       // Deployment that was rolled back from this
+  rollbackToId   String?       // Deployment that this was rolled back to
+  configuration  String        @default("{}")
+  metadata    String           @default("{}")
+  errorMessage String?
+  errorStack   String?
 
   // Relations
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deployedByUser User @relation("DeploymentDeployedBy", fields: [deployedBy], references: [id])
 
   @@map("deployments")
 }
 
 enum DeploymentStatus {
   PENDING
-  DEPLOYING
-  SUCCESS
+  IN_PROGRESS
+  DEPLOYED
   FAILED
   ROLLED_BACK
 }

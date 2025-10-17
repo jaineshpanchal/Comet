@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { SidebarTooltip } from "@/components/ui/tooltip-sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -313,7 +314,7 @@ export function Sidebar({ children, className }: SidebarProps) {
         <Link
           href={item.href}
           className={cn(
-            "group relative flex items-center gap-3 rounded-lg px-4 py-2.5 ml-2 text-sm font-medium transition-all duration-75 ease-out",
+            "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 ml-2 text-sm font-medium transition-all duration-75 ease-out",
             isActive
               ? "bg-gradient-to-r from-blue-500/10 to-indigo-500/5 text-blue-700 border border-blue-200/50 backdrop-blur-sm"
               : "text-slate-600 border border-transparent hover:text-slate-800 hover:bg-white/70 hover:border-slate-200/30"
@@ -326,35 +327,35 @@ export function Sidebar({ children, className }: SidebarProps) {
           {/* Enhanced icon with background */}
           <div className={cn(
             "flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-75 shrink-0",
-            isActive 
-              ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white" 
+            isActive
+              ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white"
               : "bg-slate-100 text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700"
           )}>
             <item.icon className="w-4 h-4 stroke-2" />
           </div>
-          
+
           {/* Text content with green dot - NO TRUNCATION */}
-          <div className="flex items-center gap-1 flex-1">
-            <span className="font-medium whitespace-nowrap">{item.label}</span>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <span className="font-medium whitespace-nowrap overflow-visible">{item.label}</span>
             {/* Green dot for sub-items with updates */}
             {(() => {
               // Get parent key from the current navigation structure
               const parentItem = navigationItems.find(nav => nav.subItems?.some(sub => sub.href === item.href));
               const parentKey = parentItem?.href.replace('/', '');
               return parentKey && hasSubItemNotification(item, parentKey) && (
-                <div className="relative">
-                  <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
-                  <div className="absolute inset-0 w-2.5 h-2.5 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                <div className="relative shrink-0 ml-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
+                  <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping opacity-80"></div>
                 </div>
               );
             })()}
           </div>
-          
+
           {/* Status indicator for active state */}
           {isActive && (
-            <div className="w-2 h-2 bg-blue-500 rounded-full shadow-sm shadow-blue-500/50 animate-pulse"></div>
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-sm shadow-blue-500/50 animate-pulse shrink-0"></div>
           )}
-          
+
           {/* Subtle border accent */}
           <div className={cn(
             "absolute left-0 top-0 bottom-0 w-0.5 rounded-r-full transition-all duration-300",
@@ -373,12 +374,12 @@ export function Sidebar({ children, className }: SidebarProps) {
             type="button"
             className={cn(
               "group relative flex items-center transition-all duration-75 ease-out overflow-hidden w-full text-left",
-              collapsed 
+              collapsed
                 ? "justify-center w-12 h-12 rounded-xl mx-auto my-1"
-                : "justify-between rounded-2xl px-4 py-4",
+                : "justify-between rounded-2xl px-4 py-3.5",
               isActive || expanded
                 ? collapsed
-                  ? (itemKey === 'dashboard' || itemKey === 'settings') 
+                  ? (itemKey === 'dashboard' || itemKey === 'settings')
                     ? "text-blue-600 bg-gradient-to-br from-blue-50 to-indigo-50/80 border border-blue-200/50 ring-1 ring-blue-300/30 backdrop-blur-sm"
                     : "bg-gradient-to-br from-blue-500/90 to-indigo-600/90 text-white border border-blue-400/30 ring-1 ring-blue-300/40 backdrop-blur-sm"
                   : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20"
@@ -404,24 +405,26 @@ export function Sidebar({ children, className }: SidebarProps) {
             }}
           >
             {collapsed ? (
-              // Collapsed state - enhanced icon with tooltip indicator
-              <div className="relative flex items-center justify-center">
-                <item.icon className="h-6 w-6 shrink-0 stroke-2" />
-                {hasMainItemNotification(item) && (
-                  <div className="absolute -top-1 -right-1">
-                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 border-white ring-1 ring-green-300/50"></div>
-                    <div className="absolute inset-0 w-3 h-3 bg-green-500 rounded-full animate-ping opacity-80"></div>
-                  </div>
-                )}
-              </div>
+              // Collapsed state - enhanced icon with tooltip
+              <SidebarTooltip content={item.label} side="right" delayDuration={150}>
+                <div className="relative">
+                  <item.icon className="h-6 w-6 shrink-0 stroke-2" />
+                  {hasMainItemNotification(item) && (
+                    <div className="absolute -top-1 -right-1">
+                      <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse border-2 border-white ring-1 ring-green-300/50"></div>
+                      <div className="absolute inset-0 w-2.5 h-2.5 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                    </div>
+                  )}
+                </div>
+              </SidebarTooltip>
             ) : (
               // Expanded state - full layout
               <>
-                <div className="flex items-center gap-3 flex-1 min-w-0 overflow-visible">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className={cn(
-                    "flex items-center justify-center rounded-xl p-2.5 transition-all duration-75 ease-out relative",
+                    "flex items-center justify-center rounded-xl p-2.5 transition-all duration-75 ease-out relative shrink-0",
                     isActive || expanded
-                      ? "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40" 
+                      ? "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40"
                       : "bg-slate-200/80 text-slate-700 border border-transparent ring-2 ring-transparent group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:ring-blue-200/30 group-hover:border-blue-200/40"
                   )}>
                     <item.icon className="h-6 w-6 shrink-0 stroke-2" />
@@ -430,26 +433,26 @@ export function Sidebar({ children, className }: SidebarProps) {
                       <div className="absolute inset-0 rounded-xl bg-blue-100/30 animate-pulse"></div>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className={cn(
-                      "font-semibold text-base tracking-tight whitespace-nowrap",
+                      "font-semibold text-sm tracking-tight whitespace-nowrap overflow-visible",
                       isActive ? "text-slate-800" : "text-slate-700"
                     )}>{item.label}</span>
                     {hasMainItemNotification(item) && (
-                      <div className="relative">
-                        <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
-                        <div className="absolute inset-0 w-2.5 h-2.5 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                      <div className="relative shrink-0">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
+                        <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping opacity-80"></div>
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   {item.subItems && (
-                    <div 
+                    <div
                       className={cn(
-                        "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-75 ease-out cursor-pointer",
-                        expanded 
-                          ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white ring-2 ring-blue-300/50 rotate-90" 
+                        "flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-75 ease-out cursor-pointer shrink-0",
+                        expanded
+                          ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white ring-2 ring-blue-300/50 rotate-90"
                           : "bg-slate-200/80 text-slate-700 group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600 group-hover:text-white group-hover:ring-2 group-hover:ring-blue-300/50"
                       )}
                       onClick={(e) => {
@@ -457,7 +460,7 @@ export function Sidebar({ children, className }: SidebarProps) {
                         toggleExpanded();
                       }}
                     >
-                      <ChevronRightIcon className="h-4 w-4 shrink-0 stroke-[2.5]" />
+                      <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 stroke-[2.5]" />
                     </div>
                   )}
                 </div>
@@ -470,9 +473,9 @@ export function Sidebar({ children, className }: SidebarProps) {
             href={item.href}
             className={cn(
               "group relative flex items-center transition-all duration-75 ease-out overflow-hidden",
-              collapsed 
+              collapsed
                 ? "justify-center w-12 h-12 rounded-xl mx-auto my-1"
-                : "justify-between w-full rounded-2xl px-4 py-4",
+                : "justify-between w-full rounded-2xl px-4 py-3.5",
               isActive
                 ? collapsed
                   ? (itemKey === 'dashboard' || itemKey === 'settings')
@@ -490,24 +493,26 @@ export function Sidebar({ children, className }: SidebarProps) {
             }}
           >
             {collapsed ? (
-              // Collapsed state
-              <div className="relative flex items-center justify-center">
-                <item.icon className="h-6 w-6 shrink-0 stroke-2" />
-                {hasMainItemNotification(item) && (
-                  <div className="absolute -top-1 -right-1">
-                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 border-white ring-1 ring-green-300/50"></div>
-                    <div className="absolute inset-0 w-3 h-3 bg-green-500 rounded-full animate-ping opacity-80"></div>
-                  </div>
-                )}
-              </div>
+              // Collapsed state with tooltip
+              <SidebarTooltip content={item.label} side="right" delayDuration={150}>
+                <div className="relative">
+                  <item.icon className="h-6 w-6 shrink-0 stroke-2" />
+                  {hasMainItemNotification(item) && (
+                    <div className="absolute -top-1 -right-1">
+                      <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse border-2 border-white ring-1 ring-green-300/50"></div>
+                      <div className="absolute inset-0 w-2.5 h-2.5 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                    </div>
+                  )}
+                </div>
+              </SidebarTooltip>
             ) : (
               // Expanded state
               <>
-                <div className="flex items-center gap-3 flex-1 min-w-0 overflow-visible">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className={cn(
-                    "flex items-center justify-center rounded-xl p-2.5 transition-all duration-75 ease-out relative",
-                    isActive 
-                      ? "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40" 
+                    "flex items-center justify-center rounded-xl p-2.5 transition-all duration-75 ease-out relative shrink-0",
+                    isActive
+                      ? "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40"
                       : "bg-slate-200/80 text-slate-700 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:ring-2 group-hover:ring-blue-200/30 group-hover:border group-hover:border-blue-200/40"
                   )}>
                     <item.icon className="h-6 w-6 shrink-0 stroke-2" />
@@ -515,15 +520,15 @@ export function Sidebar({ children, className }: SidebarProps) {
                       <div className="absolute inset-0 rounded-xl bg-blue-100/30 animate-pulse"></div>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className={cn(
-                      "font-semibold text-base tracking-tight whitespace-nowrap",
+                      "font-semibold text-sm tracking-tight whitespace-nowrap overflow-visible",
                       isActive ? "text-slate-800" : "text-slate-700"
                     )}>{item.label}</span>
                     {hasMainItemNotification(item) && (
-                      <div className="relative">
-                        <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
-                        <div className="absolute inset-0 w-2.5 h-2.5 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                      <div className="relative shrink-0">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
+                        <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping opacity-80"></div>
                       </div>
                     )}
                   </div>
@@ -694,7 +699,7 @@ export function Sidebar({ children, className }: SidebarProps) {
           WebkitOverflowScrolling: 'touch'
         }}>
           <div className="space-y-2" style={{ containIntrinsicSize: 'auto 1000px' }}>
-            {navigationItems.map((item, index) => (
+            {navigationItems.map((item) => (
               <div key={item.href}>
                 <NavItemComponent item={item} />
               </div>
