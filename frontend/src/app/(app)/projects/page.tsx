@@ -26,68 +26,44 @@ interface Project {
 
 export default function ProjectsPage() {
   useAuthGuard();
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: "1",
-      name: "E-Commerce Web App",
-      description: "Full-stack e-commerce platform with Next.js and Node.js",
-      repository: "https://github.com/company/ecommerce",
-      branch: "main",
-      technology: "nodejs",
-      visibility: "private",
-      createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      pipelinesCount: 15,
-      testsCount: 234,
-      deploymentsCount: 45,
-      team: "Frontend Team",
-      lastActivity: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    },
-    {
-      id: "2",
-      name: "API Gateway Service",
-      description: "Microservices API gateway with rate limiting and authentication",
-      repository: "https://github.com/company/api-gateway",
-      branch: "develop",
-      technology: "nodejs",
-      visibility: "private",
-      createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
-      pipelinesCount: 23,
-      testsCount: 156,
-      deploymentsCount: 67,
-      team: "Backend Team",
-      lastActivity: new Date(Date.now() - 5 * 60 * 60 * 1000),
-    },
-    {
-      id: "3",
-      name: "Mobile App",
-      description: "React Native mobile application for iOS and Android",
-      repository: "https://github.com/company/mobile-app",
-      branch: "main",
-      technology: "nodejs",
-      visibility: "private",
-      createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-      pipelinesCount: 12,
-      testsCount: 89,
-      deploymentsCount: 28,
-      team: "Mobile Team",
-      lastActivity: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    },
-    {
-      id: "4",
-      name: "Data Analytics Service",
-      description: "Python-based data processing and analytics pipeline",
-      repository: "https://github.com/company/analytics",
-      branch: "main",
-      technology: "python",
-      visibility: "private",
-      createdAt: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
-      pipelinesCount: 8,
-      testsCount: 67,
-      deploymentsCount: 19,
-      team: "Data Team",
-      lastActivity: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    },
-  ])
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/projects");
+        if (!res.ok) throw new Error("Failed to fetch projects");
+        const data = await res.json();
+        // Map backend fields to frontend Project type if needed
+        setProjects(
+          (data.projects || []).map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            repository: p.repository || "",
+            branch: p.branch || "main",
+            technology: p.technology || "nodejs",
+            visibility: p.visibility || "private",
+            createdAt: p.created_at ? new Date(p.created_at) : new Date(),
+            pipelinesCount: p.pipelinesCount,
+            testsCount: p.testsCount,
+            deploymentsCount: p.deploymentsCount,
+            team: p.team,
+            lastActivity: p.lastActivity ? new Date(p.lastActivity) : undefined,
+          }))
+        );
+      } catch (err: any) {
+        setError(err.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
   const techIcons: Record<string, string> = {
     nodejs: "🟢",
     python: "🐍",
@@ -124,6 +100,20 @@ export default function ProjectsPage() {
     return new Date(date).toLocaleDateString()
   }
 
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center h-96">
+        <span className="text-lg text-gray-500">Loading projects...</span>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="p-8 flex items-center justify-center h-96">
+        <span className="text-lg text-red-500">{error}</span>
+      </div>
+    );
+  }
   return (
     <div className="p-8 space-y-6">
       {/* Header */}
