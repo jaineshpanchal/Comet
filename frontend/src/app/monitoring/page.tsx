@@ -58,141 +58,97 @@ export default function MonitoringPage() {
   const [timeRange, setTimeRange] = useState<string>("24h");
   const [selectedMetric, setSelectedMetric] = useState<string>("overview");
 
-  // Mock data
-  const metrics: MetricData[] = [
-    {
-      name: "Response Time",
-      value: 245,
-      unit: "ms",
-      change: -12,
-      status: "healthy",
-    },
-    {
-      name: "Throughput",
-      value: 1847,
-      unit: "req/min",
-      change: 8,
-      status: "healthy",
-    },
-    {
-      name: "Error Rate",
-      value: 0.8,
-      unit: "%",
-      change: 0.2,
-      status: "warning",
-    },
-    {
-      name: "CPU Usage",
-      value: 68,
-      unit: "%",
-      change: 15,
-      status: "warning",
-    },
-    {
-      name: "Memory Usage",
-      value: 82,
-      unit: "%",
-      change: 5,
-      status: "critical",
-    },
-    {
-      name: "Active Users",
-      value: 1234,
-      unit: "users",
-      change: 23,
-      status: "healthy",
-    },
-  ];
 
-  const alerts: Alert[] = [
-    {
-      id: "1",
-      title: "High Memory Usage",
-      message: "Memory usage has exceeded 80% for the past 15 minutes in production environment",
-      severity: "critical",
-      status: "active",
-      triggeredAt: new Date("2024-01-15T11:30:00"),
-      source: "Production API",
-    },
-    {
-      id: "2",
-      title: "Increased Error Rate",
-      message: "Error rate has increased to 0.8% in the authentication service",
-      severity: "medium",
-      status: "acknowledged",
-      triggeredAt: new Date("2024-01-15T10:45:00"),
-      source: "Auth Service",
-    },
-    {
-      id: "3",
-      title: "Database Connection Pool",
-      message: "Database connection pool utilization is at 95%",
-      severity: "high",
-      status: "active",
-      triggeredAt: new Date("2024-01-15T11:15:00"),
-      source: "Database",
-    },
-    {
-      id: "4",
-      title: "SSL Certificate Expiry",
-      message: "SSL certificate for api.comet.com will expire in 7 days",
-      severity: "low",
-      status: "resolved",
-      triggeredAt: new Date("2024-01-15T08:00:00"),
-      source: "Security",
-    },
-  ];
+  // Real data integration
+  const [metrics, setMetrics] = useState<MetricData[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [systemHealth, setSystemHealth] = useState<SystemHealth[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const systemHealth: SystemHealth[] = [
-    {
-      service: "Frontend App",
-      status: "healthy",
-      uptime: 99.9,
-      responseTime: 120,
-      errorRate: 0.1,
-      lastCheck: new Date("2024-01-15T11:35:00"),
-    },
-    {
-      service: "API Gateway",
-      status: "healthy",
-      uptime: 99.8,
-      responseTime: 85,
-      errorRate: 0.3,
-      lastCheck: new Date("2024-01-15T11:35:00"),
-    },
-    {
-      service: "Auth Service",
-      status: "degraded",
-      uptime: 99.2,
-      responseTime: 340,
-      errorRate: 0.8,
-      lastCheck: new Date("2024-01-15T11:35:00"),
-    },
-    {
-      service: "Database",
-      status: "unhealthy",
-      uptime: 98.5,
-      responseTime: 890,
-      errorRate: 2.1,
-      lastCheck: new Date("2024-01-15T11:35:00"),
-    },
-    {
-      service: "Cache Redis",
-      status: "healthy",
-      uptime: 99.9,
-      responseTime: 15,
-      errorRate: 0.0,
-      lastCheck: new Date("2024-01-15T11:35:00"),
-    },
-    {
-      service: "File Storage",
-      status: "healthy",
-      uptime: 99.7,
-      responseTime: 200,
-      errorRate: 0.2,
-      lastCheck: new Date("2024-01-15T11:35:00"),
-    },
-  ];
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    Promise.all([
+      import('@/services/metrics.service').then(({ MetricsService }) => MetricsService.getOverviewMetrics(timeRange)),
+      import('@/services/metrics.service').then(({ MetricsService }) => MetricsService.getSystemHealth()),
+      import('@/services/metrics.service').then(({ MetricsService }) => MetricsService.getActivities(10, 'all')),
+    ])
+      .then(([overview, health, activities]) => {
+        // Use DashboardMetrics.kpis for metrics
+        const kpis = (overview as any)?.kpis || {};
+        setMetrics([
+          {
+            name: 'Total Projects',
+            value: kpis.totalProjects ?? 0,
+            unit: '',
+            change: 0,
+            status: 'healthy',
+          },
+          {
+            name: 'Active Pipelines',
+            value: kpis.activePipelines ?? 0,
+            unit: '',
+            change: 0,
+            status: 'healthy',
+          },
+          {
+            name: 'Pipeline Success Rate',
+            value: kpis.pipelineSuccessRate ?? 0,
+            unit: '%',
+            change: 0,
+            status: 'healthy',
+          },
+          {
+            name: 'Test Pass Rate',
+            value: kpis.testPassRate ?? 0,
+            unit: '%',
+            change: 0,
+            status: 'healthy',
+          },
+          {
+            name: 'Deployment Success Rate',
+            value: kpis.deploymentSuccessRate ?? 0,
+            unit: '%',
+            change: 0,
+            status: 'healthy',
+          },
+          {
+            name: 'Avg Pipeline Duration',
+            value: kpis.avgPipelineDuration ?? 0,
+            unit: 's',
+            change: 0,
+            status: 'healthy',
+          },
+        ]);
+        // Use SystemHealth.system for health
+        setSystemHealth([
+          {
+            service: 'System',
+            status: 'healthy',
+            uptime: health.uptime ?? 0,
+            responseTime: health.system?.cpuUsage ?? 0,
+            errorRate: health.system?.memoryUsage ?? 0,
+            lastCheck: health.timestamp ? new Date(health.timestamp) : new Date(),
+          },
+        ]);
+        setAlerts(
+          (activities || []).filter((a: any) => a.type === 'alert').map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            message: a.message,
+            severity: a.severity,
+            status: a.status,
+            triggeredAt: new Date(a.timestamp),
+            source: a.source,
+          }))
+        );
+      })
+      .catch((err) => {
+        setError(err.message || 'Failed to load monitoring data');
+      })
+      .finally(() => setLoading(false));
+  }, [timeRange]);
 
   const getMetricIcon = (name: string) => {
     switch (name.toLowerCase()) {
