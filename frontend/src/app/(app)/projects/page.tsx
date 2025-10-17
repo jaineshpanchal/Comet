@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useToast } from '@/components/ui/toast'
 import { useAuthGuard } from '@/lib/useAuthGuard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CreateProjectModal } from "@/components/modals/create-project-modal"
 import { Plus, Search, Filter, GitBranch, Calendar, Users, Settings } from "lucide-react"
+
 
 interface Project {
   id: string
@@ -26,6 +28,7 @@ interface Project {
 
 export default function ProjectsPage() {
   useAuthGuard();
+  const { showToast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,6 @@ export default function ProjectsPage() {
         const res = await fetch("/api/projects");
         if (!res.ok) throw new Error("Failed to fetch projects");
         const data = await res.json();
-        // Map backend fields to frontend Project type if needed
         setProjects(
           (data.projects || []).map((p: any) => ({
             id: p.id,
@@ -58,12 +60,13 @@ export default function ProjectsPage() {
         );
       } catch (err: any) {
         setError(err.message || "Unknown error");
+        showToast(err.message || "Unknown error", "error");
       } finally {
         setLoading(false);
       }
     };
     fetchProjects();
-  }, []);
+  }, [showToast]);
   const techIcons: Record<string, string> = {
     nodejs: "🟢",
     python: "🐍",
@@ -77,8 +80,8 @@ export default function ProjectsPage() {
   const [filterTech, setFilterTech] = useState<string>("all")
 
   const handleCreateProject = (newProject: Project) => {
-    setProjects([newProject, ...projects])
-    // In a real app, you would also show a success toast notification
+    setProjects([newProject, ...projects]);
+    showToast("Project created successfully!", "success");
   }
 
   const filteredProjects = projects.filter((project) => {
