@@ -5,6 +5,78 @@
 
 echo "🚀 Starting Comet DevOps Platform Services..."
 
+SERVICE_PIDS=()
+SERVICE_NAMES=()
+CLEANUP_PERFORMED=0
+
+register_service() {
+    SERVICE_PIDS+=("$1")
+    SERVICE_NAMES+=("$2")
+}
+
+cleanup_services() {
+    if [ "$CLEANUP_PERFORMED" -eq 1 ]; then
+        return
+    fi
+
+    CLEANUP_PERFORMED=1
+
+    if [ ${#SERVICE_PIDS[@]} -eq 0 ]; then
+        return
+    fi
+
+    echo ""
+    echo "🛑 Stopping services..."
+
+    for index in "${!SERVICE_PIDS[@]}"; do
+        pid="${SERVICE_PIDS[$index]}"
+        name="${SERVICE_NAMES[$index]}"
+
+        if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+            echo "   ⏹️  $name (pid: $pid)"
+            kill "$pid" 2>/dev/null || true
+
+            for _ in 1 2 3 4 5; do
+                if ! kill -0 "$pid" 2>/dev/null; then
+                    break
+                fi
+                sleep 1
+            done
+
+            if kill -0 "$pid" 2>/dev/null; then
+                kill -9 "$pid" 2>/dev/null || true
+            fi
+
+            wait "$pid" 2>/dev/null
+        fi
+    done
+}
+
+handle_signal() {
+    echo ""
+    echo "🛑 Received termination signal. Cleaning up..."
+    cleanup_services
+    exit 0
+}
+
+trap handle_signal INT TERM
+
+supports_wait_n() {
+    if [ -z "${BASH_VERSINFO[0]:-}" ]; then
+        return 1
+    fi
+
+    if [ "${BASH_VERSINFO[0]}" -gt 4 ]; then
+        return 0
+    fi
+
+    if [ "${BASH_VERSINFO[0]}" -eq 4 ] && [ "${BASH_VERSINFO[1]}" -ge 3 ]; then
+        return 0
+    fi
+
+    return 1
+}
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 MODE="dev"
@@ -146,6 +218,7 @@ else
     npm run dev:metrics &
 fi
 METRICS_PID=$!
+register_service "$METRICS_PID" "Metrics Service"
 
 # Wait for metrics service to start
 if [ "$MODE" = "prod" ]; then
@@ -156,7 +229,7 @@ fi
 METRICS_TIMEOUT=${METRICS_TIMEOUT:-$DEFAULT_METRICS_TIMEOUT}
 echo "⏳ Waiting for metrics service to initialize (timeout: ${METRICS_TIMEOUT}s)..."
 if ! wait_for_port 9090 "Metrics Service" "$METRICS_TIMEOUT"; then
-    kill $METRICS_PID 2>/dev/null
+    cleanup_services
     exit 1
 fi
 
@@ -168,7 +241,7 @@ if [ "$MODE" = "prod" ]; then
     echo "⚙️  Building frontend..."
     if ! npm run build; then
         echo "❌ Frontend build failed"
-        kill $METRICS_PID 2>/dev/null
+        cleanup_services
         exit 1
     fi
     NODE_ENV=production npm run start &
@@ -176,6 +249,7 @@ else
     npm run dev &
 fi
 FRONTEND_PID=$!
+register_service "$FRONTEND_PID" "Frontend"
 
 # Wait for frontend to start
 if [ "$MODE" = "prod" ]; then
@@ -186,8 +260,7 @@ fi
 FRONTEND_TIMEOUT=${FRONTEND_TIMEOUT:-$DEFAULT_FRONTEND_TIMEOUT}
 echo "⏳ Waiting for frontend to initialize (timeout: ${FRONTEND_TIMEOUT}s)..."
 if ! wait_for_port 3030 "Frontend" "$FRONTEND_TIMEOUT"; then
-    kill $METRICS_PID 2>/dev/null
-    kill $FRONTEND_PID 2>/dev/null
+    cleanup_services
     exit 1
 fi
 
@@ -198,8 +271,22 @@ echo "🌐 Dashboard: http://localhost:3030"
 echo ""
 echo "Press Ctrl+C to stop all services"
 
-# Wait for interrupt signal
-trap 'echo "🛑 Stopping services..."; kill $METRICS_PID $FRONTEND_PID 2>/dev/null; exit 0' INT
+if [ ${#SERVICE_PIDS[@]} -gt 0 ]; then
+    if supports_wait_n; then
+        wait -n "${SERVICE_PIDS[@]}"
+        SERVICE_EXIT_CODE=$?
+    else
+        wait "${SERVICE_PIDS[@]}"
+        SERVICE_EXIT_CODE=$?
+    fi
 
-# Keep script running
-wait
+    if [ "$CLEANUP_PERFORMED" -eq 0 ]; then
+        echo ""
+        echo "⚠️  A service exited unexpectedly (code: $SERVICE_EXIT_CODE). Cleaning up..."
+        cleanup_services
+        exit "$SERVICE_EXIT_CODE"
+    fi
+fi
+
+cleanup_services
+exit 0
