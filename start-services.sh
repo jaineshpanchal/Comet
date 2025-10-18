@@ -7,6 +7,48 @@ echo "🚀 Starting Comet DevOps Platform Services..."
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+MODE="dev"
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --mode)
+            if [ -n "${2:-}" ]; then
+                MODE="$2"
+                shift 2
+                continue
+            else
+                echo "❌ --mode flag requires a value (dev or prod)"
+                exit 1
+            fi
+            ;;
+        --mode=*)
+            MODE="${1#*=}"
+            ;;
+        -m)
+            if [ -n "${2:-}" ]; then
+                MODE="$2"
+                shift 2
+                continue
+            else
+                echo "❌ -m flag requires a value (dev or prod)"
+                exit 1
+            fi
+            ;;
+        *)
+            echo "❌ Unknown option: $1"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+MODE="$(echo "$MODE" | tr '[:upper:]' '[:lower:]')"
+if [ "$MODE" != "dev" ] && [ "$MODE" != "prod" ]; then
+    echo "❌ Unsupported mode '$MODE'. Use 'dev' or 'prod'."
+    exit 1
+fi
+
+echo "🔧 Running in ${MODE^^} mode"
+
 # Function to check if a port is in use
 check_port() {
     local port=$1
@@ -72,9 +114,11 @@ kill_port() {
         else
             case "$port" in
                 9090)
-                    pkill -f "metrics-service.ts" 2>/dev/null ;;
+                    pkill -f "metrics-service.ts" 2>/dev/null
+                    pkill -f "metrics-service.js" 2>/dev/null ;;
                 3030)
                     pkill -f "next dev" 2>/dev/null
+                    pkill -f "next start" 2>/dev/null
                     pkill -f "npm run dev" 2>/dev/null ;;
             esac
         fi
@@ -90,11 +134,26 @@ kill_port 9090  # Metrics service
 # Start metrics service
 echo "📊 Starting Metrics Service on port 9090..."
 cd "$SCRIPT_DIR/backend/services" || exit 1
-npm run dev:metrics &
+
+if [ "$MODE" = "prod" ]; then
+    echo "⚙️  Building metrics service..."
+    if ! npm run build; then
+        echo "❌ Metrics service build failed"
+        exit 1
+    fi
+    NODE_ENV=production npm run start:metrics:prod &
+else
+    npm run dev:metrics &
+fi
 METRICS_PID=$!
 
 # Wait for metrics service to start
-METRICS_TIMEOUT=${METRICS_TIMEOUT:-60}
+if [ "$MODE" = "prod" ]; then
+    DEFAULT_METRICS_TIMEOUT=90
+else
+    DEFAULT_METRICS_TIMEOUT=60
+fi
+METRICS_TIMEOUT=${METRICS_TIMEOUT:-$DEFAULT_METRICS_TIMEOUT}
 echo "⏳ Waiting for metrics service to initialize (timeout: ${METRICS_TIMEOUT}s)..."
 if ! wait_for_port 9090 "Metrics Service" "$METRICS_TIMEOUT"; then
     kill $METRICS_PID 2>/dev/null
@@ -104,11 +163,27 @@ fi
 # Start frontend
 echo "🌐 Starting Frontend on port 3030..."
 cd "$SCRIPT_DIR/frontend" || exit 1
-npm run dev &
+
+if [ "$MODE" = "prod" ]; then
+    echo "⚙️  Building frontend..."
+    if ! npm run build; then
+        echo "❌ Frontend build failed"
+        kill $METRICS_PID 2>/dev/null
+        exit 1
+    fi
+    NODE_ENV=production npm run start &
+else
+    npm run dev &
+fi
 FRONTEND_PID=$!
 
 # Wait for frontend to start
-FRONTEND_TIMEOUT=${FRONTEND_TIMEOUT:-90}
+if [ "$MODE" = "prod" ]; then
+    DEFAULT_FRONTEND_TIMEOUT=120
+else
+    DEFAULT_FRONTEND_TIMEOUT=90
+fi
+FRONTEND_TIMEOUT=${FRONTEND_TIMEOUT:-$DEFAULT_FRONTEND_TIMEOUT}
 echo "⏳ Waiting for frontend to initialize (timeout: ${FRONTEND_TIMEOUT}s)..."
 if ! wait_for_port 3030 "Frontend" "$FRONTEND_TIMEOUT"; then
     kill $METRICS_PID 2>/dev/null

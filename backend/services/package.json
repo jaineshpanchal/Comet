@@ -11,7 +11,8 @@
     "dev:testing": "ts-node-dev --respawn testing-service.ts",
     "dev:quality": "ts-node-dev --respawn quality-service.ts",
     "dev:metrics": "ts-node-dev --respawn metrics-service.ts",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
+    "start:metrics:prod": "node dist/metrics-service.js",
     "test": "jest"
   },
   "dependencies": {
