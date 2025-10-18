@@ -82,6 +82,7 @@ echo "📊 Starting Metrics Service on port 9090..."
 cd "$SCRIPT_DIR/backend/services" || exit 1
 npm run dev:metrics &
 METRICS_PID=$!
+register_service "$METRICS_PID" "Metrics Service"
 
 # Wait for metrics service to start
 METRICS_TIMEOUT=${METRICS_TIMEOUT:-60}
@@ -96,6 +97,7 @@ echo "🌐 Starting Frontend on port 3030..."
 cd "$SCRIPT_DIR/frontend" || exit 1
 npm run dev &
 FRONTEND_PID=$!
+register_service "$FRONTEND_PID" "Frontend"
 
 # Wait for frontend to start
 FRONTEND_TIMEOUT=${FRONTEND_TIMEOUT:-90}
@@ -113,8 +115,22 @@ echo "🌐 Dashboard: http://localhost:3030"
 echo ""
 echo "Press Ctrl+C to stop all services"
 
-# Wait for interrupt signal
-trap 'echo "🛑 Stopping services..."; kill $METRICS_PID $FRONTEND_PID 2>/dev/null; exit 0' INT
+if [ ${#SERVICE_PIDS[@]} -gt 0 ]; then
+    if supports_wait_n; then
+        wait -n "${SERVICE_PIDS[@]}"
+        SERVICE_EXIT_CODE=$?
+    else
+        wait "${SERVICE_PIDS[@]}"
+        SERVICE_EXIT_CODE=$?
+    fi
+
+    if [ "$CLEANUP_PERFORMED" -eq 0 ]; then
+        echo ""
+        echo "⚠️  A service exited unexpectedly (code: $SERVICE_EXIT_CODE). Cleaning up..."
+        cleanup_services
+        exit "$SERVICE_EXIT_CODE"
+    fi
+fi
 
 # Keep script running
 wait
