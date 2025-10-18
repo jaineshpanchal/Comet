@@ -1,27 +1,30 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Role, Permission, RolePermissions, User } from '@/lib/rbac'
 import { logout } from '@/lib/auth'
 import { useRouter } from "next/navigation"
 import { useAuthGuard } from '@/lib/useAuthGuard'
+import {
+  UserCircleIcon,
+  ShieldCheckIcon,
+  BellIcon,
+  Cog6ToothIcon,
+  ArrowRightStartOnRectangleIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/outline"
 
 export default function SettingsPage() {
-  const router = useRouter();
+  useAuthGuard()
+  const router = useRouter()
+
   const tabs = [
-    { id: "profile", label: "Profile", icon: "👤" },
-    { id: "security", label: "Security", icon: "🔒" },
-    { id: "notifications", label: "Notifications", icon: "🔔" },
-    { id: "preferences", label: "Preferences", icon: "⚙️" },
-    { id: "roles", label: "Roles & Permissions", icon: "🛡️" },
-  ];
-  const [users, setUsers] = useState<User[]>([
-    { id: '1', name: 'Alice Admin', email: 'alice@comet.com', role: 'admin' },
-    { id: '2', name: 'Bob Manager', email: 'bob@comet.com', role: 'project_manager' },
-    { id: '3', name: 'Carol Dev', email: 'carol@comet.com', role: 'developer' },
-    { id: '4', name: 'Dave QA', email: 'dave@comet.com', role: 'tester' },
-    { id: '5', name: 'Eve Viewer', email: 'eve@comet.com', role: 'viewer' },
-  ]);
+    { id: "profile", label: "Profile", icon: UserCircleIcon, gradient: "from-blue-500 to-cyan-500" },
+    { id: "security", label: "Security", icon: ShieldCheckIcon, gradient: "from-purple-500 to-pink-500" },
+    { id: "notifications", label: "Notifications", icon: BellIcon, gradient: "from-orange-500 to-red-500" },
+    { id: "preferences", label: "Preferences", icon: Cog6ToothIcon, gradient: "from-green-500 to-emerald-500" },
+  ]
+
   const [activeTab, setActiveTab] = useState("profile")
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -41,116 +44,53 @@ export default function SettingsPage() {
   const [language, setLanguage] = useState("en")
   const [timezone, setTimezone] = useState("UTC")
 
-  // Handler to update a user's role
-  const handleRoleChange = (userId: string, newRole: Role) => {
-    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
-  };
-  // Render Roles & Permissions tab
-  const renderRolesTab = () => (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Roles & Permissions</h2>
-      <div className="mb-6">
-        <h3 className="font-semibold mb-2">Role Permissions Matrix</h3>
-        <table className="min-w-full border text-sm">
-          <thead>
-            <tr>
-              <th className="border px-2 py-1">Role</th>
-              {Object.values(RolePermissions.admin).map((perm, idx) => (
-                <th key={perm + idx} className="border px-2 py-1">{perm}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(RolePermissions).map(([role, perms]) => (
-              <tr key={role}>
-                <td className="border px-2 py-1 font-semibold">{role}</td>
-                {Object.values(RolePermissions.admin).map((perm, idx) => (
-                  <td key={perm + idx} className="border px-2 py-1 text-center">
-                    {perms.includes(perm as Permission) ? '✔️' : ''}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <h3 className="font-semibold mb-2">Assign Roles to Users</h3>
-        <table className="min-w-full border text-sm">
-          <thead>
-            <tr>
-              <th className="border px-2 py-1">Name</th>
-              <th className="border px-2 py-1">Email</th>
-              <th className="border px-2 py-1">Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(user => (
-              <tr key={user.id}>
-                <td className="border px-2 py-1">{user.name}</td>
-                <td className="border px-2 py-1">{user.email}</td>
-                <td className="border px-2 py-1">
-                  <select
-                    value={user.role}
-                    onChange={e => handleRoleChange(user.id, e.target.value as Role)}
-                    className="border rounded px-1 py-0.5"
-                  >
-                    {Object.keys(RolePermissions).map(role => (
-                      <option key={role} value={role}>{role}</option>
-                    ))}
-                  </select>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-
   useEffect(() => {
-    // Load user profile from backend
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("comet_jwt");
-        if (!token) throw new Error("No token");
-        const res = await fetch("/api/user/profile", {
+        const token = localStorage.getItem("comet_jwt")
+        if (!token) throw new Error("No token")
+
+        const res = await fetch("http://localhost:8000/api/auth/profile", {
           headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to load profile");
-        const data = await res.json();
-        setUser(data);
-        setFirstName(data.firstName || "");
-        setLastName(data.lastName || "");
-        setEmail(data.email || "");
-        setUsername(data.username || "");
+        })
+
+        if (!res.ok) throw new Error("Failed to load profile")
+        const data = await res.json()
+        const userData = data.data?.user || data.user || data
+
+        setUser(userData)
+        setFirstName(userData.firstName || "")
+        setLastName(userData.lastName || "")
+        setEmail(userData.email || "")
+        setUsername(userData.username || "")
       } catch (err: any) {
-        setMessage({ type: "error", text: err.message || "Failed to load profile" });
+        setMessage({ type: "error", text: err.message || "Failed to load profile" })
       }
-    };
-    fetchProfile();
-    // Optionally: load preferences from localStorage as before
-    const storedPrefs = localStorage.getItem("userPreferences");
-    if (storedPrefs) {
-      const prefs = JSON.parse(storedPrefs);
-      setEmailNotifications(prefs.emailNotifications ?? true);
-      setPushNotifications(prefs.pushNotifications ?? true);
-      setPipelineNotifications(prefs.pipelineNotifications ?? true);
-      setDeploymentNotifications(prefs.deploymentNotifications ?? true);
-      setTheme(prefs.theme ?? "light");
-      setLanguage(prefs.language ?? "en");
-      setTimezone(prefs.timezone ?? "UTC");
     }
-  }, []);
+    fetchProfile()
+
+    const storedPrefs = localStorage.getItem("userPreferences")
+    if (storedPrefs) {
+      const prefs = JSON.parse(storedPrefs)
+      setEmailNotifications(prefs.emailNotifications ?? true)
+      setPushNotifications(prefs.pushNotifications ?? true)
+      setPipelineNotifications(prefs.pipelineNotifications ?? true)
+      setDeploymentNotifications(prefs.deploymentNotifications ?? true)
+      setTheme(prefs.theme ?? "light")
+      setLanguage(prefs.language ?? "en")
+      setTimezone(prefs.timezone ?? "UTC")
+    }
+  }, [])
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage(null);
+    e.preventDefault()
+    setIsLoading(true)
+    setMessage(null)
     try {
-      const token = localStorage.getItem("comet_jwt");
-      if (!token) throw new Error("Not authenticated");
-      const res = await fetch("/api/user/profile", {
+      const token = localStorage.getItem("comet_jwt")
+      if (!token) throw new Error("Not authenticated")
+
+      const res = await fetch("http://localhost:8000/api/auth/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -159,36 +99,39 @@ export default function SettingsPage() {
         body: JSON.stringify({
           firstName,
           lastName,
-          email,
-          username,
+          avatar: user?.avatar,
         }),
-      });
-      if (!res.ok) throw new Error("Failed to update profile");
-      const data = await res.json();
-      setUser(data);
-      setMessage({ type: "success", text: "Profile updated successfully!" });
+      })
+
+      if (!res.ok) throw new Error("Failed to update profile")
+      const data = await res.json()
+      const userData = data.data?.user || data.user || data
+      setUser(userData)
+      setMessage({ type: "success", text: "Profile updated successfully!" })
     } catch (error: any) {
-      setMessage({ type: "error", text: error.message || "Failed to update profile" });
+      setMessage({ type: "error", text: error.message || "Failed to update profile" })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage(null);
+    e.preventDefault()
+    setIsLoading(true)
+    setMessage(null)
     try {
       if (newPassword !== confirmPassword) {
-        throw new Error("Passwords do not match");
+        throw new Error("Passwords do not match")
       }
       if (newPassword.length < 8) {
-        throw new Error("Password must be at least 8 characters long");
+        throw new Error("Password must be at least 8 characters long")
       }
-      const token = localStorage.getItem("comet_jwt");
-      if (!token) throw new Error("Not authenticated");
-      const res = await fetch("/api/user/password", {
-        method: "PUT",
+
+      const token = localStorage.getItem("comet_jwt")
+      if (!token) throw new Error("Not authenticated")
+
+      const res = await fetch("http://localhost:8000/api/auth/change-password", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -196,221 +139,219 @@ export default function SettingsPage() {
         body: JSON.stringify({
           currentPassword,
           newPassword,
+          confirmPassword,
         }),
-      });
-      if (!res.ok) throw new Error("Failed to change password");
-      setMessage({ type: "success", text: "Password changed successfully!" });
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || "Failed to change password")
+      }
+
+      setMessage({ type: "success", text: "Password changed successfully!" })
+      setCurrentPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
     } catch (error: any) {
-      setMessage({ type: "error", text: error.message || "Failed to change password" });
+      setMessage({ type: "error", text: error.message || "Failed to change password" })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handlePreferencesSave = async () => {
-    setIsLoading(true);
-    setMessage(null);
+    setIsLoading(true)
+    setMessage(null)
     try {
-      const token = localStorage.getItem("comet_jwt");
-      if (!token) throw new Error("Not authenticated");
-      const res = await fetch("/api/user/preferences", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          emailNotifications,
-          pushNotifications,
-          pipelineNotifications,
-          deploymentNotifications,
-          theme,
-          language,
-          timezone,
-        }),
-      });
-      if (!res.ok) throw new Error("Failed to save preferences");
-      setMessage({ type: "success", text: "Preferences saved successfully!" });
-    } catch (error: any) {
-      setMessage({ type: "error", text: error.message || "Failed to save preferences" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Logout handler must be inside the component and after router is defined
-  const handleLogout = () => {
-    logout();
-    router.replace("/auth/login");
-  };
-
-  useEffect(() => {
-    // Load user profile and preferences from backend
-    const fetchProfileAndPrefs = async () => {
-      try {
-        const token = localStorage.getItem("comet_jwt");
-        if (!token) throw new Error("No token");
-        // Profile
-        const res = await fetch("/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to load profile");
-        const data = await res.json();
-        setUser(data);
-        setFirstName(data.firstName || "");
-        setLastName(data.lastName || "");
-        setEmail(data.email || "");
-        setUsername(data.username || "");
-        // Preferences
-        const prefsRes = await fetch("/api/user/preferences", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (prefsRes.ok) {
-          const prefs = await prefsRes.json();
-          setEmailNotifications(prefs.emailNotifications ?? true);
-          setPushNotifications(prefs.pushNotifications ?? true);
-          setPipelineNotifications(prefs.pipelineNotifications ?? true);
-          setDeploymentNotifications(prefs.deploymentNotifications ?? true);
-          setTheme(prefs.theme ?? "light");
-          setLanguage(prefs.language ?? "en");
-          setTimezone(prefs.timezone ?? "UTC");
-        }
-      } catch (err: any) {
-        setMessage({ type: "error", text: err.message || "Failed to load profile" });
+      const preferences = {
+        emailNotifications,
+        pushNotifications,
+        pipelineNotifications,
+        deploymentNotifications,
+        theme,
+        language,
+        timezone,
       }
-    };
-    fetchProfileAndPrefs();
-  }, [router]);
+      localStorage.setItem("userPreferences", JSON.stringify(preferences))
+      setMessage({ type: "success", text: "Preferences saved successfully!" })
+    } catch (error: any) {
+      setMessage({ type: "error", text: error.message || "Failed to save preferences" })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-  // ...existing code...
+  const handleLogout = () => {
+    logout()
+    router.replace("/auth/login")
+  }
+
+  const getRoleBadge = (role: string) => {
+    const badges: Record<string, { color: string; label: string }> = {
+      ADMIN: { color: "bg-gradient-to-r from-red-500 to-pink-500", label: "Administrator" },
+      MANAGER: { color: "bg-gradient-to-r from-purple-500 to-indigo-500", label: "Manager" },
+      DEVELOPER: { color: "bg-gradient-to-r from-blue-500 to-cyan-500", label: "Developer" },
+      TESTER: { color: "bg-gradient-to-r from-green-500 to-emerald-500", label: "Tester" },
+      VIEWER: { color: "bg-gradient-to-r from-gray-500 to-slate-500", label: "Viewer" },
+    }
+    return badges[role] || badges.VIEWER
+  }
 
   return (
-    <div className="p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header with User Info */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-2">Manage your account settings and preferences</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-1">
+                  <img
+                    src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`}
+                    alt="Avatar"
+                    className="h-full w-full rounded-xl object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-green-500 border-4 border-white shadow-lg"></div>
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900">
+                  {firstName} {lastName}
+                </h1>
+                <p className="text-gray-600 text-lg mt-1">@{username}</p>
+                {user?.role && (
+                  <span className={`inline-flex items-center gap-2 mt-2 px-4 py-1.5 rounded-full text-white text-sm font-semibold ${getRoleBadge(user.role).color}`}>
+                    <ShieldCheckIcon className="h-4 w-4" />
+                    {getRoleBadge(user.role).label}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Message Banner */}
         {message && (
           <div
-            className={`mb-6 p-4 rounded-lg ${
+            className={`mb-6 p-4 rounded-2xl backdrop-blur-sm border-2 flex items-center gap-3 animate-in slide-in-from-top ${
               message.type === "success"
-                ? "bg-green-50 border border-green-200 text-green-800"
-                : "bg-red-50 border border-red-200 text-red-800"
+                ? "bg-green-50/80 border-green-200 text-green-800"
+                : "bg-red-50/80 border-red-200 text-red-800"
             }`}
           >
-            {message.text}
+            {message.type === "success" ? (
+              <CheckCircleIcon className="h-6 w-6" />
+            ) : (
+              <ExclamationCircleIcon className="h-6 w-6" />
+            )}
+            <span className="font-medium">{message.text}</span>
           </div>
         )}
 
-        {/* Tabs */}
-        <div className="border-b border-gray-200 mb-8">
-          <nav className="-mb-px flex space-x-8">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id)
-                  setMessage(null)
-                }}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                <span className="mr-2">{tab.icon}</span>
-                {tab.label}
-              </button>
-            ))}
-          </nav>
+        {/* Modern Tabs */}
+        <div className="mb-8">
+          <div className="flex gap-3 p-2 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200">
+            {tabs.map((tab) => {
+              const Icon = tab.icon
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    setMessage(null)
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-semibold transition-all duration-300 ${
+                    activeTab === tab.id
+                      ? `bg-gradient-to-r ${tab.gradient} text-white shadow-lg scale-105`
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span>{tab.label}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         {/* Profile Tab */}
         {activeTab === "profile" && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Profile Information</h2>
-
-            {/* Avatar */}
-            <div className="flex items-center mb-8">
-              <img
-                src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`}
-                alt="Avatar"
-                className="w-20 h-20 rounded-full border-2 border-gray-200"
-              />
-              <div className="ml-6">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  Change Avatar
-                </button>
-                <p className="text-sm text-gray-500 mt-2">JPG, PNG or GIF. Max size 2MB.</p>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200 p-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                <UserCircleIcon className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
+                <p className="text-gray-600">Update your personal details</p>
               </div>
             </div>
 
             <form onSubmit={handleProfileUpdate} className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
                     First Name
                   </label>
                   <input
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
                     Last Name
                   </label>
                   <input
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                     required
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
                   Email Address
                 </label>
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  required
+                  className="w-full px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded-xl cursor-not-allowed"
+                  disabled
                 />
+                <p className="text-sm text-gray-500 flex items-center gap-1">
+                  <ExclamationCircleIcon className="h-4 w-4" />
+                  Email cannot be changed
+                </p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
                   Username
                 </label>
                 <input
                   type="text"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  required
+                  className="w-full px-4 py-3 bg-gray-100 border-2 border-gray-300 rounded-xl cursor-not-allowed"
+                  disabled
                 />
+                <p className="text-sm text-gray-500 flex items-center gap-1">
+                  <ExclamationCircleIcon className="h-4 w-4" />
+                  Username cannot be changed
+                </p>
               </div>
 
               <div className="flex justify-end pt-4">
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   {isLoading ? "Saving..." : "Save Changes"}
                 </button>
@@ -422,46 +363,54 @@ export default function SettingsPage() {
         {/* Security Tab */}
         {activeTab === "security" && (
           <div className="space-y-6">
-            {/* Change Password */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Change Password</h2>
-              <form onSubmit={handlePasswordChange} className="space-y-6">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200 p-8">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <ShieldCheckIcon className="h-7 w-7 text-white" />
+                </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <h2 className="text-2xl font-bold text-gray-900">Change Password</h2>
+                  <p className="text-gray-600">Keep your account secure</p>
+                </div>
+              </div>
+
+              <form onSubmit={handlePasswordChange} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
                     Current Password
                   </label>
                   <input
                     type="password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
                     New Password
                   </label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                     required
                   />
-                  <p className="text-sm text-gray-500 mt-1">Must be at least 8 characters long</p>
+                  <p className="text-sm text-gray-500">Must be at least 8 characters long</p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
                     Confirm New Password
                   </label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
                     required
                   />
                 </div>
@@ -470,121 +419,58 @@ export default function SettingsPage() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? "Changing..." : "Change Password"}
                   </button>
                 </div>
               </form>
             </div>
-
-            {/* Two-Factor Authentication */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Two-Factor Authentication</h2>
-              <p className="text-gray-600 mb-4">
-                Add an extra layer of security to your account by enabling two-factor authentication.
-              </p>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                Enable 2FA
-              </button>
-            </div>
-
-            {/* Active Sessions */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Active Sessions</h2>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">Current Session</p>
-                    <p className="text-sm text-gray-600">Mac OS - Chrome - San Francisco, CA</p>
-                    <p className="text-xs text-gray-500 mt-1">Active now</p>
-                  </div>
-                  <span className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">Active</span>
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
         {/* Notifications Tab */}
         {activeTab === "notifications" && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Notification Preferences</h2>
-
-            <div className="space-y-6">
-              {/* Email Notifications */}
-              <div className="flex items-center justify-between py-4 border-b border-gray-200">
-                <div>
-                  <h3 className="font-medium text-gray-900">Email Notifications</h3>
-                  <p className="text-sm text-gray-600">Receive notifications via email</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={emailNotifications}
-                    onChange={(e) => setEmailNotifications(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200 p-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                <BellIcon className="h-7 w-7 text-white" />
               </div>
-
-              {/* Push Notifications */}
-              <div className="flex items-center justify-between py-4 border-b border-gray-200">
-                <div>
-                  <h3 className="font-medium text-gray-900">Push Notifications</h3>
-                  <p className="text-sm text-gray-600">Receive push notifications in your browser</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={pushNotifications}
-                    onChange={(e) => setPushNotifications(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-
-              {/* Pipeline Notifications */}
-              <div className="flex items-center justify-between py-4 border-b border-gray-200">
-                <div>
-                  <h3 className="font-medium text-gray-900">Pipeline Updates</h3>
-                  <p className="text-sm text-gray-600">Get notified about pipeline status changes</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={pipelineNotifications}
-                    onChange={(e) => setPipelineNotifications(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-
-              {/* Deployment Notifications */}
-              <div className="flex items-center justify-between py-4">
-                <div>
-                  <h3 className="font-medium text-gray-900">Deployment Alerts</h3>
-                  <p className="text-sm text-gray-600">Get notified about deployment events</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={deploymentNotifications}
-                    onChange={(e) => setDeploymentNotifications(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Notification Preferences</h2>
+                <p className="text-gray-600">Manage how you receive updates</p>
               </div>
             </div>
 
-            <div className="flex justify-end pt-6 border-t border-gray-200 mt-6">
+            <div className="space-y-4">
+              {[
+                { id: "email", label: "Email Notifications", desc: "Receive notifications via email", state: emailNotifications, setState: setEmailNotifications },
+                { id: "push", label: "Push Notifications", desc: "Receive push notifications in your browser", state: pushNotifications, setState: setPushNotifications },
+                { id: "pipeline", label: "Pipeline Updates", desc: "Get notified about pipeline status changes", state: pipelineNotifications, setState: setPipelineNotifications },
+                { id: "deployment", label: "Deployment Alerts", desc: "Get notified about deployment events", state: deploymentNotifications, setState: setDeploymentNotifications },
+              ].map((item) => (
+                <div key={item.id} className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl border-2 border-gray-200 hover:border-orange-300 transition-all">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{item.label}</h3>
+                    <p className="text-sm text-gray-600">{item.desc}</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={item.state}
+                      onChange={(e) => item.setState(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end pt-6">
               <button
                 onClick={handlePreferencesSave}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-8 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
               >
                 Save Preferences
               </button>
@@ -594,19 +480,26 @@ export default function SettingsPage() {
 
         {/* Preferences Tab */}
         {activeTab === "preferences" && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Application Preferences</h2>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200 p-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                <Cog6ToothIcon className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Application Preferences</h2>
+                <p className="text-gray-600">Customize your experience</p>
+              </div>
+            </div>
 
             <div className="space-y-6">
-              {/* Theme */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
                   Theme
                 </label>
                 <select
                   value={theme}
                   onChange={(e) => setTheme(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
                 >
                   <option value="light">Light</option>
                   <option value="dark">Dark</option>
@@ -614,15 +507,14 @@ export default function SettingsPage() {
                 </select>
               </div>
 
-              {/* Language */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
                   Language
                 </label>
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
                 >
                   <option value="en">English</option>
                   <option value="es">Spanish</option>
@@ -631,15 +523,14 @@ export default function SettingsPage() {
                 </select>
               </div>
 
-              {/* Timezone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">
                   Timezone
                 </label>
                 <select
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
                 >
                   <option value="UTC">UTC</option>
                   <option value="America/New_York">Eastern Time (ET)</option>
@@ -653,10 +544,10 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="flex justify-end pt-6 border-t border-gray-200 mt-6">
+            <div className="flex justify-end pt-6">
               <button
                 onClick={handlePreferencesSave}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
               >
                 Save Preferences
               </button>
@@ -665,19 +556,26 @@ export default function SettingsPage() {
         )}
 
         {/* Logout Section */}
-        <div className="mt-8 bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-2">Logout</h2>
-          <p className="text-red-700 mb-4">End your current session and return to the login page.</p>
-          <button
-            onClick={handleLogout}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Logout
-          </button>
+        <div className="mt-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-3xl shadow-xl p-8 text-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                <ArrowRightStartOnRectangleIcon className="h-8 w-8" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">Ready to go?</h2>
+                <p className="text-white/80">End your session and log out securely</p>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-8 py-3 bg-white text-red-600 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
-      {/* Roles & Permissions Tab */}
-      {activeTab === "roles" && renderRolesTab()}
     </div>
   )
 }

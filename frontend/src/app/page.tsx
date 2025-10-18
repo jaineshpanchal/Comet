@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  const router = useRouter();
-
-  // Removed automatic redirect - let users see the landing page first
+  // Landing page - users must sign in to access the platform
 
   return (
     <div className="min-h-screen bg-white">
@@ -42,11 +39,14 @@ export default function HomePage() {
                 <a href="#docs" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Documentation</a>
               </nav>
               <div className="flex items-center space-x-3">
-                <button className="text-gray-600 hover:text-gray-900 text-sm font-medium px-3 py-2">
+                <Link
+                  href="/auth/login"
+                  className="text-gray-600 hover:text-gray-900 text-sm font-medium px-3 py-2"
+                >
                   Sign In
-                </button>
-                <Link 
-                  href="/dashboard" 
+                </Link>
+                <Link
+                  href="/auth/login"
                   className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors shadow-sm"
                 >
                   Open Platform
@@ -73,7 +73,7 @@ export default function HomePage() {
             </p>
             <div className="mt-10 flex justify-center gap-4">
               <Link
-                href="/dashboard"
+                href="/auth/login"
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all hover:shadow-lg hover:scale-105"
               >
                 Launch Platform

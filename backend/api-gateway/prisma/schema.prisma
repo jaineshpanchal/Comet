@@ -32,6 +32,7 @@ model User {
   triggeredPipelineRuns PipelineRun[] @relation("PipelineRunTriggeredBy")
   triggeredTestRuns TestRun[]      @relation("TestRunTriggeredBy")
   deployments      Deployment[]   @relation("DeploymentDeployedBy")
+  customPermissions UserPermission[]
 
   @@map("users")
 }
@@ -383,4 +384,74 @@ enum LogLevel {
   INFO
   WARN
   ERROR
+}
+
+model UserPermission {
+  id         String     @id @default(uuid())
+  userId     String
+  permission Permission
+  createdAt  DateTime   @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permission])
+  @@map("user_permissions")
+}
+
+enum Permission {
+  // User Management
+  USER_VIEW
+  USER_CREATE
+  USER_EDIT
+  USER_DELETE
+  USER_MANAGE_ROLES
+  USER_MANAGE_PERMISSIONS
+
+  // Team Management
+  TEAM_VIEW
+  TEAM_CREATE
+  TEAM_EDIT
+  TEAM_DELETE
+  TEAM_MANAGE_MEMBERS
+
+  // Project Management
+  PROJECT_VIEW
+  PROJECT_CREATE
+  PROJECT_EDIT
+  PROJECT_DELETE
+  PROJECT_MANAGE_SETTINGS
+
+  // Pipeline Management
+  PIPELINE_VIEW
+  PIPELINE_CREATE
+  PIPELINE_EDIT
+  PIPELINE_DELETE
+  PIPELINE_EXECUTE
+  PIPELINE_CANCEL
+
+  // Test Management
+  TEST_VIEW
+  TEST_CREATE
+  TEST_EDIT
+  TEST_DELETE
+  TEST_EXECUTE
+
+  // Deployment Management
+  DEPLOYMENT_VIEW
+  DEPLOYMENT_TRIGGER
+  DEPLOYMENT_ROLLBACK
+  DEPLOYMENT_APPROVE
+
+  // Integration Management
+  INTEGRATION_VIEW
+  INTEGRATION_CREATE
+  INTEGRATION_EDIT
+  INTEGRATION_DELETE
+
+  // System Management
+  SYSTEM_VIEW_LOGS
+  SYSTEM_VIEW_METRICS
+  SYSTEM_MANAGE_SETTINGS
+  SYSTEM_VIEW_AUDIT_LOGS
 }

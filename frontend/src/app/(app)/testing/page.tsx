@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import { isAuthenticated } from '@/lib/auth'
+import { useAuthGuard } from '@/lib/useAuthGuard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -26,12 +25,7 @@ const statusConfig = {
 }
 
 export default function TestingPage() {
-  const router = useRouter();
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      router.replace('/auth/login');
-    }
-  }, [router]);
+  useAuthGuard();
   const [testSuites, setTestSuites] = useState<TestSuite[]>([])
   const [selectedSuite, setSelectedSuite] = useState<TestSuite | null>(null)
   const [testRuns, setTestRuns] = useState<TestRun[]>([])

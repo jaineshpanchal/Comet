@@ -67,9 +67,62 @@ export class AuthService {
     };
   }
 
+  // Generate demo tokens without database
+  static generateDemoTokens(user: any): AuthTokens {
+    const tokenId = uuidv4();
+
+    const accessTokenPayload: JWTPayload = {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + this.parseTimeToSeconds(APP_CONFIG.JWT_EXPIRES_IN)
+    };
+
+    const refreshTokenPayload: RefreshTokenPayload = {
+      userId: user.id,
+      tokenId: tokenId,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + this.parseTimeToSeconds(APP_CONFIG.JWT_REFRESH_EXPIRES_IN)
+    };
+
+    const accessToken = jwt.sign(accessTokenPayload, APP_CONFIG.JWT_SECRET);
+    const refreshToken = jwt.sign(refreshTokenPayload, APP_CONFIG.JWT_SECRET);
+
+    return {
+      accessToken,
+      refreshToken,
+      expiresIn: this.parseTimeToSeconds(APP_CONFIG.JWT_EXPIRES_IN),
+      tokenType: 'Bearer'
+    };
+  }
+
   // Login user
   static async login(loginRequest: LoginRequest): Promise<{ user: User; tokens: AuthTokens }> {
     const { email, password } = loginRequest;
+
+    // Demo mode: Allow demo credentials without database
+    if (email === 'demo@comet.dev' && password === 'Demo#2025!Comet') {
+      const demoUser = {
+        id: 'demo-user-id',
+        email: 'demo@comet.dev',
+        username: 'demo',
+        firstName: 'Demo',
+        lastName: 'User',
+        role: 'ADMIN' as any,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastLoginAt: new Date()
+      };
+
+      const tokens = this.generateDemoTokens(demoUser);
+
+      return {
+        user: demoUser as User,
+        tokens
+      };
+    }
 
     // Find user by email
     const user = await db.user.findUnique({
@@ -212,6 +265,23 @@ export class AuthService {
   static async verifyToken(token: string): Promise<User> {
     try {
       const decoded = jwt.verify(token, APP_CONFIG.JWT_SECRET) as JWTPayload;
+
+      // Demo mode: Return demo user for demo token
+      if (decoded.userId === 'demo-user-id') {
+        const demoUser = {
+          id: 'demo-user-id',
+          email: 'demo@comet.dev',
+          username: 'demo',
+          firstName: 'Demo',
+          lastName: 'User',
+          role: 'ADMIN' as any,
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          lastLoginAt: new Date()
+        };
+        return demoUser as User;
+      }
 
       // Check cache first
       const cachedUser = await getCache(`user_session:${decoded.userId}`);

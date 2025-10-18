@@ -26,6 +26,7 @@ import pipelineRoutes from './routes/pipelines';
 import testRoutes from './routes/tests';
 import deploymentRoutes from './routes/deployments';
 import metricsRoutes from './routes/metrics';
+import usersRoutes from './routes/users';
 
 class APIGateway {
   private app: Express;
@@ -253,6 +254,7 @@ class APIGateway {
     // API routes
     this.app.use('/api/health', healthRoutes);
     this.app.use('/api/auth', authRoutes);
+    this.app.use('/api/users', usersRoutes);
     this.app.use('/api/projects', projectRoutes);
     this.app.use('/api/pipelines', pipelineRoutes);
     this.app.use('/api/tests', testRoutes);

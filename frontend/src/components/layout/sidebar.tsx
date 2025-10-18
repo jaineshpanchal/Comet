@@ -28,6 +28,7 @@ import {
   CloudIcon,
   CpuChipIcon,
   CheckCircleIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
 interface SidebarProps {
@@ -103,6 +104,11 @@ const navigationItems: NavItem[] = [
     href: "/settings",
     icon: CogIcon,
   },
+  {
+    label: "Admin",
+    href: "/admin/users",
+    icon: UserGroupIcon,
+  },
 ];
 
 export function Sidebar({ children, className }: SidebarProps) {
@@ -116,7 +122,8 @@ export function Sidebar({ children, className }: SidebarProps) {
     testing: false, // Show green dots
     monitoring: false, // Show green dots
     analytics: false, // Show green dots
-    settings: true // Always viewed - no green dot
+    settings: true, // Always viewed - no green dot
+    admin: true // Always viewed - no green dot
   });
   const [sidebarHovered, setSidebarHovered] = useState(false);
   

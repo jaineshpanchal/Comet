@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { isAuthenticated, logout } from "@/lib/auth"
+import { logout } from "@/lib/auth"
+import { useAuthGuard } from "@/lib/useAuthGuard"
+import { useToast } from '@/components/ui/toast'
 import { KpiMetric } from "@/components/ui/kpi-metric"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -10,10 +12,12 @@ import { useMetrics } from "@/hooks/use-metrics"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ActivityFeed, useActivityFeed } from "@/components/ui/activity-feed"
 import { SimpleChart, PieChart } from "@/components/ui/simple-chart"
-import { RefreshCw, Activity, Zap, TrendingUp, BarChart3, Target, Clock, Shield, Rocket, CheckCircle2, Timer, Users, Gauge, BarChart4, PieChart as PieChartIcon } from "lucide-react"
+import { RefreshCw, BarChart3, Clock, Shield, Rocket, CheckCircle2, Timer, Gauge, PieChart as PieChartIcon } from "lucide-react"
 
 export default function DashboardPage() {
+  useAuthGuard();
   const router = useRouter();
+  const { showToast } = useToast();
   const { kpis, pipelines, activities, isLoading, error, wsConnected, refresh } = useMetrics()
   const activityFeed = useActivityFeed()
   const [selectedKpi, setSelectedKpi] = useState<string | null>(null)
@@ -27,18 +31,12 @@ export default function DashboardPage() {
   const [previousCounts, setPreviousCounts] = useState<Record<string, number>>({
     pipelines: 0,
     activity: 0
-  })
-
-  // Protect route: redirect to login if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      router.replace("/auth/login");
-    }
-  }, []);
+  });
 
   // Logout handler
   const handleLogout = () => {
     logout();
+    showToast("Logged out successfully!", "success");
     router.replace("/auth/login");
   };
 
@@ -75,7 +73,8 @@ export default function DashboardPage() {
 
   // Handle refresh with notification simulation
   const handleRefresh = () => {
-    refresh()
+    refresh();
+    showToast("Dashboard data refreshed!", "success");
     // Simulate new notifications for sections not currently active
     if (activeTab !== 'pipelines') {
       setViewedSections(prev => ({ ...prev, pipelines: false }))
@@ -100,6 +99,7 @@ export default function DashboardPage() {
   }
 
   if (error) {
+    showToast(error, "error");
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
@@ -538,5 +538,5 @@ export default function DashboardPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
