@@ -108,8 +108,63 @@ model Project {
   pipelines   Pipeline[]
   testSuites  TestSuite[]
   deployments Deployment[]
+  secrets     ProjectSecret[]
+  securityScans SecurityScan[]
 
   @@map("projects")
+}
+
+model ProjectSecret {
+  id          String   @id @default(uuid())
+  projectId   String
+  key         String
+  value       String   // Encrypted value
+  description String?
+  environment String   @default("development") // development, staging, production, etc.
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, key, environment])
+  @@map("project_secrets")
+}
+
+model SecurityScan {
+  id             String              @id @default(uuid())
+  projectId      String
+  scanType       SecurityScanType
+  status         SecurityScanStatus  @default(PENDING)
+  startedAt      DateTime            @default(now())
+  completedAt    DateTime?
+  duration       Int?                // Duration in seconds
+  vulnerabilities String             @default("[]") // JSON array of vulnerabilities
+  summary        String?             // JSON summary of scan results
+  initiatedBy    String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("security_scans")
+}
+
+enum SecurityScanType {
+  DEPENDENCY    // npm audit / yarn audit
+  SAST          // Static Application Security Testing
+  DAST          // Dynamic Application Security Testing
+  CONTAINER     // Container image scanning
+  LICENSE       // License compliance scanning
+}
+
+enum SecurityScanStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
 }
 
 model Pipeline {

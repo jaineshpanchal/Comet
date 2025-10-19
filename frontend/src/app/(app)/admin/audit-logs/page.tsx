@@ -8,7 +8,8 @@ import {
   ClockIcon,
   UserIcon,
   ComputerDesktopIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  ArrowDownTrayIcon
 } from "@heroicons/react/24/outline"
 
 interface AuditLog {
@@ -148,16 +149,89 @@ export default function AuditLogsPage() {
     }
   }
 
+  const exportToCSV = () => {
+    const filteredLogs = logs.filter(log =>
+      !searchQuery ||
+      log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      log.resource.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      log.user?.email.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+
+    const headers = ["Timestamp", "User", "Email", "Action", "Resource", "IP Address"]
+    const csvData = filteredLogs.map(log => [
+      formatTimestamp(log.timestamp),
+      log.user ? `${log.user.firstName} ${log.user.lastName}` : "System",
+      log.user?.email || "N/A",
+      log.action,
+      log.resource,
+      log.ipAddress || "N/A"
+    ])
+
+    const csv = [
+      headers.join(","),
+      ...csvData.map(row => row.map(cell => `"${cell}"`).join(","))
+    ].join("\n")
+
+    const blob = new Blob([csv], { type: "text/csv" })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `audit-logs-${new Date().toISOString().split('T')[0]}.csv`
+    link.click()
+    window.URL.revokeObjectURL(url)
+  }
+
+  const exportToJSON = () => {
+    const filteredLogs = logs.filter(log =>
+      !searchQuery ||
+      log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      log.resource.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      log.user?.email.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+
+    const jsonData = JSON.stringify(filteredLogs, null, 2)
+    const blob = new Blob([jsonData], { type: "application/json" })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `audit-logs-${new Date().toISOString().split('T')[0]}.json`
+    link.click()
+    window.URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="space-y-8 pb-12">
       {/* Header */}
       <div className="space-y-4">
-        <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-none mb-4">
-          Audit Logs
-        </h1>
-        <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
-          Track all <span className="text-gray-700 font-medium">user actions</span> and <span className="text-gray-700 font-medium">system events</span>
-        </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+              Audit Logs
+            </h1>
+            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+              Track all <span className="text-gray-700 font-medium">user actions</span> and <span className="text-gray-700 font-medium">system events</span>
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={exportToCSV}
+              disabled={logs.length === 0}
+              className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+            >
+              <ArrowDownTrayIcon className="w-5 h-5" />
+              Export CSV
+            </button>
+            <button
+              onClick={exportToJSON}
+              disabled={logs.length === 0}
+              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+            >
+              <ArrowDownTrayIcon className="w-5 h-5" />
+              Export JSON
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Statistics Cards */}

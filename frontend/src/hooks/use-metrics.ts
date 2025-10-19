@@ -75,7 +75,12 @@ function transformActivity(activity: Activity): ActivityEvent {
 /**
  * Transform backend DashboardMetrics KPIs to frontend KPIMetrics
  */
-function transformKPIs(dashboardMetrics: DashboardMetrics): KPIMetric[] {
+function transformKPIs(dashboardMetrics: DashboardMetrics | null): KPIMetric[] {
+  if (!dashboardMetrics || !dashboardMetrics.kpis) {
+    // Return default empty metrics if data is unavailable
+    return []
+  }
+
   const { kpis } = dashboardMetrics
 
   return [
@@ -159,8 +164,10 @@ export function useMetrics(timeRange: string = '24h') {
 
       // Fetch dashboard metrics (KPIs)
       const dashboardMetrics = await MetricsService.getDashboardMetrics(timeRange)
-      const transformedKpis = transformKPIs(dashboardMetrics)
-      setKpis(transformedKpis)
+      if (dashboardMetrics) {
+        const transformedKpis = transformKPIs(dashboardMetrics)
+        setKpis(transformedKpis)
+      }
 
       // Fetch pipeline metrics
       const pipelineMetrics = await MetricsService.getPipelineMetrics(timeRange)

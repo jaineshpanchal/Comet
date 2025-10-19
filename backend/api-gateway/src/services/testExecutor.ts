@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
+import { websocketService } from './websocketService';
 
 const prisma = new PrismaClient();
 
@@ -55,15 +56,25 @@ export class TestExecutor extends EventEmitter {
       this.activeExecutions.add(testRunId);
 
       // Update test run status to RUNNING
-      await prisma.testRun.update({
+      const startedRun = await prisma.testRun.update({
         where: { id: testRunId },
         data: {
           status: TestRunStatus.RUNNING,
           startedAt: new Date()
+        },
+        include: {
+          testSuite: true
         }
       });
 
       this.emit('test:started', { testRunId, testSuiteId });
+
+      // Broadcast test run started via WebSocket
+      websocketService.broadcastTestRunUpdate(testSuiteId, {
+        type: 'started',
+        testRun: startedRun,
+        timestamp: new Date().toISOString()
+      });
 
       // Execute tests based on type
       let testResults: TestCaseResult[];
@@ -109,7 +120,7 @@ export class TestExecutor extends EventEmitter {
           : TestRunStatus.SKIPPED;
 
       // Update test run with results
-      await prisma.testRun.update({
+      const completedRun = await prisma.testRun.update({
         where: { id: testRunId },
         data: {
           status: finalStatus,
@@ -121,6 +132,9 @@ export class TestExecutor extends EventEmitter {
           skippedTests,
           results: JSON.stringify(testResults),
           coverage: this.calculateCoverage(testResults)
+        },
+        include: {
+          testSuite: true
         }
       });
 
@@ -135,6 +149,20 @@ export class TestExecutor extends EventEmitter {
         duration: totalDuration
       });
 
+      // Broadcast test run completed via WebSocket
+      websocketService.broadcastTestRunUpdate(testSuiteId, {
+        type: 'completed',
+        testRun: completedRun,
+        status: finalStatus,
+        totalTests,
+        passedTests,
+        failedTests,
+        skippedTests,
+        duration: totalDuration,
+        coverage: this.calculateCoverage(testResults),
+        timestamp: new Date().toISOString()
+      });
+
       logger.info('Test execution completed', {
         testRunId,
         status: finalStatus,
@@ -147,17 +175,28 @@ export class TestExecutor extends EventEmitter {
     } catch (error: any) {
       logger.error('Test execution error', { testRunId, error: error.message });
 
-      await prisma.testRun.update({
+      const failedRun = await prisma.testRun.update({
         where: { id: testRunId },
         data: {
           status: TestRunStatus.FAILED,
           finishedAt: new Date(),
           errorMessage: error.message,
           errorStack: error.stack
+        },
+        include: {
+          testSuite: true
         }
       });
 
       this.emit('test:failed', { testRunId, error: error.message });
+
+      // Broadcast test run failed via WebSocket
+      websocketService.broadcastTestRunUpdate(testSuiteId, {
+        type: 'failed',
+        testRun: failedRun,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
     } finally {
       this.activeExecutions.delete(testRunId);
     }
@@ -167,20 +206,38 @@ export class TestExecutor extends EventEmitter {
    * Execute unit tests
    */
   private async executeUnitTests(context: TestExecutionContext): Promise<TestCaseResult[]> {
-    const { framework, testFiles, configuration } = context;
+    const { framework, testFiles, testRunId, testSuiteId } = context;
 
     logger.info('Executing unit tests', { framework, fileCount: testFiles.length });
 
     // Simulate test execution (in production, this would use actual test runners)
     const results: TestCaseResult[] = [];
+    let completedTests = 0;
 
     for (const testFile of testFiles) {
       // Simulate running tests in each file
       const fileTests = this.generateTestCases(testFile, framework, 'unit');
+      const totalTests = testFiles.reduce((sum, file) =>
+        sum + this.generateTestCases(file, framework, 'unit').length, 0
+      );
 
       for (const test of fileTests) {
         await this.delay(Math.random() * 500 + 200); // Simulate test execution time
         results.push(test);
+        completedTests++;
+
+        // Broadcast progress update every test
+        const progress = Math.round((completedTests / totalTests) * 100);
+        websocketService.broadcastTestRunUpdate(testSuiteId, {
+          type: 'progress',
+          testRunId,
+          progress,
+          completedTests,
+          totalTests,
+          currentTest: test.name,
+          status: test.status,
+          timestamp: new Date().toISOString()
+        });
       }
     }
 

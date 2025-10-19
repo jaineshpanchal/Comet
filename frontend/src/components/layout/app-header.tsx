@@ -41,10 +41,9 @@ export function AppHeader() {
   };
 
   return (
-    <header className="fixed top-0 right-0 z-40 h-16 border-b border-slate-200/50 bg-gradient-to-r from-slate-50/50 to-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 box-border"
+    <header className="fixed top-0 right-0 z-40 h-16 border-b border-slate-200/50 bg-gradient-to-r from-slate-50/50 to-white/50 backdrop-blur-sm shadow-sm box-border"
             style={{
-              left: 'var(--sidebar-width, 320px)',
-              transition: 'left 300ms ease-out'
+              left: 'var(--sidebar-width, 320px)'
             }}>
       <div className="flex h-16 items-center justify-between px-3">
         <div className="flex items-center gap-3">

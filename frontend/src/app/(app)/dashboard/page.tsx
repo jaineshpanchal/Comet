@@ -120,25 +120,15 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50 space-y-10 p-8 pb-12">
       {/* Header */}
       <div className="space-y-4">
-        <div className="flex justify-end">
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
-          >
-            Logout
-          </button>
+        <div>
+          <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            Dashboard
+          </h1>
+          <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+            Real-time insights into your <span className="text-gray-700 font-medium">DevOps</span> performance
+          </p>
         </div>
-        <div className="flex items-end justify-between">
-          <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-none mb-4">
-              Dashboard
-            </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
-              Real-time insights into your <span className="text-gray-700 font-medium">DevOps</span> performance
-            </p>
-          </div>
-        </div>
-        
+
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
             <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
@@ -146,15 +136,6 @@ export default function DashboardPage() {
               {wsConnected ? 'Live' : 'Polling Mode'}
             </span>
           </div>
-          
-          <button
-            onClick={handleRefresh}
-            disabled={isLoading}
-            className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
         </div>
       </div>
 

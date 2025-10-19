@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
+import { websocketService } from './websocketService';
 
 const prisma = new PrismaClient();
 
@@ -59,15 +60,27 @@ export class DeploymentExecutor extends EventEmitter {
       this.activeDeployments.add(deploymentId);
 
       // Update deployment status to IN_PROGRESS
-      await prisma.deployment.update({
+      const startedDeployment = await prisma.deployment.update({
         where: { id: deploymentId },
         data: {
           status: DeploymentStatus.IN_PROGRESS,
           deployedAt: new Date()
+        },
+        include: {
+          project: true
         }
       });
 
       this.emit('deployment:started', { deploymentId, environment });
+
+      // Broadcast deployment started via WebSocket
+      websocketService.broadcastDeploymentUpdate(deploymentId, {
+        type: 'started',
+        deployment: startedDeployment,
+        environment,
+        version,
+        timestamp: new Date().toISOString()
+      });
 
       // Execute deployment steps
       const steps = this.getDeploymentSteps(environment, isRollback || false);
@@ -100,6 +113,18 @@ export class DeploymentExecutor extends EventEmitter {
           step,
           status: stepResult.status
         });
+
+        // Broadcast deployment step progress via WebSocket
+        websocketService.broadcastDeploymentUpdate(deploymentId, {
+          type: 'step_completed',
+          deploymentId,
+          step,
+          status: stepResult.status,
+          progress: Math.round(((stepResults.length) / steps.length) * 100),
+          completedSteps: stepResults.length,
+          totalSteps: steps.length,
+          timestamp: new Date().toISOString()
+        });
       }
 
       // Check if deployment was cancelled
@@ -117,7 +142,7 @@ export class DeploymentExecutor extends EventEmitter {
       const totalDuration = stepResults.reduce((sum, r) => sum + r.duration, 0);
 
       // Update deployment with results
-      await prisma.deployment.update({
+      const completedDeployment = await prisma.deployment.update({
         where: { id: deploymentId },
         data: {
           status: finalStatus,
@@ -130,6 +155,9 @@ export class DeploymentExecutor extends EventEmitter {
             successfulSteps: stepResults.filter(r => r.status === 'SUCCESS').length,
             failedSteps: stepResults.filter(r => r.status === 'FAILED').length
           })
+        },
+        include: {
+          project: true
         }
       });
 
@@ -137,6 +165,18 @@ export class DeploymentExecutor extends EventEmitter {
         deploymentId,
         status: finalStatus,
         duration: totalDuration
+      });
+
+      // Broadcast deployment completed via WebSocket
+      websocketService.broadcastDeploymentUpdate(deploymentId, {
+        type: 'completed',
+        deployment: completedDeployment,
+        status: finalStatus,
+        duration: totalDuration,
+        totalSteps: steps.length,
+        successfulSteps: stepResults.filter(r => r.status === 'SUCCESS').length,
+        failedSteps: stepResults.filter(r => r.status === 'FAILED').length,
+        timestamp: new Date().toISOString()
       });
 
       logger.info('Deployment execution completed', {

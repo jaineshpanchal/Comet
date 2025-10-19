@@ -1,6 +1,7 @@
 import { PrismaClient, PipelineRunStatus, StageRunStatus, StageType } from '@prisma/client';
 import { logger } from '../utils/logger';
 import { EventEmitter } from 'events';
+import { websocketService } from './websocketService';
 
 const prisma = new PrismaClient();
 
@@ -58,9 +59,19 @@ export class PipelineExecutor extends EventEmitter {
       this.activeExecutions.add(pipelineRunId);
 
       // Update pipeline run status to RUNNING
-      await prisma.pipelineRun.update({
+      const updatedRun = await prisma.pipelineRun.update({
         where: { id: pipelineRunId },
-        data: { status: PipelineRunStatus.RUNNING }
+        data: { status: PipelineRunStatus.RUNNING },
+        include: {
+          pipeline: true
+        }
+      });
+
+      // Broadcast pipeline run started via WebSocket
+      websocketService.broadcastPipelineRunUpdate(pipelineId, {
+        type: 'started',
+        pipelineRun: updatedRun,
+        timestamp: new Date().toISOString()
       });
 
       // Execute stages sequentially
@@ -104,6 +115,18 @@ export class PipelineExecutor extends EventEmitter {
           stageName: stage.name,
           status: stageResult.status
         });
+
+        // Broadcast stage progress via WebSocket
+        websocketService.broadcastPipelineRunUpdate(pipelineId, {
+          type: 'stage_completed',
+          pipelineRunId,
+          stageIndex: i,
+          totalStages: stages.length,
+          stageName: stage.name,
+          stageStatus: stageResult.status,
+          progress: Math.round(((i + 1) / stages.length) * 100),
+          timestamp: new Date().toISOString()
+        });
       }
 
       // Determine final status
@@ -120,12 +143,16 @@ export class PipelineExecutor extends EventEmitter {
         : 0;
 
       // Update pipeline run with final status
-      await prisma.pipelineRun.update({
+      const completedRun = await prisma.pipelineRun.update({
         where: { id: pipelineRunId },
         data: {
           status: finalStatus,
           finishedAt,
           duration
+        },
+        include: {
+          pipeline: true,
+          stages: true
         }
       });
 
@@ -153,6 +180,15 @@ export class PipelineExecutor extends EventEmitter {
         duration
       });
 
+      // Broadcast pipeline completion via WebSocket
+      websocketService.broadcastPipelineRunUpdate(pipelineId, {
+        type: 'completed',
+        pipelineRun: completedRun,
+        status: finalStatus,
+        duration,
+        timestamp: new Date().toISOString()
+      });
+
       this.activeExecutions.delete(pipelineRunId);
 
     } catch (error: any) {
@@ -163,18 +199,30 @@ export class PipelineExecutor extends EventEmitter {
       });
 
       // Update to failed status
-      await prisma.pipelineRun.update({
+      const failedRun = await prisma.pipelineRun.update({
         where: { id: pipelineRunId },
         data: {
           status: PipelineRunStatus.FAILED,
           finishedAt: new Date(),
           logs: `Pipeline execution error: ${error.message}`
+        },
+        include: {
+          pipeline: true,
+          stages: true
         }
       });
 
       await prisma.pipeline.update({
         where: { id: pipelineId },
         data: { status: 'FAILED' }
+      });
+
+      // Broadcast pipeline failure via WebSocket
+      websocketService.broadcastPipelineRunUpdate(pipelineId, {
+        type: 'failed',
+        pipelineRun: failedRun,
+        error: error.message,
+        timestamp: new Date().toISOString()
       });
 
       this.activeExecutions.delete(pipelineRunId);

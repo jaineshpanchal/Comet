@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import Table from 'cli-table3';
+import { createServer, Server as HttpServer } from 'http';
 import { APP_CONFIG } from './config/services';
 import { connectDatabase } from './config/database';
 import { redis, checkRedisConnection } from './config/redis';
@@ -15,6 +16,7 @@ import { requestLogger } from './middleware/requestLogger';
 import { authenticateToken } from './middleware/auth';
 import { auditMiddleware } from './middleware/audit';
 import { ServiceProxy } from './services/serviceProxy';
+import { websocketService } from './services/websocketService';
 import { logger } from './utils/logger';
 import { ApiResponse } from './types';
 
@@ -29,13 +31,19 @@ import deploymentRoutes from './routes/deployments';
 import metricsRoutes from './routes/metrics';
 import usersRoutes from './routes/users';
 import auditLogsRoutes from './routes/auditLogs';
+import teamsRoutes from './routes/teams';
+import permissionsRoutes from './routes/permissions';
+import secretsRoutes from './routes/secrets';
+import securityScansRoutes from './routes/securityScans';
 
 class APIGateway {
   private app: Express;
+  private httpServer: HttpServer;
   private port: number;
 
   constructor() {
     this.app = express();
+    this.httpServer = createServer(this.app);
     this.port = APP_CONFIG.PORT;
     this.initializeMiddleware();
     this.initializeSwagger();
@@ -260,7 +268,11 @@ class APIGateway {
     this.app.use('/api/health', healthRoutes);
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/users', usersRoutes);
+    this.app.use('/api/teams', teamsRoutes);
+    this.app.use('/api/permissions', permissionsRoutes);
     this.app.use('/api/projects', projectRoutes);
+    this.app.use('/api', secretsRoutes); // Secrets routes are nested under /api/projects/:projectId/secrets
+    this.app.use('/api/security', securityScansRoutes);
     this.app.use('/api/pipelines', pipelineRoutes);
     this.app.use('/api/tests', testRoutes);
     this.app.use('/api/deployments', deploymentRoutes);
@@ -469,18 +481,24 @@ class APIGateway {
       // Note: Redis connection can be added here if needed in the future
       // logger.info('Connecting to Redis...', { service: 'api-gateway' });
 
+      // Initialize WebSocket server
+      logger.info('Initializing WebSocket server...', { service: 'api-gateway' });
+      websocketService.initialize(this.httpServer);
+      logger.info('✅ WebSocket server initialized', { service: 'api-gateway' });
+
       // Initialize service health checks
       logger.info('Initializing service health checks...');
       // ServiceProxy health checks will be implemented in next phase
       logger.info('Service health checks initialized');
 
-      // Start the server
-      this.app.listen(this.port, () => {
+      // Start the HTTP server (this will also start WebSocket)
+      this.httpServer.listen(this.port, () => {
         logger.info(`API Gateway started successfully`, {
           port: this.port,
           environment: APP_CONFIG.NODE_ENV,
           version: process.env.APP_VERSION || '1.0.0',
           pid: process.pid,
+          websocket: 'enabled',
           timestamp: new Date().toISOString()
         });
 

@@ -375,6 +375,40 @@ class WebSocketService {
   }
 
   /**
+   * Broadcast audit log event to admins
+   */
+  broadcastAuditLog(auditLog: any): void {
+    if (!this.io) return;
+
+    // Send to all ADMIN users
+    this.io.to('role:ADMIN').emit('audit:log', {
+      ...auditLog,
+      timestamp: new Date().toISOString()
+    });
+
+    logger.debug('Audit log broadcasted to admins', { action: auditLog.action });
+  }
+
+  /**
+   * Broadcast security event (critical audit logs)
+   */
+  broadcastSecurityEvent(event: any): void {
+    if (!this.io) return;
+
+    // Send to all ADMIN and MANAGER users for security events
+    this.io.to('role:ADMIN').emit('security:event', {
+      ...event,
+      timestamp: new Date().toISOString()
+    });
+    this.io.to('role:MANAGER').emit('security:event', {
+      ...event,
+      timestamp: new Date().toISOString()
+    });
+
+    logger.warn('Security event broadcasted', { action: event.action });
+  }
+
+  /**
    * Get connected clients count
    */
   getConnectedClientsCount(): number {

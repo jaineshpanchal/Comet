@@ -5,6 +5,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
+import { websocketService } from './websocketService';
 
 const prisma = new PrismaClient();
 
@@ -90,7 +91,7 @@ export class AuditService {
    */
   static async log(data: AuditLogData): Promise<void> {
     try {
-      await prisma.auditLog.create({
+      const auditLog = await prisma.auditLog.create({
         data: {
           userId: data.userId,
           action: data.action,
@@ -100,6 +101,17 @@ export class AuditService {
           ipAddress: data.ipAddress,
           userAgent: data.userAgent,
         },
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              role: true,
+            },
+          },
+        },
       });
 
       logger.info('Audit log created', {
@@ -107,6 +119,40 @@ export class AuditService {
         resource: data.resource,
         userId: data.userId,
       });
+
+      // Broadcast audit log to admins via WebSocket
+      websocketService.broadcastAuditLog({
+        id: auditLog.id,
+        action: auditLog.action,
+        resource: auditLog.resource,
+        resourceId: auditLog.resourceId,
+        user: auditLog.user,
+        ipAddress: auditLog.ipAddress,
+        timestamp: auditLog.timestamp,
+      });
+
+      // Broadcast security events for critical actions
+      const securityActions = [
+        AuditAction.LOGIN,
+        AuditAction.PASSWORD_CHANGE,
+        AuditAction.USER_ROLE_CHANGE,
+        AuditAction.USER_DELETE,
+        AuditAction.TEAM_DELETE,
+        AuditAction.PROJECT_DELETE,
+        AuditAction.USER_PERMISSION_ADD,
+        AuditAction.USER_PERMISSION_REMOVE,
+      ];
+
+      if (securityActions.includes(data.action as AuditAction)) {
+        websocketService.broadcastSecurityEvent({
+          id: auditLog.id,
+          action: auditLog.action,
+          resource: auditLog.resource,
+          user: auditLog.user,
+          timestamp: auditLog.timestamp,
+          severity: 'high',
+        });
+      }
     } catch (error) {
       // Don't throw error to prevent audit logging from breaking the main flow
       logger.error('Failed to create audit log', { error, data });

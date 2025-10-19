@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarTooltip } from "@/components/ui/tooltip-sidebar";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -30,6 +30,7 @@ import {
   CheckCircleIcon,
   UserGroupIcon,
   ClipboardDocumentListIcon,
+  UsersIcon,
 } from "@heroicons/react/24/outline";
 
 interface SidebarProps {
@@ -101,9 +102,14 @@ const navigationItems: NavItem[] = [
     ],
   },
   {
-    label: "Settings",
-    href: "/settings",
-    icon: CogIcon,
+    label: "Teams",
+    href: "/teams",
+    icon: UsersIcon,
+  },
+  {
+    label: "Security",
+    href: "/security",
+    icon: ShieldCheckIcon,
   },
   {
     label: "Admin",
@@ -114,12 +120,18 @@ const navigationItems: NavItem[] = [
       { label: "Audit Logs", href: "/admin/audit-logs", icon: ClipboardDocumentListIcon },
     ],
   },
+  {
+    label: "Settings",
+    href: "/settings",
+    icon: CogIcon,
+  },
 ];
 
 export function Sidebar({ children, className }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [mounted, setMounted] = useState(false);
   const [viewedItems, setViewedItems] = useState<Record<string, boolean>>({
     dashboard: true, // Always viewed - no green dot
     pipelines: false, // Show green dots
@@ -131,6 +143,28 @@ export function Sidebar({ children, className }: SidebarProps) {
     admin: true // Always viewed - no green dot
   });
   const [sidebarHovered, setSidebarHovered] = useState(false);
+
+  // Restore expanded state from localStorage after mount
+  React.useEffect(() => {
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebar-expanded-items');
+      if (saved) {
+        try {
+          setExpandedItems(JSON.parse(saved));
+        } catch (e) {
+          console.error('Failed to parse saved expanded items:', e);
+        }
+      }
+    }
+  }, []);
+
+  // Save expanded state to localStorage whenever it changes (only after mount)
+  React.useEffect(() => {
+    if (mounted && typeof window !== 'undefined') {
+      localStorage.setItem('sidebar-expanded-items', JSON.stringify(expandedItems));
+    }
+  }, [expandedItems, mounted]);
   
   // Track specific sub-items that have updates (Dashboard and Settings excluded)
   const [subItemUpdates, setSubItemUpdates] = useState<Record<string, string>>({
@@ -167,6 +201,7 @@ export function Sidebar({ children, className }: SidebarProps) {
   }, []);
 
   const pathname = usePathname();
+  const router = useRouter();
 
   // Handle sidebar collapse with menu reset
   const handleSidebarToggle = (newCollapsedState: boolean) => {
@@ -381,14 +416,13 @@ export function Sidebar({ children, className }: SidebarProps) {
     return (
       <div>
         {item.subItems ? (
-          // Items with submenus - button for dropdown toggle
-          <button
-            type="button"
+          // Items with submenus - smart navigation logic
+          <div
             className={cn(
-              "group relative flex items-center transition-all duration-75 ease-out overflow-hidden w-full text-left",
+              "group relative flex items-center transition-all duration-75 ease-out w-full text-left cursor-pointer",
               collapsed
                 ? "justify-center w-12 h-12 rounded-xl mx-auto my-1"
-                : "justify-between rounded-2xl px-4 py-3.5",
+                : "justify-between rounded-2xl px-4 py-5",
               isActive || expanded
                 ? collapsed
                   ? (itemKey === 'dashboard' || itemKey === 'settings')
@@ -396,23 +430,33 @@ export function Sidebar({ children, className }: SidebarProps) {
                     : "bg-gradient-to-br from-blue-500/90 to-indigo-600/90 text-white border border-blue-400/30 ring-1 ring-blue-300/40 backdrop-blur-sm"
                   : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20"
                 : collapsed
-                  ? "text-slate-700 bg-slate-200/80 border border-transparent ring-1 ring-transparent hover:text-blue-600 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50/80 hover:border-blue-200/50 hover:ring-blue-300/30 backdrop-blur-sm"
-                  : "text-slate-600 border border-transparent ring-1 ring-transparent hover:bg-gradient-to-r hover:from-white hover:to-blue-50/50 hover:text-slate-800 hover:border-blue-200/50 hover:ring-blue-300/20",
+                  ? "text-blue-600 bg-gradient-to-br from-blue-50 to-indigo-50/80 border border-blue-200/50 ring-1 ring-blue-300/30 backdrop-blur-sm"
+                  : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20",
               "text-sm font-semibold backdrop-blur-sm"
             )}
             onClick={() => {
-              // For dropdown items, different behavior based on sidebar state
+              // Smart navigation logic
               if (collapsed) {
                 // If sidebar is collapsed, open it and expand this menu
                 handleSidebarToggle(false);
+              }
+
+              // Check if we're already on this page
+              const isCurrentPage = pathname === item.href || pathname.startsWith(item.href + "/");
+
+              if (isCurrentPage) {
+                // Already on this page - just toggle the dropdown
+                toggleExpanded();
+              } else {
+                // Not on this page - navigate to it and expand dropdown
                 setExpandedItems(prev => ({
                   ...prev,
                   [itemKey]: true
                 }));
-              } else {
-                // If sidebar is open, just toggle the menu
-                toggleExpanded();
+                markAsViewed(item.href);
+                router.push(item.href);
               }
+
               setMobileOpen(false);
             }}
           >
@@ -435,9 +479,7 @@ export function Sidebar({ children, className }: SidebarProps) {
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className={cn(
                     "flex items-center justify-center rounded-xl p-2.5 transition-all duration-75 ease-out relative shrink-0",
-                    isActive || expanded
-                      ? "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40"
-                      : "bg-slate-200/80 text-slate-700 border border-transparent ring-2 ring-transparent group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:ring-blue-200/30 group-hover:border-blue-200/40"
+                    "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40"
                   )}>
                     <item.icon className="h-6 w-6 shrink-0 stroke-2" />
                     {/* Subtle glow effect for active state */}
@@ -447,9 +489,9 @@ export function Sidebar({ children, className }: SidebarProps) {
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className={cn(
-                      "font-semibold text-sm tracking-tight whitespace-nowrap overflow-visible",
+                      "font-semibold text-sm tracking-tight whitespace-nowrap inline-block",
                       isActive ? "text-slate-800" : "text-slate-700"
-                    )}>{item.label}</span>
+                    )} style={{ lineHeight: '1.75' }}>{item.label}</span>
                     {hasMainItemNotification(item) && (
                       <div className="relative shrink-0">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
@@ -462,32 +504,33 @@ export function Sidebar({ children, className }: SidebarProps) {
                   {item.subItems && (
                     <div
                       className={cn(
-                        "flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-75 ease-out cursor-pointer shrink-0",
+                        "flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-300 ease-in-out shrink-0 pointer-events-none",
                         expanded
-                          ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white ring-2 ring-blue-300/50 rotate-90"
+                          ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white ring-2 ring-blue-300/50"
                           : "bg-slate-200/80 text-slate-700 group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600 group-hover:text-white group-hover:ring-2 group-hover:ring-blue-300/50"
                       )}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleExpanded();
-                      }}
                     >
-                      <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 stroke-[2.5]" />
+                      <ChevronRightIcon
+                        className={cn(
+                          "h-3.5 w-3.5 shrink-0 stroke-[2.5] transition-transform duration-300 ease-in-out",
+                          expanded ? "rotate-90" : "rotate-0"
+                        )}
+                      />
                     </div>
                   )}
                 </div>
               </>
             )}
-          </button>
+          </div>
         ) : (
           // Items without submenus - regular link
           <Link
             href={item.href}
             className={cn(
-              "group relative flex items-center transition-all duration-75 ease-out overflow-hidden",
+              "group relative flex items-center transition-all duration-75 ease-out",
               collapsed
                 ? "justify-center w-12 h-12 rounded-xl mx-auto my-1"
-                : "justify-between w-full rounded-2xl px-4 py-3.5",
+                : "justify-between w-full rounded-2xl px-4 py-5",
               isActive
                 ? collapsed
                   ? (itemKey === 'dashboard' || itemKey === 'settings')
@@ -495,8 +538,8 @@ export function Sidebar({ children, className }: SidebarProps) {
                     : "bg-gradient-to-br from-blue-500/90 to-indigo-600/90 text-white border border-blue-400/30 ring-1 ring-blue-300/40 backdrop-blur-sm"
                   : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20"
                 : collapsed
-                  ? "text-slate-700 bg-slate-200/80 border border-transparent ring-2 ring-transparent hover:text-blue-600 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50/80 hover:border-blue-200/50 hover:ring-blue-300/30 backdrop-blur-sm"
-                  : "text-slate-600 border border-transparent ring-1 ring-transparent hover:bg-white/80 hover:text-slate-800 hover:border-slate-200/50 hover:ring-blue-300/20",
+                  ? "text-blue-600 bg-gradient-to-br from-blue-50 to-indigo-50/80 border border-blue-200/50 ring-1 ring-blue-300/30 backdrop-blur-sm"
+                  : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20",
               "text-sm font-semibold backdrop-blur-sm"
             )}
             onClick={() => {
@@ -523,9 +566,7 @@ export function Sidebar({ children, className }: SidebarProps) {
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className={cn(
                     "flex items-center justify-center rounded-xl p-2.5 transition-all duration-75 ease-out relative shrink-0",
-                    isActive
-                      ? "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40"
-                      : "bg-slate-200/80 text-slate-700 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:ring-2 group-hover:ring-blue-200/30 group-hover:border group-hover:border-blue-200/40"
+                    "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40"
                   )}>
                     <item.icon className="h-6 w-6 shrink-0 stroke-2" />
                     {isActive && (
@@ -534,9 +575,9 @@ export function Sidebar({ children, className }: SidebarProps) {
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className={cn(
-                      "font-semibold text-sm tracking-tight whitespace-nowrap overflow-visible",
+                      "font-semibold text-sm tracking-tight whitespace-nowrap inline-block",
                       isActive ? "text-slate-800" : "text-slate-700"
-                    )}>{item.label}</span>
+                    )} style={{ lineHeight: '1.75' }}>{item.label}</span>
                     {hasMainItemNotification(item) && (
                       <div className="relative shrink-0">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
@@ -550,12 +591,19 @@ export function Sidebar({ children, className }: SidebarProps) {
           </Link>
         )}
         
-        {/* Sub-menu items */}
-        {item.subItems && expanded && !collapsed && (
-          <div className="mt-2 mb-4 space-y-1 pl-3 pr-2 py-2 bg-gradient-to-b from-slate-50/50 to-white/30 rounded-xl border border-slate-100/50 backdrop-blur-sm">
-            {item.subItems.map((subItem) => (
-              <NavItemComponent key={subItem.href} item={subItem} level={level + 1} />
-            ))}
+        {/* Sub-menu items with smooth animation */}
+        {item.subItems && !collapsed && (
+          <div
+            className={cn(
+              "overflow-hidden transition-all duration-300 ease-in-out",
+              expanded ? "max-h-[1000px] opacity-100 mt-2 mb-4" : "max-h-0 opacity-0 mt-0 mb-0"
+            )}
+          >
+            <div className="space-y-1 pl-3 pr-2 py-2 bg-gradient-to-b from-slate-50/50 to-white/30 rounded-xl border border-slate-100/50 backdrop-blur-sm">
+              {item.subItems.map((subItem) => (
+                <NavItemComponent key={subItem.href} item={subItem} level={level + 1} />
+              ))}
+            </div>
           </div>
         )}
       </div>
