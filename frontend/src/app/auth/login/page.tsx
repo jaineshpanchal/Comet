@@ -40,6 +40,9 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    console.log('Login attempt with:', { email: formData.email });
+
     try {
       const res = await fetch('http://localhost:8000/api/auth/login', {
         method: "POST",
@@ -49,28 +52,38 @@ export default function LoginPage() {
           password: formData.password,
         }),
       });
+
+      console.log('Response status:', res.status);
+
       const data = await res.json();
+      console.log('Response data:', data);
 
       if (!res.ok) {
-        if (data?.error && data.error.toLowerCase().includes('expired')) {
-          setError('Your session has expired. Please log in again.');
-        } else {
-          setError(data?.error || "Login failed. Please check your credentials.");
-        }
+        const errorMessage = data?.error || data?.message || "Login failed. Please check your credentials.";
+        console.error('Login failed:', errorMessage);
+        setError(errorMessage);
         setLoading(false);
         return;
       }
 
-      // Store JWT in localStorage (for demo; use httpOnly cookie for production)
+      // Store JWT in localStorage
       if (data?.data?.tokens?.accessToken) {
+        console.log('Storing token...');
         localStorage.setItem("comet_jwt", data.data.tokens.accessToken);
         api.setToken(data.data.tokens.accessToken);
+        console.log('Token stored, redirecting to dashboard...');
+        setLoading(false);
+        router.push("/dashboard");
+        return;
+      } else {
+        console.error('No access token in response:', data);
+        setError("Login successful but no access token received.");
+        setLoading(false);
+        return;
       }
-
-      setLoading(false);
-      router.push("/dashboard");
-    } catch (err) {
-      setError("Network error. Please try again.");
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(`Network error: ${err.message || 'Please try again.'}`);
       setLoading(false);
     }
   };
@@ -245,11 +258,11 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                   <span className="text-xs font-medium text-gray-600">Email:</span>
-                  <code className="text-sm font-mono text-blue-700 font-semibold">demo@comet.dev</code>
+                  <code className="text-sm font-mono text-blue-700 font-semibold">admin@comet.dev</code>
                 </div>
                 <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                   <span className="text-xs font-medium text-gray-600">Password:</span>
-                  <code className="text-sm font-mono text-blue-700 font-semibold">Demo#2025!Comet</code>
+                  <code className="text-sm font-mono text-blue-700 font-semibold">password123</code>
                 </div>
               </div>
               <p className="mt-3 text-xs text-gray-600 text-center">

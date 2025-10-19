@@ -651,4 +651,135 @@ router.post('/reset-password', async (req: AuthenticatedRequest, res: Response) 
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/verify-email:
+ *   post:
+ *     summary: Verify email with token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ *       400:
+ *         description: Invalid or expired token
+ */
+router.post('/verify-email', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Verification token is required',
+        message: 'Please provide a verification token',
+        timestamp: new Date().toISOString(),
+        path: req.path,
+        statusCode: 400
+      });
+    }
+
+    await AuthService.verifyEmail(token);
+
+    logger.info('Email verified successfully', { token: token.substring(0, 8) + '...' });
+
+    res.json({
+      success: true,
+      message: 'Email verified successfully',
+      timestamp: new Date().toISOString(),
+      path: req.path,
+      statusCode: 200
+    });
+  } catch (error: any) {
+    logger.error('Email verification failed', {
+      error: error.message
+    });
+
+    res.status(400).json({
+      success: false,
+      error: error.message,
+      message: 'Email verification failed',
+      timestamp: new Date().toISOString(),
+      path: req.path,
+      statusCode: 400
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/auth/resend-verification:
+ *   post:
+ *     summary: Resend email verification
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Verification email sent
+ *       400:
+ *         description: Invalid request
+ */
+router.post('/resend-verification', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required',
+        message: 'Please provide an email address',
+        timestamp: new Date().toISOString(),
+        path: req.path,
+        statusCode: 400
+      });
+    }
+
+    await AuthService.resendVerificationEmail(email);
+
+    logger.info('Verification email resent', { email });
+
+    res.json({
+      success: true,
+      message: 'Verification email sent. Please check your inbox.',
+      timestamp: new Date().toISOString(),
+      path: req.path,
+      statusCode: 200
+    });
+  } catch (error: any) {
+    logger.error('Failed to resend verification email', {
+      error: error.message
+    });
+
+    res.status(400).json({
+      success: false,
+      error: error.message,
+      message: 'Failed to resend verification email',
+      timestamp: new Date().toISOString(),
+      path: req.path,
+      statusCode: 400
+    });
+  }
+});
+
 export default router;

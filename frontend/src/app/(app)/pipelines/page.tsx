@@ -1,455 +1,402 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAuthGuard } from '@/lib/useAuthGuard'
-import { PipelineService, type Pipeline, type PipelineRun } from "@/services"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
 import {
-  Play,
-  Square,
-  RefreshCw,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Loader2,
-  Plus,
-  GitBranch,
-  Calendar,
-  Filter
-} from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+  PlusIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  BoltIcon,
+  PlayIcon,
+  ArrowPathIcon,
+  ClockIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  CodeBracketIcon,
+  CalendarIcon,
+} from "@heroicons/react/24/outline"
 
-const statusConfig = {
-  IDLE: { color: 'bg-gray-500', icon: Clock, label: 'Idle' },
-  PENDING: { color: 'bg-yellow-500', icon: Clock, label: 'Pending' },
-  RUNNING: { color: 'bg-blue-500', icon: Loader2, label: 'Running' },
-  SUCCESS: { color: 'bg-green-500', icon: CheckCircle2, label: 'Success' },
-  FAILED: { color: 'bg-red-500', icon: XCircle, label: 'Failed' },
-  CANCELLED: { color: 'bg-gray-500', icon: Square, label: 'Cancelled' },
-}
-
-const runStatusConfig = {
-  PENDING: { color: 'bg-yellow-500', icon: Clock, label: 'Pending' },
-  RUNNING: { color: 'bg-blue-500', icon: Loader2, label: 'Running' },
-  SUCCESS: { color: 'bg-green-500', icon: CheckCircle2, label: 'Success' },
-  FAILED: { color: 'bg-red-500', icon: XCircle, label: 'Failed' },
-  CANCELLED: { color: 'bg-gray-500', icon: Square, label: 'Cancelled' },
+interface Pipeline {
+  id: string
+  name: string
+  description: string | null
+  projectId: string
+  trigger: string
+  status: string
+  isActive: boolean
+  lastRunAt: string | null
+  createdAt: string
+  project?: {
+    name: string
+    language: string
+  }
+  _count?: {
+    runs: number
+    stages: number
+  }
 }
 
 export default function PipelinesPage() {
+  const router = useRouter()
   const [pipelines, setPipelines] = useState<Pipeline[]>([])
-  const [selectedPipeline, setSelectedPipeline] = useState<Pipeline | null>(null)
-  useAuthGuard();
-  const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isRunning, setIsRunning] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [activeTab, setActiveTab] = useState<'pipelines' | 'runs'>('pipelines')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterStatus, setFilterStatus] = useState<string>("all")
+  const [runningPipeline, setRunningPipeline] = useState<string | null>(null)
 
-  // Fetch pipelines
-  const fetchPipelines = async () => {
-    try {
-      setError(null)
-      const data = await PipelineService.getPipelines()
-      setPipelines(data)
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch pipelines')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // Fetch pipeline runs
-  const fetchPipelineRuns = async (pipelineId: string) => {
-    try {
-      const runs = await PipelineService.getPipelineRuns(pipelineId, 10)
-      setPipelineRuns(runs)
-    } catch (err: any) {
-      console.error('Failed to fetch pipeline runs:', err)
-    }
-  }
-
-  // Run pipeline
-  const handleRunPipeline = async (pipelineId: string) => {
-    try {
-      setIsRunning(pipelineId)
-      setError(null)
-
-      const run = await PipelineService.runPipeline(pipelineId)
-
-      // Refresh pipelines and runs
-      await fetchPipelines()
-      if (selectedPipeline?.id === pipelineId) {
-        await fetchPipelineRuns(pipelineId)
-      }
-
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || 'Failed to run pipeline')
-    } finally {
-      setIsRunning(null)
-    }
-  }
-
-  // Cancel pipeline run
-  const handleCancelRun = async (runId: string) => {
-    try {
-      await PipelineService.cancelPipelineRun(runId)
-
-      // Refresh runs
-      if (selectedPipeline) {
-        await fetchPipelineRuns(selectedPipeline.id)
-      }
-    } catch (err: any) {
-      setError(err.message || 'Failed to cancel pipeline run')
-    }
-  }
-
-  // Select pipeline and load its runs
-  const handleSelectPipeline = async (pipeline: Pipeline) => {
-    setSelectedPipeline(pipeline)
-    setActiveTab('runs')
-    await fetchPipelineRuns(pipeline.id)
-  }
-
-  // Initial load
   useEffect(() => {
     fetchPipelines()
   }, [])
 
-  // Auto-refresh running pipelines every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const hasRunningPipelines = pipelines.some(p => p.status === 'RUNNING')
-      if (hasRunningPipelines) {
-        fetchPipelines()
+  const fetchPipelines = async () => {
+    setLoading(true)
+    setError("")
+
+    try {
+      const token = localStorage.getItem("comet_jwt")
+      if (!token) {
+        setError("Not authenticated")
+        return
       }
 
-      if (selectedPipeline) {
-        fetchPipelineRuns(selectedPipeline.id)
+      const response = await fetch("http://localhost:8000/api/pipelines", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setPipelines(data.data.pipelines || [])
+      } else {
+        setError(data.error || "Failed to fetch pipelines")
       }
-    }, 5000)
+    } catch (err) {
+      setError("Network error. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
-    return () => clearInterval(interval)
-  }, [pipelines, selectedPipeline])
+  const handleRunPipeline = async (pipelineId: string) => {
+    setRunningPipeline(pipelineId)
 
-  // Filter pipelines by status
-  const filteredPipelines = statusFilter === 'all'
-    ? pipelines
-    : pipelines.filter(p => p.status === statusFilter)
+    try {
+      const token = localStorage.getItem("comet_jwt")
+      const response = await fetch(`http://localhost:8000/api/pipelines/${pipelineId}/run`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-  if (error && pipelines.length === 0) {
+      const data = await response.json()
+
+      if (data.success) {
+        await fetchPipelines()
+      } else {
+        setError(data.error || "Failed to run pipeline")
+      }
+    } catch (err) {
+      setError("Network error. Please try again.")
+    } finally {
+      setRunningPipeline(null)
+    }
+  }
+
+  const filteredPipelines = pipelines.filter((pipeline) => {
+    const matchesSearch =
+      pipeline.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (pipeline.description && pipeline.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    const matchesStatus = filterStatus === "all" || pipeline.status === filterStatus
+
+    return matchesSearch && matchesStatus
+  })
+
+  const formatTimeAgo = (date: string) => {
+    const now = new Date()
+    const past = new Date(date)
+    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000)
+
+    if (diffInSeconds < 60) return "just now"
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`
+    return past.toLocaleDateString()
+  }
+
+  const getStatusColor = (status: string) => {
+    const colors: Record<string, string> = {
+      SUCCESS: "bg-green-100 text-green-800 border-green-300",
+      RUNNING: "bg-blue-100 text-blue-800 border-blue-300",
+      FAILED: "bg-red-100 text-red-800 border-red-300",
+      PENDING: "bg-yellow-100 text-yellow-800 border-yellow-300",
+      IDLE: "bg-gray-100 text-gray-800 border-gray-300",
+      CANCELLED: "bg-gray-100 text-gray-800 border-gray-300",
+    }
+    return colors[status] || "bg-gray-100 text-gray-800 border-gray-300"
+  }
+
+  const getStatusIcon = (status: string) => {
+    if (status === "SUCCESS") return <CheckCircleIcon className="w-4 h-4" />
+    if (status === "FAILED") return <XCircleIcon className="w-4 h-4" />
+    if (status === "RUNNING") return <ArrowPathIcon className="w-4 h-4 animate-spin" />
+    return <ClockIcon className="w-4 h-4" />
+  }
+
+  const getTriggerIcon = (trigger: string) => {
+    const icons: Record<string, string> = {
+      GIT_PUSH: "🔄",
+      GIT_PR: "🔀",
+      MANUAL: "👆",
+      SCHEDULE: "⏰",
+      WEBHOOK: "🔗",
+    }
+    return icons[trigger] || "⚡"
+  }
+
+  if (loading) {
     return (
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Pipelines</h1>
+      <div className="space-y-8 pb-12">
+        <div className="animate-pulse space-y-4">
+          <div className="h-12 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-6 bg-gray-200 rounded w-1/2"></div>
         </div>
-
-        <Card className="border-red-200 bg-red-50">
-          <CardHeader>
-            <CardTitle className="text-red-700 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
-              Connection Error
-            </CardTitle>
-            <CardDescription className="text-red-600">
-              {error}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={fetchPipelines} variant="outline">
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>
+          ))}
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="space-y-8 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Pipelines</h1>
-          <p className="text-neutral-600 mt-1">
-            Manage and execute your CI/CD pipelines
-          </p>
-        </div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-none mb-4">
+              Pipelines
+            </h1>
+            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+              Automate your <span className="text-gray-700 font-medium">CI/CD workflows</span> and{" "}
+              <span className="text-gray-700 font-medium">deployments</span>
+            </p>
+          </div>
 
-        <div className="flex items-center gap-3">
-          <Button onClick={fetchPipelines} variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
-          </Button>
-          <Button size="sm">
-            <Plus className="w-4 h-4 mr-2" />
+          <button
+            onClick={() => router.push("/pipelines/create")}
+            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
+          >
+            <PlusIcon className="w-5 h-5" />
             New Pipeline
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* Error Banner */}
-      {error && (
-        <Card className="border-yellow-200 bg-yellow-50">
-          <CardContent className="pt-4">
-            <div className="flex items-center gap-2 text-yellow-800">
-              <AlertCircle className="w-4 h-4" />
-              <span className="text-sm">{error}</span>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <BoltIcon className="w-5 h-5 text-purple-600" />
             </div>
-          </CardContent>
-        </Card>
-      )}
+            <span className="text-sm font-medium text-gray-500">Total Pipelines</span>
+          </div>
+          <p className="text-3xl font-bold text-gray-900">{pipelines.length}</p>
+        </div>
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} defaultValue="pipelines">
-        <TabsList>
-          <TabsTrigger value="pipelines">
-            All Pipelines ({pipelines.length})
-          </TabsTrigger>
-          <TabsTrigger value="runs" disabled={!selectedPipeline}>
-            {selectedPipeline ? `${selectedPipeline.name} - Runs` : 'Pipeline Runs'}
-          </TabsTrigger>
-        </TabsList>
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <ArrowPathIcon className="w-5 h-5 text-blue-600" />
+            </div>
+            <span className="text-sm font-medium text-gray-500">Running</span>
+          </div>
+          <p className="text-3xl font-bold text-gray-900">
+            {pipelines.filter((p) => p.status === "RUNNING").length}
+          </p>
+        </div>
 
-        {/* Pipelines Tab */}
-        <TabsContent value="pipelines" className="space-y-4">
-          {/* Filters */}
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-neutral-500" />
-            <Button
-              variant={statusFilter === 'all' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter('all')}
-            >
-              All
-            </Button>
-            <Button
-              variant={statusFilter === 'RUNNING' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter('RUNNING')}
-            >
-              Running
-            </Button>
-            <Button
-              variant={statusFilter === 'SUCCESS' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter('SUCCESS')}
-            >
-              Success
-            </Button>
-            <Button
-              variant={statusFilter === 'FAILED' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter('FAILED')}
-            >
-              Failed
-            </Button>
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <CheckCircleIcon className="w-5 h-5 text-green-600" />
+            </div>
+            <span className="text-sm font-medium text-gray-500">Successful</span>
+          </div>
+          <p className="text-3xl font-bold text-gray-900">
+            {pipelines.filter((p) => p.status === "SUCCESS").length}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-red-100 rounded-lg">
+              <XCircleIcon className="w-5 h-5 text-red-600" />
+            </div>
+            <span className="text-sm font-medium text-gray-500">Failed</span>
+          </div>
+          <p className="text-3xl font-bold text-gray-900">
+            {pipelines.filter((p) => p.status === "FAILED").length}
+          </p>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2 text-gray-700 font-medium">
+            <FunnelIcon className="w-5 h-5" />
+            <span>Filters:</span>
           </div>
 
-          {/* Pipeline List */}
-          {isLoading ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {[1, 2, 3, 4].map(i => (
-                <Card key={i}>
-                  <CardHeader>
-                    <Skeleton className="h-6 w-2/3" />
-                    <Skeleton className="h-4 w-1/2 mt-2" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-10 w-full" />
-                  </CardContent>
-                </Card>
-              ))}
+          <div className="flex-1 min-w-[200px]">
+            <div className="relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search pipelines..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              />
             </div>
-          ) : filteredPipelines.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <GitBranch className="w-12 h-12 mx-auto text-neutral-400 mb-4" />
-                <p className="text-neutral-600 mb-2">No pipelines found</p>
-                <p className="text-sm text-neutral-500">
-                  {statusFilter !== 'all'
-                    ? `No pipelines with status: ${statusFilter}`
-                    : 'Create your first pipeline to get started'
-                  }
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              {filteredPipelines.map(pipeline => {
-                const StatusIcon = statusConfig[pipeline.status]?.icon || Clock
-                const isCurrentlyRunning = isRunning === pipeline.id
+          </div>
 
-                return (
-                  <Card
-                    key={pipeline.id}
-                    className="hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => handleSelectPipeline(pipeline)}
-                  >
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="flex items-center gap-2">
-                            {pipeline.name}
-                            {pipeline.status === 'RUNNING' && (
-                              <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                            )}
-                          </CardTitle>
-                          <CardDescription className="mt-1">
-                            {pipeline.project?.name || 'No project'}
-                          </CardDescription>
-                        </div>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+          >
+            <option value="all">All Status</option>
+            <option value="RUNNING">Running</option>
+            <option value="SUCCESS">Success</option>
+            <option value="FAILED">Failed</option>
+            <option value="PENDING">Pending</option>
+            <option value="IDLE">Idle</option>
+          </select>
+        </div>
+      </div>
 
-                        <Badge
-                          className={`${statusConfig[pipeline.status]?.color || 'bg-gray-500'} text-white`}
-                        >
-                          <StatusIcon className="w-3 h-3 mr-1" />
-                          {statusConfig[pipeline.status]?.label || pipeline.status}
-                        </Badge>
-                      </div>
-                    </CardHeader>
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+          <p className="text-sm text-red-800">{error}</p>
+        </div>
+      )}
 
-                    <CardContent className="space-y-3">
-                      <div className="flex items-center gap-4 text-sm text-neutral-600">
-                        <div className="flex items-center gap-1">
-                          <GitBranch className="w-4 h-4" />
-                          <span className="capitalize">{pipeline.trigger.toLowerCase().replace('_', ' ')}</span>
-                        </div>
-                        {pipeline.lastRunAt && (
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{new Date(pipeline.lastRunAt).toLocaleDateString()}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleRunPipeline(pipeline.id)
-                          }}
-                          disabled={isCurrentlyRunning || pipeline.status === 'RUNNING'}
-                          size="sm"
-                          className="flex-1"
-                        >
-                          {isCurrentlyRunning ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Starting...
-                            </>
-                          ) : (
-                            <>
-                              <Play className="w-4 h-4 mr-2" />
-                              Run Pipeline
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
+      {/* Pipelines Display */}
+      {filteredPipelines.length === 0 ? (
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <BoltIcon className="mx-auto w-16 h-16 text-gray-400 mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No Pipelines Found</h3>
+          <p className="text-gray-600 mb-6">
+            {searchTerm || filterStatus !== "all"
+              ? "Try adjusting your search or filters"
+              : "Get started by creating your first pipeline"}
+          </p>
+          {!searchTerm && filterStatus === "all" && (
+            <button
+              onClick={() => {}}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all inline-flex items-center gap-2"
+            >
+              <PlusIcon className="w-5 h-5" />
+              Create Your First Pipeline
+            </button>
           )}
-        </TabsContent>
-
-        {/* Pipeline Runs Tab */}
-        <TabsContent value="runs" className="space-y-4">
-          {selectedPipeline && (
-            <>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Runs - {selectedPipeline.name}</CardTitle>
-                  <CardDescription>
-                    View execution history and detailed logs
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              {pipelineRuns.length === 0 ? (
-                <Card>
-                  <CardContent className="py-12 text-center">
-                    <Clock className="w-12 h-12 mx-auto text-neutral-400 mb-4" />
-                    <p className="text-neutral-600">No runs yet</p>
-                    <p className="text-sm text-neutral-500 mb-4">
-                      This pipeline hasn't been executed
-                    </p>
-                    <Button onClick={() => handleRunPipeline(selectedPipeline.id)}>
-                      <Play className="w-4 h-4 mr-2" />
-                      Run Now
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="space-y-3">
-                  {pipelineRuns.map(run => {
-                    const RunStatusIcon = runStatusConfig[run.status]?.icon || Clock
-                    const isRunning = run.status === 'RUNNING'
-
-                    return (
-                      <Card key={run.id}>
-                        <CardContent className="py-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                              <Badge
-                                className={`${runStatusConfig[run.status]?.color || 'bg-gray-500'} text-white`}
-                              >
-                                <RunStatusIcon className={`w-3 h-3 mr-1 ${isRunning ? 'animate-spin' : ''}`} />
-                                {runStatusConfig[run.status]?.label || run.status}
-                              </Badge>
-
-                              <div>
-                                <div className="font-medium">
-                                  Run #{run.id.substring(0, 8)}
-                                </div>
-                                <div className="text-sm text-neutral-600">
-                                  Started {new Date(run.startedAt).toLocaleString()}
-                                  {run.triggeredByUser && (
-                                    <span className="ml-2">
-                                      by {run.triggeredByUser.firstName} {run.triggeredByUser.lastName}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                              {run.duration && (
-                                <div className="text-sm text-neutral-600">
-                                  <Clock className="w-4 h-4 inline mr-1" />
-                                  {Math.floor(run.duration / 60)}m {run.duration % 60}s
-                                </div>
-                              )}
-
-                              {isRunning && (
-                                <Button
-                                  onClick={() => handleCancelRun(run.id)}
-                                  variant="outline"
-                                  size="sm"
-                                >
-                                  <Square className="w-4 h-4 mr-2" />
-                                  Cancel
-                                </Button>
-                              )}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )
-                  })}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPipelines.map((pipeline) => (
+            <div
+              key={pipeline.id}
+              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-all group"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg">
+                    <BoltIcon className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
+                      {pipeline.name}
+                    </h3>
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border mt-1 ${getStatusColor(
+                        pipeline.status
+                      )}`}
+                    >
+                      {getStatusIcon(pipeline.status)}
+                      {pipeline.status}
+                    </span>
+                  </div>
                 </div>
-              )}
-            </>
-          )}
-        </TabsContent>
-      </Tabs>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                {pipeline.description || "No description"}
+              </p>
+
+              <div className="space-y-2 mb-4 text-sm text-gray-500">
+                {pipeline.project && (
+                  <div className="flex items-center gap-2">
+                    <CodeBracketIcon className="w-4 h-4" />
+                    <span className="truncate">{pipeline.project.name}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{getTriggerIcon(pipeline.trigger)}</span>
+                  <span className="capitalize">{pipeline.trigger.toLowerCase().replace(/_/g, " ")}</span>
+                </div>
+                {pipeline.lastRunAt && (
+                  <div className="flex items-center gap-2">
+                    <CalendarIcon className="w-4 h-4" />
+                    <span>Last run {formatTimeAgo(pipeline.lastRunAt)}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 py-3 border-t border-gray-100 mb-4">
+                <div className="text-center">
+                  <p className="text-lg font-bold text-gray-900">{pipeline._count?.runs || 0}</p>
+                  <p className="text-xs text-gray-500">Runs</p>
+                </div>
+                <div className="text-center border-l border-gray-100">
+                  <p className="text-lg font-bold text-gray-900">{pipeline._count?.stages || 0}</p>
+                  <p className="text-xs text-gray-500">Stages</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/pipelines/${pipeline.id}`}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors text-center"
+                >
+                  View Details
+                </Link>
+                <button
+                  onClick={() => handleRunPipeline(pipeline.id)}
+                  disabled={runningPipeline === pipeline.id || pipeline.status === "RUNNING"}
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Run Pipeline"
+                >
+                  {runningPipeline === pipeline.id ? (
+                    <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <PlayIcon className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

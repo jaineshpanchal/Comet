@@ -158,7 +158,7 @@ export class AuthService {
   }
 
   // Register new user
-  static async register(registerRequest: RegisterRequest): Promise<{ user: User; tokens: AuthTokens }> {
+  static async register(registerRequest: RegisterRequest): Promise<{ user: User; tokens: AuthTokens; requiresEmailVerification: boolean }> {
     const { email, username, firstName, lastName, password, confirmPassword } = registerRequest;
 
     // Validate passwords match
@@ -183,6 +183,9 @@ export class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Generate email verification token
+    const emailVerificationToken = uuidv4();
+
     // Create user
     const newUser = await db.user.create({
       data: {
@@ -191,9 +194,19 @@ export class AuthService {
         firstName,
         lastName,
         password: hashedPassword,
-        role: UserRole.DEVELOPER
+        role: UserRole.DEVELOPER,
+        isEmailVerified: false,
+        emailVerificationToken
       }
     });
+
+    // Send verification email (import EmailService at top)
+    const EmailService = require('./emailService').EmailService;
+    await EmailService.sendVerificationEmail(
+      newUser.email,
+      `${newUser.firstName} ${newUser.lastName}`,
+      emailVerificationToken
+    );
 
     // Generate tokens
     const tokens = await this.generateTokens(newUser);
@@ -203,7 +216,8 @@ export class AuthService {
 
     return {
       user: userWithoutPassword as User,
-      tokens
+      tokens,
+      requiresEmailVerification: true
     };
   }
 
@@ -364,13 +378,17 @@ export class AuthService {
 
     // Generate reset token
     const resetToken = uuidv4();
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     // Store reset token in cache
     await setCache(`password_reset:${resetToken}`, user.id, 3600); // 1 hour
 
-    // TODO: Send email with reset token
-    console.log(`Password reset token for ${email}: ${resetToken}`);
+    // Send password reset email
+    const EmailService = require('./emailService').EmailService;
+    await EmailService.sendPasswordResetEmail(
+      user.email,
+      `${user.firstName} ${user.lastName}`,
+      resetToken
+    );
   }
 
   // Reset password
@@ -437,6 +455,70 @@ export class AuthService {
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword as User;
+  }
+
+  // Verify email with token
+  static async verifyEmail(token: string): Promise<void> {
+    const user = await db.user.findFirst({
+      where: { emailVerificationToken: token }
+    });
+
+    if (!user) {
+      throw new Error('Invalid verification token');
+    }
+
+    if (user.isEmailVerified) {
+      throw new Error('Email already verified');
+    }
+
+    // Update user as verified
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        isEmailVerified: true,
+        emailVerifiedAt: new Date(),
+        emailVerificationToken: null
+      }
+    });
+
+    // Send welcome email
+    const EmailService = require('./emailService').EmailService;
+    await EmailService.sendWelcomeEmail(
+      user.email,
+      `${user.firstName} ${user.lastName}`
+    );
+  }
+
+  // Resend verification email
+  static async resendVerificationEmail(email: string): Promise<void> {
+    const user = await db.user.findUnique({
+      where: { email: email.toLowerCase() }
+    });
+
+    if (!user) {
+      // Don't reveal if user exists
+      return;
+    }
+
+    if (user.isEmailVerified) {
+      throw new Error('Email already verified');
+    }
+
+    // Generate new verification token
+    const emailVerificationToken = uuidv4();
+
+    await db.user.update({
+      where: { id: user.id },
+      data: { emailVerificationToken }
+    });
+
+    // Send verification email
+    const EmailService = require('./emailService').EmailService;
+    await EmailService.sendVerificationEmail(
+      user.email,
+      `${user.firstName} ${user.lastName}`,
+      emailVerificationToken
+    );
   }
 
   // Utility function to parse time strings to seconds

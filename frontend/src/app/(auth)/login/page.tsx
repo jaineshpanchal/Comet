@@ -17,28 +17,32 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      // Mock authentication - store user data in localStorage
-      // In production, this would call the API endpoint
-      if (email && password) {
-        const mockUser = {
-          id: "1",
-          email: email,
-          username: email.split("@")[0],
-          firstName: "Demo",
-          lastName: "User",
-          role: "ADMIN",
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-        }
+      const response = await fetch("http://localhost:8000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-        localStorage.setItem("user", JSON.stringify(mockUser))
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed")
+      }
+
+      if (data.success && data.data.tokens?.accessToken) {
+        // Store JWT token
+        localStorage.setItem("comet_jwt", data.data.tokens.accessToken)
         localStorage.setItem("isAuthenticated", "true")
 
+        // Redirect to dashboard
         router.push("/dashboard")
       } else {
-        setError("Please enter both email and password")
+        setError("Invalid credentials")
       }
     } catch (err: any) {
-      setError(err.message || "Login failed")
+      setError(err.message || "Network error. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -78,12 +82,25 @@ export default function LoginPage() {
             )}
 
             {/* Demo Credentials Info */}
-            <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg text-sm">
-              <div className="font-semibold mb-1">Demo Credentials:</div>
-              <div>Email: admin@comet.dev</div>
-              <div>Password: password123</div>
-              <div className="mt-2 text-xs text-blue-600">
-                Or enter any email/password to try the demo
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <span className="font-bold text-blue-900">Quick Demo Access</span>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Email:</span>
+                  <span className="font-semibold text-blue-600">admin@comet.dev</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Password:</span>
+                  <span className="font-semibold text-blue-600">password123</span>
+                </div>
+              </div>
+              <div className="mt-3 text-xs text-gray-600 border-t border-blue-200 pt-2">
+                Use these credentials to explore the platform
               </div>
             </div>
 

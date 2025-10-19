@@ -13,6 +13,7 @@ import { redis, checkRedisConnection } from './config/redis';
 import { errorHandler, notFoundHandler, timeoutHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { authenticateToken } from './middleware/auth';
+import { auditMiddleware } from './middleware/audit';
 import { ServiceProxy } from './services/serviceProxy';
 import { logger } from './utils/logger';
 import { ApiResponse } from './types';
@@ -27,6 +28,7 @@ import testRoutes from './routes/tests';
 import deploymentRoutes from './routes/deployments';
 import metricsRoutes from './routes/metrics';
 import usersRoutes from './routes/users';
+import auditLogsRoutes from './routes/auditLogs';
 
 class APIGateway {
   private app: Express;
@@ -103,6 +105,9 @@ class APIGateway {
 
     // Request logging
     this.app.use(requestLogger);
+
+    // Audit logging (after request logging)
+    this.app.use(auditMiddleware);
 
     // Trust proxy for accurate IP addresses
     this.app.set('trust proxy', 1);
@@ -260,6 +265,7 @@ class APIGateway {
     this.app.use('/api/tests', testRoutes);
     this.app.use('/api/deployments', deploymentRoutes);
     this.app.use('/api/metrics', metricsRoutes);
+    this.app.use('/api/audit-logs', auditLogsRoutes);
 
     // Microservice proxy routes
     this.app.use('/', proxyRoutes);
@@ -455,11 +461,13 @@ class APIGateway {
 
   public async start(): Promise<void> {
     try {
-      // Skip database connection for now to get server running
-      logger.info('⚠️  Skipping database connection for initial startup', { service: 'api-gateway' });
+      // Connect to database
+      logger.info('Connecting to database...', { service: 'api-gateway' });
+      await connectDatabase();
+      logger.info('✅ Database connected successfully', { service: 'api-gateway' });
 
-      // Skip Redis connection for now
-      logger.info('⚠️  Skipping Redis connection for initial startup', { service: 'api-gateway' });
+      // Note: Redis connection can be added here if needed in the future
+      // logger.info('Connecting to Redis...', { service: 'api-gateway' });
 
       // Initialize service health checks
       logger.info('Initializing service health checks...');

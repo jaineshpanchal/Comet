@@ -29,6 +29,7 @@ import {
   CpuChipIcon,
   CheckCircleIcon,
   UserGroupIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 
 interface SidebarProps {
@@ -108,6 +109,10 @@ const navigationItems: NavItem[] = [
     label: "Admin",
     href: "/admin/users",
     icon: UserGroupIcon,
+    subItems: [
+      { label: "Users", href: "/admin/users", icon: UserGroupIcon },
+      { label: "Audit Logs", href: "/admin/audit-logs", icon: ClipboardDocumentListIcon },
+    ],
   },
 ];
 

@@ -3,6 +3,7 @@
 import React from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { AppHeader } from "@/components/layout/app-header";
+import EmailVerificationBanner from "@/components/EmailVerificationBanner";
 
 export default function AppSectionLayout({
   children,
@@ -13,6 +14,7 @@ export default function AppSectionLayout({
     <div className="min-h-screen bg-neutral-50/50">
       <Sidebar>
         <main className="pt-16">
+          <EmailVerificationBanner />
           <AppHeader />
           <div className="px-6 py-8 lg:px-8">{children}</div>
         </main>

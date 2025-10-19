@@ -11,18 +11,21 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  username    String   @unique
-  firstName   String
-  lastName    String
-  password    String
-  avatar      String?
-  role        UserRole @default(DEVELOPER)
-  isActive    Boolean  @default(true)
-  lastLoginAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String   @id @default(uuid())
+  email             String   @unique
+  username          String   @unique
+  firstName         String
+  lastName          String
+  password          String
+  avatar            String?
+  role              UserRole @default(DEVELOPER)
+  isActive          Boolean  @default(true)
+  isEmailVerified   Boolean  @default(false)
+  emailVerifiedAt   DateTime?
+  emailVerificationToken String?
+  lastLoginAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   // Relations
   ownedProjects    Project[]      @relation("ProjectOwner")
