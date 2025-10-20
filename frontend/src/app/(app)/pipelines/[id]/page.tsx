@@ -74,7 +74,7 @@ interface Pipeline {
     language: string
   }
   stages?: PipelineStage[]
-  runs?: PipelineRun[]
+  pipelineRuns?: PipelineRun[]
 }
 
 export default function PipelineDetailPage() {
@@ -115,7 +115,8 @@ export default function PipelineDetailPage() {
       const data = await response.json()
 
       if (data.success) {
-        setPipeline(data.data.pipeline)
+        // API returns pipeline data directly in data.data, not data.data.pipeline
+        setPipeline(data.data)
       } else {
         setError(data.error || "Failed to fetch pipeline")
       }
@@ -384,7 +385,7 @@ export default function PipelineDetailPage() {
                     <ClockIcon className="w-5 h-5 text-cyan-600" />
                     <span className="text-sm font-medium text-gray-500">Total Runs</span>
                   </div>
-                  <p className="text-lg font-semibold text-gray-900">{pipeline.runs?.length || 0}</p>
+                  <p className="text-lg font-semibold text-gray-900">{pipeline.pipelineRuns?.length || 0}</p>
                 </div>
               </div>
 
@@ -448,10 +449,10 @@ export default function PipelineDetailPage() {
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Run History</h2>
 
-              {pipeline.runs && pipeline.runs.length > 0 ? (
+              {pipeline.pipelineRuns && pipeline.pipelineRuns.length > 0 ? (
                 <div className="space-y-4">
-                  {pipeline.runs.map((run) => (
-                    <div key={run.id} className="border border-gray-200 rounded-lg p-4">
+                  {pipeline.pipelineRuns.map((run) => (
+                    <div key={run.id} className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-4">
                           <span
@@ -463,7 +464,12 @@ export default function PipelineDetailPage() {
                             {run.status}
                           </span>
                           <div>
-                            <p className="font-medium text-gray-900">Run #{run.id.substring(0, 8)}</p>
+                            <Link
+                              href={`/pipelines/runs/${run.id}`}
+                              className="font-medium text-purple-600 hover:text-purple-800 hover:underline"
+                            >
+                              Run #{run.id.substring(0, 8)}
+                            </Link>
                             <p className="text-sm text-gray-500">
                               Started {formatDate(run.startedAt)}
                               {run.triggeredByUser && (
@@ -474,12 +480,20 @@ export default function PipelineDetailPage() {
                             </p>
                           </div>
                         </div>
-                        {run.duration !== null && (
-                          <div className="text-sm text-gray-600">
-                            <ClockIcon className="w-4 h-4 inline mr-1" />
-                            {formatDuration(run.duration)}
-                          </div>
-                        )}
+                        <div className="flex items-center gap-3">
+                          {run.duration !== null && (
+                            <div className="text-sm text-gray-600">
+                              <ClockIcon className="w-4 h-4 inline mr-1" />
+                              {formatDuration(run.duration)}
+                            </div>
+                          )}
+                          <Link
+                            href={`/pipelines/runs/${run.id}`}
+                            className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors text-sm"
+                          >
+                            View Logs
+                          </Link>
+                        </div>
                       </div>
 
                       {run.stageRuns && run.stageRuns.length > 0 && (

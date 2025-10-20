@@ -409,6 +409,37 @@ class WebSocketService {
   }
 
   /**
+   * Broadcast pipeline event (generic pipeline updates)
+   */
+  broadcastPipelineEvent(event: any): void {
+    if (!this.io) return;
+
+    const { pipelineId, projectId } = event;
+
+    // Broadcast to pipeline subscribers
+    if (pipelineId) {
+      this.io.to(`pipeline:${pipelineId}`).emit('pipeline:event', {
+        ...event,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Broadcast to project subscribers
+    if (projectId) {
+      this.io.to(`project:${projectId}`).emit('pipeline:event', {
+        ...event,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    logger.debug('Pipeline event broadcasted', {
+      type: event.type,
+      pipelineId,
+      projectId
+    });
+  }
+
+  /**
    * Get connected clients count
    */
   getConnectedClientsCount(): number {

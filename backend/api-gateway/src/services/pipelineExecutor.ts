@@ -2,6 +2,7 @@ import { PrismaClient, PipelineRunStatus, StageRunStatus, StageType } from '@pri
 import { logger } from '../utils/logger';
 import { EventEmitter } from 'events';
 import { websocketService } from './websocketService';
+import { dockerExecutor, type DockerExecutionOptions } from './dockerExecutor';
 
 const prisma = new PrismaClient();
 
@@ -13,6 +14,8 @@ export interface StageConfig {
   environment?: Record<string, string>;
   timeout?: number;
   continueOnError?: boolean;
+  dockerImage?: string; // Optional custom Docker image
+  workDir?: string; // Working directory inside container
 }
 
 export interface PipelineExecutionContext {
@@ -231,7 +234,31 @@ export class PipelineExecutor extends EventEmitter {
   }
 
   /**
-   * Execute a single pipeline stage
+   * Get Docker image for a stage type
+   */
+  private getDockerImageForStage(stage: StageConfig): string {
+    // Use custom image if specified
+    if (stage.dockerImage) {
+      return stage.dockerImage;
+    }
+
+    // Default images for each stage type
+    const imageMap: Record<StageType, string> = {
+      [StageType.BUILD]: 'node:18-alpine',
+      [StageType.TEST]: 'node:18-alpine',
+      [StageType.SECURITY_SCAN]: 'alpine:latest',
+      [StageType.CODE_ANALYSIS]: 'alpine:latest',
+      [StageType.DEPLOY]: 'alpine:latest',
+      [StageType.NOTIFICATION]: 'alpine:latest',
+      [StageType.APPROVAL]: 'alpine:latest',
+      [StageType.ROLLBACK]: 'alpine:latest',
+    };
+
+    return imageMap[stage.type] || 'alpine:latest';
+  }
+
+  /**
+   * Execute a single pipeline stage using Docker
    */
   private async executeStage(
     pipelineRunId: string,
@@ -256,45 +283,66 @@ export class PipelineExecutor extends EventEmitter {
     });
 
     try {
-      // Simulate stage execution based on type
+      // Execute stage in Docker container
+      const dockerImage = this.getDockerImageForStage(stage);
+      const commands = stage.commands || ['echo "No commands specified"'];
+
+      logger.info('Executing stage in Docker', {
+        pipelineRunId,
+        stageName: stage.name,
+        dockerImage,
+        commands
+      });
+
+      // Execute in Docker container
+      const result = await dockerExecutor.executeInContainer(stage.name, {
+        image: dockerImage,
+        commands,
+        environment: stage.environment,
+        workDir: stage.workDir || '/workspace',
+        timeout: stage.timeout || 300, // Default 5 minutes
+      });
+
       let stageOutput = '';
       let artifacts: string[] = [];
 
-      switch (stage.type) {
-        case StageType.BUILD:
-          stageOutput = await this.executeBuildStage(stage);
-          artifacts = ['build/output.zip'];
-          break;
+      // Format output based on execution result
+      if (result.success) {
+        stageOutput = `=== ${stage.name} (${stage.type}) ===\n`;
+        stageOutput += `Docker Image: ${dockerImage}\n`;
+        stageOutput += `Commands: ${commands.join(' && ')}\n`;
+        stageOutput += `Duration: ${result.duration}s\n\n`;
+        stageOutput += `--- Output ---\n${result.stdout}\n`;
 
-        case StageType.TEST:
-          stageOutput = await this.executeTestStage(stage);
-          artifacts = ['test-results.xml', 'coverage-report.html'];
-          break;
+        if (result.stderr) {
+          stageOutput += `\n--- Warnings/Errors ---\n${result.stderr}\n`;
+        }
 
-        case StageType.SECURITY_SCAN:
-          stageOutput = await this.executeSecurityScanStage(stage);
-          artifacts = ['security-report.json'];
-          break;
+        // Set artifacts based on stage type
+        switch (stage.type) {
+          case StageType.BUILD:
+            artifacts = ['build/output.zip'];
+            break;
+          case StageType.TEST:
+            artifacts = ['test-results.xml', 'coverage-report.html'];
+            break;
+          case StageType.SECURITY_SCAN:
+            artifacts = ['security-report.json'];
+            break;
+          case StageType.CODE_ANALYSIS:
+            artifacts = ['code-quality-report.json'];
+            break;
+        }
+      } else {
+        // Execution failed
+        stageOutput = `=== ${stage.name} FAILED ===\n`;
+        stageOutput += `Docker Image: ${dockerImage}\n`;
+        stageOutput += `Error: ${result.error || 'Command failed'}\n`;
+        stageOutput += `Exit Code: ${result.exitCode}\n\n`;
+        stageOutput += `--- Output ---\n${result.stdout}\n`;
+        stageOutput += `\n--- Error Output ---\n${result.stderr}\n`;
 
-        case StageType.CODE_ANALYSIS:
-          stageOutput = await this.executeCodeAnalysisStage(stage);
-          artifacts = ['code-quality-report.json'];
-          break;
-
-        case StageType.DEPLOY:
-          stageOutput = await this.executeDeployStage(stage);
-          break;
-
-        case StageType.NOTIFICATION:
-          stageOutput = await this.executeNotificationStage(stage);
-          break;
-
-        case StageType.APPROVAL:
-          stageOutput = await this.executeApprovalStage(stage);
-          break;
-
-        default:
-          stageOutput = 'Stage type not implemented';
+        throw new Error(`Stage ${stage.name} failed with exit code ${result.exitCode}`);
       }
 
       const finishedAt = new Date();

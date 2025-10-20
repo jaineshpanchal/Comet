@@ -158,8 +158,46 @@ export class PipelineService {
   /**
    * Get pipeline run logs
    */
-  static async getPipelineRunLogs(runId: string): Promise<string> {
-    const response = await api.get<{ logs: string }>(`/api/pipelines/runs/${runId}/logs`);
-    return response.data!.logs;
+  static async getPipelineRunLogs(runId: string): Promise<any> {
+    const response = await api.get<any>(`/api/pipelines/runs/${runId}/logs`);
+    return response.data!;
+  }
+
+  /**
+   * Retry a failed pipeline run
+   */
+  static async retryPipelineRun(runId: string): Promise<{ originalRunId: string; newRunId: string }> {
+    const response = await api.post<{ originalRunId: string; newRunId: string }>(
+      `/api/pipelines/runs/${runId}/retry`
+    );
+    return response.data!;
+  }
+
+  /**
+   * Get pipeline run stages
+   */
+  static async getPipelineRunStages(runId: string): Promise<StageRun[]> {
+    const response = await api.get<{ pipelineRunId: string; stages: StageRun[] }>(
+      `/api/pipelines/runs/${runId}/stages`
+    );
+    return response.data!.stages;
+  }
+
+  /**
+   * Get all pipeline runs (across all pipelines)
+   */
+  static async getAllPipelineRuns(
+    limit: number = 20,
+    offset: number = 0,
+    status?: string
+  ): Promise<{ runs: PipelineRun[]; total: number }> {
+    const params: any = { limit, offset };
+    if (status) params.status = status;
+
+    const response = await api.get<{ runs: PipelineRun[]; total: number }>(
+      `/api/pipeline-runs`,
+      params
+    );
+    return response.data!;
   }
 }

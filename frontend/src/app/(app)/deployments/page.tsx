@@ -117,11 +117,19 @@ export default function DeploymentsPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight">Deployments</h1>
-            <p className="text-muted-foreground">Track and manage deployments</p>
+      <div className="space-y-8 pb-12">
+        {/* Header */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+                Deployments
+              </h1>
+              <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+                Track and manage <span className="text-gray-700 font-medium">deployments</span> across{" "}
+                <span className="text-gray-700 font-medium">environments</span>
+              </p>
+            </div>
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -146,13 +154,22 @@ export default function DeploymentsPage() {
   const envStats = getEnvironmentStats()
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Deployments</h1>
-          <p className="text-muted-foreground">Track and manage deployments across environments</p>
+    <div className="space-y-8 pb-12">
+      {/* Header */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+              Deployments
+            </h1>
+            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+              Track and manage <span className="text-gray-700 font-medium">deployments</span> across{" "}
+              <span className="text-gray-700 font-medium">environments</span>
+            </p>
+          </div>
+
+          <Button onClick={() => fetchDeployments()}>Refresh</Button>
         </div>
-        <Button onClick={() => fetchDeployments()}>Refresh</Button>
       </div>
 
       {error && (

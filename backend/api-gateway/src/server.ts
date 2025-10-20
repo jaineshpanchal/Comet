@@ -17,6 +17,7 @@ import { authenticateToken } from './middleware/auth';
 import { auditMiddleware } from './middleware/audit';
 import { ServiceProxy } from './services/serviceProxy';
 import { websocketService } from './services/websocketService';
+import { queueService } from './services/queueService';
 import { logger } from './utils/logger';
 import { ApiResponse } from './types';
 
@@ -35,6 +36,7 @@ import teamsRoutes from './routes/teams';
 import permissionsRoutes from './routes/permissions';
 import secretsRoutes from './routes/secrets';
 import securityScansRoutes from './routes/securityScans';
+import integrationsRoutes from './routes/integrations';
 
 class APIGateway {
   private app: Express;
@@ -273,6 +275,7 @@ class APIGateway {
     this.app.use('/api/projects', projectRoutes);
     this.app.use('/api', secretsRoutes); // Secrets routes are nested under /api/projects/:projectId/secrets
     this.app.use('/api/security', securityScansRoutes);
+    this.app.use('/api/integrations', integrationsRoutes);
     this.app.use('/api/pipelines', pipelineRoutes);
     this.app.use('/api/tests', testRoutes);
     this.app.use('/api/deployments', deploymentRoutes);
@@ -485,6 +488,11 @@ class APIGateway {
       logger.info('Initializing WebSocket server...', { service: 'api-gateway' });
       websocketService.initialize(this.httpServer);
       logger.info('✅ WebSocket server initialized', { service: 'api-gateway' });
+
+      // Initialize Queue Service
+      logger.info('Initializing Queue Service...', { service: 'api-gateway' });
+      await queueService.initialize();
+      logger.info('✅ Queue service initialized', { service: 'api-gateway' });
 
       // Initialize service health checks
       logger.info('Initializing service health checks...');

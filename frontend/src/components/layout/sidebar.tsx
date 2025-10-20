@@ -31,6 +31,7 @@ import {
   UserGroupIcon,
   ClipboardDocumentListIcon,
   UsersIcon,
+  LinkIcon,
 } from "@heroicons/react/24/outline";
 
 interface SidebarProps {
@@ -105,6 +106,11 @@ const navigationItems: NavItem[] = [
     label: "Teams",
     href: "/teams",
     icon: UsersIcon,
+  },
+  {
+    label: "Integrations",
+    href: "/integrations",
+    icon: LinkIcon,
   },
   {
     label: "Security",

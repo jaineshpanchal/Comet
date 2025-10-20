@@ -70,7 +70,8 @@ export default function PipelinesPage() {
       const data = await response.json()
 
       if (data.success) {
-        setPipelines(data.data.pipelines || [])
+        // data.data is already an array of pipelines
+        setPipelines(Array.isArray(data.data) ? data.data : [])
       } else {
         setError(data.error || "Failed to fetch pipelines")
       }

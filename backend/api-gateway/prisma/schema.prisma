@@ -369,13 +369,23 @@ enum DeploymentStatus {
 
 model Integration {
   id            String          @id @default(uuid())
+  userId        String?         // User who created the integration
+  teamId        String?         // Team-level integration
+  projectId     String?         // Project-specific integration
   name          String
   type          IntegrationType
-  configuration String            @default("{}")
+  configuration String          @default("{}") // Encrypted OAuth tokens, API keys, etc.
+  status        IntegrationStatus @default(ACTIVE)
   isActive      Boolean         @default(true)
   lastSyncAt    DateTime?
+  lastSyncStatus String?        // SUCCESS, FAILED, etc.
+  errorMessage  String?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+
+  // Relations
+  webhooks      Webhook[]
+  notifications IntegrationNotification[]
 
   @@map("integrations")
 }
@@ -387,10 +397,80 @@ enum IntegrationType {
   JENKINS
   JIRA
   SLACK
+  DISCORD
+  TEAMS
   SONARQUBE
   AWS
   AZURE
   GCP
+  CUSTOM_WEBHOOK
+}
+
+enum IntegrationStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+  PENDING_AUTH
+}
+
+model Webhook {
+  id            String        @id @default(uuid())
+  integrationId String
+  projectId     String?
+  name          String
+  url           String
+  secret        String?       // Webhook secret for verification
+  events        String        @default("[]") // Array of event types
+  isActive      Boolean       @default(true)
+  lastTriggeredAt DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  deliveries  WebhookDelivery[]
+
+  @@map("webhooks")
+}
+
+model WebhookDelivery {
+  id          String              @id @default(uuid())
+  webhookId   String
+  event       String
+  payload     String              @default("{}")
+  status      WebhookDeliveryStatus
+  statusCode  Int?
+  response    String?
+  attempt     Int                 @default(1)
+  deliveredAt DateTime            @default(now())
+
+  // Relations
+  webhook Webhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@map("webhook_deliveries")
+}
+
+enum WebhookDeliveryStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  RETRYING
+}
+
+model IntegrationNotification {
+  id            String   @id @default(uuid())
+  integrationId String
+  channel       String   // Slack channel, Teams channel, etc.
+  events        String   @default("[]") // Events to notify about
+  template      String?  // Custom message template
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@map("integration_notifications")
 }
 
 model AuditLog {
