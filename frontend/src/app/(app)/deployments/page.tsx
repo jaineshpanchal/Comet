@@ -1,11 +1,14 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuthGuard } from '@/lib/useAuthGuard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DocumentTextIcon } from '@heroicons/react/24/outline'
 import { DeploymentService, type Deployment } from '@/services/deployment.service'
 
 const statusConfig = {
@@ -168,7 +171,14 @@ export default function DeploymentsPage() {
             </p>
           </div>
 
-          <Button onClick={() => fetchDeployments()}>Refresh</Button>
+          <div className="flex gap-3">
+            <Link href="/deployments/analytics">
+              <Button variant="outline">
+                📊 View Analytics
+              </Button>
+            </Link>
+            <Button onClick={() => fetchDeployments()}>Refresh</Button>
+          </div>
         </div>
       </div>
 
@@ -326,19 +336,30 @@ export default function DeploymentsPage() {
                         )}
                       </div>
 
-                      {deployment.status === 'DEPLOYED' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleRollback(deployment.id)
-                          }}
-                          disabled={isRollingBack === deployment.id}
-                        >
-                          {isRollingBack === deployment.id ? 'Rolling back...' : 'Rollback'}
-                        </Button>
-                      )}
+                      <div className="flex gap-2">
+                        <Link href={`/deployments/${deployment.id}/logs`} onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                          >
+                            <DocumentTextIcon className="h-4 w-4 mr-1" />
+                            View Logs
+                          </Button>
+                        </Link>
+                        {deployment.status === 'DEPLOYED' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleRollback(deployment.id)
+                            }}
+                            disabled={isRollingBack === deployment.id}
+                          >
+                            {isRollingBack === deployment.id ? 'Rolling back...' : 'Rollback'}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
