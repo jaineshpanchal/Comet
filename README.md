@@ -1,169 +1,305 @@
 # Comet DevOps Platform 🚀
 
-*The flagship, state-of-the-art enterprise DevOps platform*
+*Enterprise-grade DevOps platform with AI-powered testing, comprehensive security, and real-time collaboration*
 
-## 🎯 Vision
-Comet revolutionizes DevOps by providing an all-in-one platform that's powerful enough for enterprise teams yet intuitive enough for non-technical users. Built with AI-first approach and Apple-level design aesthetics.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.0+-black)](https://nextjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
 
-## ✨ Core Features
+## 🎯 Overview
 
-### 1. 🔄 Complete Release Management
-- **End-to-end CI/CD pipelines** - From initial commit to production deployment
-- **Universal platform support** - Works with any technology stack
-- **Automated build mechanisms** - Smart build optimization and caching
-- **Real-time pipeline visualization** - Interactive pipeline monitoring
-- **Comprehensive logging** - Detailed logs with screenshots and video recordings
-- **JIRA integration** - Ticket-driven development workflow
+Comet is a flagship enterprise DevOps platform that combines powerful CI/CD capabilities, AI-driven testing, comprehensive security features, and real-time collaboration tools. Built with a microservices architecture and modern tech stack, Comet delivers a seamless experience for teams of all sizes.
 
-### 2. 🤖 Robotic/Agentic Testing
-- **AI-powered test generation** - Automatically create tests from user interactions
-- **Recording & scripting** - Visual test recording with smart script generation
-- **Manual testing framework** - Collaborative testing environment
-- **End-to-end test orchestration** - Cross-browser, cross-device testing
-- **All testing types** - Unit, integration, performance, security, accessibility
+## ✨ Key Features
 
-### 3. 🔍 Advanced Code Analysis
-- **SonarQube integration** - Deep code quality analysis
-- **Security scanning** - Vulnerability detection and remediation
-- **Performance profiling** - Code performance insights
-- **Technical debt tracking** - Automated debt calculation and recommendations
+### 🔄 Complete Release Management
+- **End-to-end CI/CD Pipelines** - Automated build, test, and deployment workflows
+- **Real-time Pipeline Monitoring** - Live status updates via WebSocket
+- **Multi-stage Deployments** - Build, test, security scan, deploy, rollback stages
+- **Pipeline Templates** - Pre-configured pipeline templates for common workflows
+- **Execution History** - Complete audit trail of all pipeline runs
 
-### 4. 🔗 Seamless Integrations
-- **Git providers** - GitHub, GitLab, Bitbucket, Azure DevOps
-- **Jenkins integration** - Native Jenkins pipeline management
-- **JIRA workflows** - Automated ticket lifecycle management
-- **Cloud platforms** - AWS, Azure, GCP deployment support
+### 🤖 AI-Powered Testing
+- **Automated Test Generation** - AI generates tests from code analysis
+- **Test Suite Management** - Organize and manage test suites
+- **Real-time Test Execution** - Live test results via WebSocket
+- **Coverage Tracking** - Code coverage metrics and reporting
+- **Test Result Analytics** - Visual test result dashboards
 
-### 5. 🎨 Premium User Experience
-- **Apple-inspired design** - Clean, intuitive, aesthetically pleasing interface
-- **AI assistant** - Natural language automation and help
-- **Non-technical friendly** - Simple workflows for all user types
-- **Responsive design** - Seamless experience across all devices
+### 🔐 Enterprise Security & Compliance
+- **Role-Based Access Control (RBAC)** - 5 role levels with 40+ granular permissions
+- **Encrypted Secrets Management** - AES-256-GCM encryption for sensitive data
+- **Comprehensive Audit Logging** - Track all user actions and system events
+- **Security Scanning** - npm audit integration for vulnerability detection
+- **Security Dashboard** - Visual security score and vulnerability reporting
+- **Real-time Security Alerts** - WebSocket notifications for critical events
 
-### 6. 📊 Enterprise Logging & Monitoring
-- **Intelligent logs** - Easy-to-read, searchable, filterable logs
-- **Visual debugging** - Screenshots and video recordings of failures
-- **Error resolution AI** - Automated error analysis and fix suggestions
-- **Real-time monitoring** - Live system health and performance metrics
+### 👥 Team Collaboration
+- **Team Management** - Create and manage teams with member assignments
+- **Project Organization** - Team-based project access control
+- **Real-time Notifications** - Instant updates on team activities
+- **Collaborative Workflows** - Shared access to pipelines and deployments
 
-## 🏗️ Architecture Overview
+### 📊 Monitoring & Analytics
+- **Real-time Dashboards** - Live KPIs, metrics, and system health
+- **Performance Metrics** - Build times, test results, deployment frequency
+- **Activity Tracking** - Recent actions and system events
+- **Custom Reports** - Export audit logs and security reports (CSV/JSON)
+
+### 🎨 Premium User Experience
+- **Modern UI/UX** - Clean, intuitive interface with gradient designs
+- **Responsive Design** - Seamless experience across all devices
+- **Dark Mode Ready** - Stylish dark theme support
+- **Real-time Updates** - WebSocket-powered live data
+- **Toast Notifications** - Beautiful contextual notifications
+
+## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Comet DevOps Platform                    │
-├─────────────────────────────────────────────────────────────┤
-│  Frontend (React/Next.js)                                   │
-│  ├─ Dashboard & Analytics                                   │
-│  ├─ Pipeline Builder (Visual)                               │
-│  ├─ Test Management                                         │
-│  ├─ AI Assistant Chat                                       │
-│  └─ Admin Panel                                             │
-├─────────────────────────────────────────────────────────────┤
-│  API Gateway & Load Balancer                                │
-├─────────────────────────────────────────────────────────────┤
-│  Microservices Backend (Node.js/TypeScript)                 │
-│  ├─ Pipeline Orchestration Service                          │
-│  ├─ Testing Automation Service                              │
-│  ├─ Integration Management Service                          │
-│  ├─ Code Analysis Service                                   │
-│  ├─ Logging & Monitoring Service                            │
-│  └─ User Management & Auth Service                          │
-├─────────────────────────────────────────────────────────────┤
-│  AI Agent Services (Python)                                 │
-│  ├─ Test Generation AI                                      │
-│  ├─ Error Resolution AI                                     │
-│  ├─ Code Quality AI                                         │
-│  └─ Natural Language Processing                             │
-├─────────────────────────────────────────────────────────────┤
-│  Data Layer                                                 │
-│  ├─ PostgreSQL (Primary)                                    │
-│  ├─ Redis (Caching)                                         │
-│  ├─ InfluxDB (Metrics)                                      │
-│  └─ ElasticSearch (Logs)                                    │
-├─────────────────────────────────────────────────────────────┤
-│  External Integrations                                      │
-│  ├─ Git Providers (GitHub, GitLab, etc.)                    │
-│  ├─ Jenkins Integration                                     │
-│  ├─ JIRA/Confluence                                         │
-│  ├─ SonarQube                                               │
-│  └─ Cloud Providers (AWS, Azure, GCP)                       │
-└─────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│                   Frontend Layer                       │
+│   Next.js 14 • React 18 • TypeScript • Tailwind CSS  │
+│   ├─ Dashboard & Analytics                            │
+│   ├─ Pipeline Management                              │
+│   ├─ Team & User Management                           │
+│   ├─ Security Dashboard                               │
+│   └─ Real-time WebSocket Integration                  │
+├────────────────────────────────────────────────────────┤
+│                 API Gateway (Port 8000)                │
+│   Express.js • WebSocket • JWT Auth • Rate Limiting   │
+├────────────────────────────────────────────────────────┤
+│               Microservices Backend                    │
+│   ├─ User Management Service                          │
+│   ├─ Pipeline Orchestration Service                   │
+│   ├─ Testing Automation Service                       │
+│   ├─ Deployment Service                               │
+│   ├─ Code Analysis Service                            │
+│   └─ Monitoring & Metrics Service                     │
+├────────────────────────────────────────────────────────┤
+│              AI Services (Port 9000)                   │
+│   Python • FastAPI • OpenAI • LangChain               │
+│   ├─ Test Generation                                  │
+│   ├─ Error Analysis                                   │
+│   └─ Pipeline Optimization                            │
+├────────────────────────────────────────────────────────┤
+│                   Data Layer                           │
+│   ├─ PostgreSQL/SQLite (Primary Database)             │
+│   ├─ Redis (Caching & Sessions)                       │
+│   ├─ Elasticsearch (Logs)                             │
+│   └─ Prometheus (Metrics)                             │
+└────────────────────────────────────────────────────────┘
 ```
 
-## 📅 Development Roadmap
+## 🚀 Quick Start
 
-### Phase 1: Foundation (Weeks 1-4)
-- [ ] Project architecture setup
-- [ ] Core backend services
-- [ ] Basic frontend framework
-- [ ] Authentication system
-- [ ] Database schema design
+### Prerequisites
 
-### Phase 2: Core Features (Weeks 5-12)
-- [ ] Pipeline orchestration engine
-- [ ] Git integration module
-- [ ] Basic testing framework
-- [ ] JIRA integration
-- [ ] Initial UI components
+- **Node.js** 18+ and npm
+- **Python** 3.11+
+- **PostgreSQL** or SQLite (SQLite included for development)
+- **Redis** (optional, for caching)
 
-### Phase 3: AI & Advanced Features (Weeks 13-20)
-- [ ] AI agent development
-- [ ] Advanced testing automation
-- [ ] Code analysis integration
-- [ ] Video/screenshot recording
-- [ ] Advanced UI/UX
+### Installation
 
-### Phase 4: Enterprise Features (Weeks 21-28)
-- [ ] Advanced logging system
-- [ ] Performance monitoring
-- [ ] Security features
-- [ ] Enterprise integrations
-- [ ] Scalability optimization
+```bash
+# Clone the repository
+git clone https://github.com/jaineshpanchal/Comet.git
+cd Comet
 
-### Phase 5: Polish & Launch (Weeks 29-32)
-- [ ] UI/UX refinement
-- [ ] Performance optimization
-- [ ] Documentation
-- [ ] Beta testing
-- [ ] Production deployment
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp backend/api-gateway/.env.example backend/api-gateway/.env
+cp frontend/.env.local.example frontend/.env.local
+
+# Run database migrations
+cd backend/api-gateway
+npx prisma migrate dev
+npx prisma db seed
+
+# Start all services (from root)
+npm run dev
+```
+
+The application will be available at:
+- **Frontend**: http://localhost:3030
+- **API Gateway**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/api/docs
+
+### Default Credentials
+
+After seeding the database:
+- **Email**: admin@comet.dev
+- **Password**: admin123
+
+## 📚 Documentation
+
+Comprehensive documentation is available in the [`/docs`](./docs) folder:
+
+- **[Quick Start Guide](./docs/QUICK_START.md)** - Get up and running quickly
+- **[Developer Guide](./docs/DEV-GUIDE.md)** - Development best practices
+- **[Security Guide](./docs/SECURITY.md)** - Security features and compliance
+- **[API Documentation](./docs/TECHNICAL_ARCHITECTURE.md)** - Complete API reference
+- **[Deployment Guide](./docs/DEPLOYMENT.md)** - Production deployment instructions
+- **[Database Guide](./docs/DATABASE_SEED.md)** - Database schema and seeding
+- **[Frontend Integration](./docs/FRONTEND_INTEGRATION.md)** - Frontend development guide
+- **[UI/UX Guidelines](./docs/UI_UX_GUIDELINES.md)** - Design system and components
 
 ## 🛠️ Technology Stack
 
 ### Frontend
-- **React 18** with TypeScript
-- **Next.js 14** for SSR/SSG
-- **Tailwind CSS** for styling
-- **Framer Motion** for animations
-- **React Query** for state management
-- **Storybook** for component development
+- **Next.js 14** - React framework with App Router
+- **TypeScript 5.0+** - Type-safe development
+- **Tailwind CSS 3.3** - Utility-first styling
+- **Socket.IO Client** - Real-time WebSocket communication
+- **Heroicons** - Beautiful icon library
+- **Framer Motion** - Smooth animations
 
 ### Backend
-- **Node.js** with TypeScript
-- **Express.js/Fastify** for APIs
-- **GraphQL** for flexible queries
-- **WebSocket** for real-time features
-- **Bull/Agenda** for job queues
-- **Passport.js** for authentication
+- **Node.js 18+** - JavaScript runtime
+- **Express.js** - Web framework
+- **TypeScript** - Type safety
+- **Prisma** - Type-safe ORM
+- **Socket.IO** - WebSocket server
+- **JWT** - Authentication
+- **bcrypt** - Password hashing
+- **Winston** - Logging
 
-### AI/ML Services
-- **Python 3.11+**
-- **FastAPI** for AI service APIs
-- **TensorFlow/PyTorch** for ML models
-- **OpenAI GPT** for natural language
-- **Playwright** for browser automation
-- **Computer Vision** for screenshot analysis
+### AI Services
+- **Python 3.11+** - AI/ML runtime
+- **FastAPI** - High-performance API framework
+- **OpenAI** - GPT integration
+- **LangChain** - AI orchestration
 
-### Infrastructure
-- **Docker** containerization
-- **Kubernetes** orchestration
-- **Terraform** for IaC
-- **GitHub Actions** for CI/CD
-- **Monitoring**: Prometheus + Grafana
-- **Logging**: ELK Stack
+### DevOps
+- **Docker** - Containerization
+- **Docker Compose** - Multi-container orchestration
+- **GitHub Actions** - CI/CD automation
+- **Prometheus** - Metrics collection
+- **Grafana** - Metrics visualization
 
-## 🚀 Getting Started
+## 📊 Current Status
 
-This README will be updated as we build each component. For now, let's establish the project structure and begin development!
+### ✅ Implemented Features
+
+- [x] **Authentication & Authorization**
+  - JWT-based authentication
+  - Role-based access control (5 roles)
+  - 40+ granular permissions
+  - Session management with Redis
+
+- [x] **User & Team Management**
+  - User CRUD operations
+  - Team creation and member management
+  - Permission assignment
+  - Audit logging
+
+- [x] **Pipeline Management**
+  - Pipeline creation and execution
+  - Multi-stage pipeline support
+  - Real-time pipeline status updates
+  - Pipeline run history
+
+- [x] **Testing Framework**
+  - Test suite management
+  - Test execution engine
+  - Real-time test results
+  - Test coverage tracking
+
+- [x] **Deployment Management**
+  - Deployment orchestration
+  - Multi-environment support
+  - Rollback capabilities
+  - Deployment history
+
+- [x] **Security Features**
+  - AES-256-GCM encrypted secrets
+  - Security scanning (npm audit)
+  - Audit log viewer with export
+  - Security dashboard with scoring
+  - Real-time security alerts
+
+- [x] **Real-time Features**
+  - WebSocket integration
+  - Live pipeline updates
+  - Live test results
+  - Live deployment status
+  - Security event notifications
+
+- [x] **Monitoring & Analytics**
+  - System metrics dashboard
+  - Performance analytics
+  - Activity tracking
+  - Audit log analysis
+
+### 🚧 In Progress
+
+- [ ] AI-powered test generation
+- [ ] Advanced code analysis
+- [ ] Container security scanning
+- [ ] Multi-cloud deployment support
+
+### 📋 Planned Features
+
+- [ ] JIRA integration
+- [ ] Slack/Teams notifications
+- [ ] Advanced reporting
+- [ ] Cost optimization insights
+- [ ] Performance profiling
+
+## 🔒 Security
+
+Comet takes security seriously:
+
+- **Encryption at Rest** - All secrets encrypted with AES-256-GCM
+- **Secure Authentication** - JWT tokens with refresh mechanism
+- **Role-Based Access** - Fine-grained permission control
+- **Audit Logging** - Complete audit trail of all actions
+- **Security Scanning** - Automated vulnerability detection
+- **HTTPS Only** - Production enforces HTTPS
+- **Rate Limiting** - API protection against abuse
+
+See [SECURITY.md](./docs/SECURITY.md) for detailed security documentation.
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for guidelines.
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🌟 Features Showcase
+
+### Real-time Dashboard
+![Dashboard](https://via.placeholder.com/800x400?text=Dashboard+Screenshot)
+
+### Pipeline Execution
+![Pipelines](https://via.placeholder.com/800x400?text=Pipeline+Screenshot)
+
+### Security Dashboard
+![Security](https://via.placeholder.com/800x400?text=Security+Dashboard)
+
+### Team Management
+![Teams](https://via.placeholder.com/800x400?text=Team+Management)
+
+## 📞 Support
+
+- **Documentation**: [docs/](./docs)
+- **Issues**: [GitHub Issues](https://github.com/jaineshpanchal/Comet/issues)
+- **Email**: support@comet-devops.com
+
+## 🙏 Acknowledgments
+
+Built with:
+- [Next.js](https://nextjs.org/)
+- [Prisma](https://www.prisma.io/)
+- [Socket.IO](https://socket.io/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [OpenAI](https://openai.com/)
 
 ---
-*Built with ❤️ for the DevOps community*
+
+**Made with ❤️ by the Comet Team**
