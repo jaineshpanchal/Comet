@@ -196,20 +196,6 @@ We welcome contributions! Please see [CONTRIBUTING.md](./docs/CONTRIBUTING.md) f
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🌟 Features Showcase
-
-### Real-time Dashboard
-![Dashboard](https://via.placeholder.com/800x400?text=Dashboard+Screenshot)
-
-### Pipeline Execution
-![Pipelines](https://via.placeholder.com/800x400?text=Pipeline+Screenshot)
-
-### Security Dashboard
-![Security](https://via.placeholder.com/800x400?text=Security+Dashboard)
-
-### Team Management
-![Teams](https://via.placeholder.com/800x400?text=Team+Management)
-
 ## 📞 Support
 
 - **Documentation**: [docs/](./docs)
