@@ -10,58 +10,58 @@ import {
   ClockIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
+  PlayIcon,
 } from "@heroicons/react/24/outline"
-
-interface TestSuite {
-  id: string
-  name: string
-  description: string
-  type: string
-  totalTests: number
-  lastRun?: Date
-  status?: 'passed' | 'failed' | 'running' | 'pending'
-  passRate?: number
-}
+import { TestService, type TestSuite } from "@/services/test.service"
 
 export default function TestSuitesPage() {
   const [testSuites, setTestSuites] = useState<TestSuite[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState<string>("all")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
 
   useEffect(() => {
-    // Simulate loading - in real app, fetch from API
-    const timer = setTimeout(() => {
-      setTestSuites([])
-      setLoading(false)
-    }, 500)
-    return () => clearTimeout(timer)
+    fetchTestSuites()
   }, [])
+
+  const fetchTestSuites = async () => {
+    try {
+      setLoading(true)
+      const suites = await TestService.getTestSuites()
+      setTestSuites(suites)
+    } catch (error) {
+      console.error('Error fetching test suites:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRunTest = async (suiteId: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    try {
+      await TestService.runTestSuite(suiteId)
+      alert('Test suite execution started!')
+      await fetchTestSuites() // Refresh the list
+    } catch (error) {
+      console.error('Error running test suite:', error)
+      alert('Failed to start test execution')
+    }
+  }
 
   const filteredSuites = testSuites.filter((suite) => {
     const matchesSearch = suite.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          suite.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = filterType === "all" || suite.type === filterType
-    return matchesSearch && matchesType
+    const matchesType = filterType === "all" || suite.type.toLowerCase() === filterType.toLowerCase()
+    const matchesStatus = statusFilter === "all" ||
+                         (statusFilter === "active" && suite.isActive) ||
+                         (statusFilter === "inactive" && !suite.isActive)
+    return matchesSearch && matchesType && matchesStatus
   })
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case 'passed': return 'bg-green-100 text-green-800 border-green-300'
-      case 'failed': return 'bg-red-100 text-red-800 border-red-300'
-      case 'running': return 'bg-blue-100 text-blue-800 border-blue-300'
-      default: return 'bg-gray-100 text-gray-800 border-gray-300'
-    }
-  }
 
-  const getStatusIcon = (status?: string) => {
-    switch (status) {
-      case 'passed': return <CheckCircleIcon className="w-4 h-4" />
-      case 'failed': return <XCircleIcon className="w-4 h-4" />
-      case 'running': return <ClockIcon className="w-4 h-4 animate-spin" />
-      default: return <ClockIcon className="w-4 h-4" />
-    }
-  }
 
   if (loading) {
     return (
@@ -119,34 +119,34 @@ export default function TestSuitesPage() {
             <div className="p-2 bg-green-100 rounded-lg">
               <CheckCircleIcon className="w-5 h-5 text-green-600" />
             </div>
-            <span className="text-sm font-medium text-gray-500">Passing</span>
+            <span className="text-sm font-medium text-gray-500">Active</span>
           </div>
           <p className="text-3xl font-bold text-gray-900">
-            {testSuites.filter(s => s.status === 'passed').length}
+            {testSuites.filter(s => s.isActive).length}
           </p>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <XCircleIcon className="w-5 h-5 text-red-600" />
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <XCircleIcon className="w-5 h-5 text-gray-600" />
             </div>
-            <span className="text-sm font-medium text-gray-500">Failing</span>
+            <span className="text-sm font-medium text-gray-500">Inactive</span>
           </div>
           <p className="text-3xl font-bold text-gray-900">
-            {testSuites.filter(s => s.status === 'failed').length}
+            {testSuites.filter(s => !s.isActive).length}
           </p>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 rounded-lg">
-              <ClockIcon className="w-5 h-5 text-blue-600" />
+              <BeakerIcon className="w-5 h-5 text-blue-600" />
             </div>
-            <span className="text-sm font-medium text-gray-500">Running</span>
+            <span className="text-sm font-medium text-gray-500">Total Runs</span>
           </div>
           <p className="text-3xl font-bold text-gray-900">
-            {testSuites.filter(s => s.status === 'running').length}
+            {testSuites.reduce((acc, s) => acc + (s._count?.testRuns || 0), 0)}
           </p>
         </div>
       </div>
@@ -178,10 +178,21 @@ export default function TestSuitesPage() {
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
           >
             <option value="all">All Types</option>
-            <option value="unit">Unit Tests</option>
-            <option value="integration">Integration Tests</option>
-            <option value="e2e">E2E Tests</option>
-            <option value="performance">Performance Tests</option>
+            <option value="UNIT">Unit Tests</option>
+            <option value="INTEGRATION">Integration Tests</option>
+            <option value="E2E">E2E Tests</option>
+            <option value="PERFORMANCE">Performance Tests</option>
+            <option value="SECURITY">Security Tests</option>
+          </select>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
         </div>
       </div>
@@ -215,24 +226,19 @@ export default function TestSuitesPage() {
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-3 flex-wrap">
                     <Link
-                      href={`/testing/${suite.id}`}
+                      href={`/testing/suites/${suite.id}`}
                       className="text-xl font-semibold text-gray-900 hover:text-purple-600 transition-colors"
                     >
                       {suite.name}
                     </Link>
-                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                    <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
                       {suite.type}
                     </span>
-                    {suite.status && (
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                          suite.status
-                        )}`}
-                      >
-                        {getStatusIcon(suite.status)}
-                        {suite.status}
-                      </span>
-                    )}
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      suite.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {suite.isActive ? 'Active' : 'Inactive'}
+                    </span>
                   </div>
 
                   {suite.description && (
@@ -242,31 +248,41 @@ export default function TestSuitesPage() {
                   <div className="flex items-center gap-6 text-sm text-gray-500">
                     <div className="flex items-center gap-2">
                       <BeakerIcon className="w-4 h-4" />
-                      <span>{suite.totalTests} tests</span>
+                      <span>Framework: <span className="font-medium text-gray-700">{suite.framework}</span></span>
                     </div>
-                    {suite.passRate !== undefined && (
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">Pass Rate:</span>
-                        <span className={suite.passRate >= 80 ? 'text-green-600 font-semibold' : 'text-orange-600 font-semibold'}>
-                          {suite.passRate}%
-                        </span>
-                      </div>
-                    )}
-                    {suite.lastRun && (
+                    <div className="flex items-center gap-2">
+                      <span>Project: <span className="font-medium text-gray-700">{suite.project?.name}</span></span>
+                    </div>
+                    {suite._count && (
                       <div className="flex items-center gap-2">
                         <ClockIcon className="w-4 h-4" />
-                        <span>Last run: {suite.lastRun.toLocaleString()}</span>
+                        <span><span className="font-medium text-gray-700">{suite._count.testRuns}</span> runs</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <Link
-                  href={`/testing/${suite.id}`}
-                  className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors ml-4"
-                >
-                  View Details
-                </Link>
+                <div className="flex items-center gap-3 ml-4">
+                  <button
+                    onClick={(e) => handleRunTest(suite.id, e)}
+                    disabled={!suite.isActive}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                      suite.isActive
+                        ? 'bg-purple-600 text-white hover:bg-purple-700'
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    }`}
+                    title={suite.isActive ? 'Run tests' : 'Test suite is inactive'}
+                  >
+                    <PlayIcon className="w-4 h-4" />
+                    Run
+                  </button>
+                  <Link
+                    href={`/testing/suites/${suite.id}`}
+                    className="px-4 py-2 border border-purple-600 text-purple-600 text-sm font-medium rounded-lg hover:bg-purple-50 transition-colors"
+                  >
+                    View Details
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
