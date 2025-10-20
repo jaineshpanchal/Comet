@@ -32,6 +32,9 @@ import {
   ClipboardDocumentListIcon,
   UsersIcon,
   LinkIcon,
+  BellIcon,
+  BellAlertIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 
 interface SidebarProps {
@@ -118,6 +121,16 @@ const navigationItems: NavItem[] = [
     icon: ShieldCheckIcon,
   },
   {
+    label: "Notifications",
+    href: "/notifications",
+    icon: BellIcon,
+    subItems: [
+      { label: "All Notifications", href: "/notifications", icon: BellIcon },
+      { label: "Alert Rules", href: "/notifications/alerts", icon: BellAlertIcon },
+      { label: "Preferences", href: "/notifications/preferences", icon: Cog6ToothIcon },
+    ],
+  },
+  {
     label: "Admin",
     href: "/admin/users",
     icon: UserGroupIcon,
@@ -145,6 +158,8 @@ export function Sidebar({ children, className }: SidebarProps) {
     testing: false, // Show green dots
     monitoring: false, // Show green dots
     analytics: false, // Show green dots
+    security: false, // Show green dots
+    notifications: false, // Show green dots (NEW!)
     settings: true, // Always viewed - no green dot
     admin: true // Always viewed - no green dot
   });
