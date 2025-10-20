@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Comet DevOps Platform - Production Deployment Script
+# GoLive DevOps Platform - Production Deployment Script
 # Usage: ./deploy.sh [environment]
 # Example: ./deploy.sh production
 
@@ -18,7 +18,7 @@ ENVIRONMENT=${1:-production}
 COMPOSE_FILE="docker-compose.prod.yml"
 
 echo -e "${BLUE}=====================================${NC}"
-echo -e "${BLUE}  Comet DevOps Platform Deployment${NC}"
+echo -e "${BLUE}  GoLive DevOps Platform Deployment${NC}"
 echo -e "${BLUE}  Environment: ${ENVIRONMENT}${NC}"
 echo -e "${BLUE}=====================================${NC}"
 echo ""

@@ -51,7 +51,7 @@ export default function TeamsPage() {
     setError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setError("Not authenticated")
         return
@@ -83,7 +83,7 @@ export default function TeamsPage() {
     setCreateError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setCreateError("Not authenticated")
         return

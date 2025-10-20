@@ -1,4 +1,4 @@
-# Comet DevOps Platform 🚀
+# GoLive DevOps Platform 🚀
 
 *Enterprise-grade DevOps platform with AI-powered testing, comprehensive security, and real-time collaboration*
 
@@ -9,7 +9,7 @@
 
 ## 🎯 Overview
 
-Comet is a flagship enterprise DevOps platform that combines powerful CI/CD capabilities, AI-driven testing, comprehensive security features, and real-time collaboration tools. Built with a microservices architecture and modern tech stack, Comet delivers a seamless experience for teams of all sizes.
+GoLive is a flagship enterprise DevOps platform that combines powerful CI/CD capabilities, AI-driven testing, comprehensive security features, and real-time collaboration tools. Built with a microservices architecture and modern tech stack, GoLive delivers a seamless experience for teams of all sizes.
 
 ## ✨ Key Features
 
@@ -104,8 +104,8 @@ Comet is a flagship enterprise DevOps platform that combines powerful CI/CD capa
 
 ```bash
 # Clone the repository
-git clone https://github.com/jaineshpanchal/Comet.git
-cd Comet
+git clone https://github.com/jaineshpanchal/GoLive.git
+cd GoLive
 
 # Install dependencies
 npm install
@@ -176,7 +176,7 @@ Comprehensive documentation is available in the [`/docs`](./docs) folder:
 
 ## 🔒 Security
 
-Comet takes security seriously:
+GoLive takes security seriously:
 
 - **Encryption at Rest** - All secrets encrypted with AES-256-GCM
 - **Secure Authentication** - JWT tokens with refresh mechanism
@@ -199,8 +199,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 - **Documentation**: [docs/](./docs)
-- **Issues**: [GitHub Issues](https://github.com/jaineshpanchal/Comet/issues)
-- **Email**: support@comet-devops.com
+- **Issues**: [GitHub Issues](https://github.com/jaineshpanchal/GoLive/issues)
+- **Email**: support@golive-devops.com
 
 ## 🙏 Acknowledgments
 
@@ -213,4 +213,4 @@ Built with:
 
 ---
 
-**Made with ❤️ by the Comet Team**
+**Made with ❤️ by the GoLive Team**

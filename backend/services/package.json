@@ -1,7 +1,7 @@
 {
-  "name": "@comet/services",
+  "name": "@golive/services",
   "version": "1.0.0",
-  "description": "Comet DevOps Platform Microservices",
+  "description": "GoLive DevOps Platform Microservices",
   "main": "dist/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:user\" \"npm run dev:project\" \"npm run dev:pipeline\" \"npm run dev:testing\" \"npm run dev:quality\" \"npm run dev:metrics\"",

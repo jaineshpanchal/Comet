@@ -373,7 +373,7 @@ export function Sidebar({ children, className }: SidebarProps) {
           <Bars3Icon className="h-6 w-6" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-lg font-semibold">Comet DevOps</h1>
+          <h1 className="text-lg font-semibold">GoLive DevOps</h1>
         </div>
       </div>
 
@@ -396,8 +396,8 @@ export function Sidebar({ children, className }: SidebarProps) {
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 flex-shrink-0 relative overflow-hidden">
                   <img 
-                    src="/Comet.png" 
-                    alt="Comet Logo" 
+                    src="/GoLive.png" 
+                    alt="GoLive Logo" 
                     className="w-10 h-10 object-contain"
                     style={{ 
                       mixBlendMode: 'multiply',
@@ -406,7 +406,7 @@ export function Sidebar({ children, className }: SidebarProps) {
                   />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-sm font-bold tracking-tight text-slate-900 truncate">Comet DevOps</span>
+                  <span className="text-sm font-bold tracking-tight text-slate-900 truncate">GoLive DevOps</span>
                   <span className="text-[10px] font-medium tracking-wide text-slate-500 truncate">DEVOPS PLATFORM</span>
                 </div>
               </div>
@@ -475,7 +475,7 @@ export function Sidebar({ children, className }: SidebarProps) {
             {!collapsed && (
               <div className="flex-1 truncate">
                 <p className="text-sm font-medium">John Doe</p>
-                <p className="text-xs text-muted-foreground">john@comet.dev</p>
+                <p className="text-xs text-muted-foreground">john@golive.dev</p>
               </div>
             )}
           </div>

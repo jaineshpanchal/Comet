@@ -59,7 +59,7 @@ export default function DeploymentDetailPage() {
     if (!id) return
     setLoading(true)
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const response = await fetch(`http://localhost:8000/api/deployments/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -86,7 +86,7 @@ export default function DeploymentDetailPage() {
 
     setRollingBack(true)
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const response = await fetch(`http://localhost:8000/api/deployments/${id}/rollback`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },

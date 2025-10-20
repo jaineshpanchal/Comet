@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Comet DevOps Platform - Service Startup Script
+# GoLive DevOps Platform - Service Startup Script
 # This script ensures all services start in the correct directories
 
-echo "🚀 Starting Comet DevOps Platform Services..."
+echo "🚀 Starting GoLive DevOps Platform Services..."
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 

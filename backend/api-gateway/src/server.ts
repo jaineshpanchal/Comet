@@ -129,12 +129,12 @@ class APIGateway {
       definition: {
         openapi: '3.0.0',
         info: {
-          title: 'Comet DevOps Platform API',
+          title: 'GoLive DevOps Platform API',
           version: '1.0.0',
           description: 'Enterprise DevOps Platform API Gateway',
           contact: {
-            name: 'Comet DevOps Team',
-            email: 'api@comet-devops.com'
+            name: 'GoLive DevOps Team',
+            email: 'api@golive-devops.com'
           },
           license: {
             name: 'MIT',
@@ -147,7 +147,7 @@ class APIGateway {
             description: 'Development server'
           },
           {
-            url: 'https://api.comet-devops.com',
+            url: 'https://api.golive-devops.com',
             description: 'Production server'
           }
         ],
@@ -238,7 +238,7 @@ class APIGateway {
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
       explorer: true,
       customCss: '.swagger-ui .topbar { display: none }',
-      customSiteTitle: 'Comet DevOps API Documentation'
+      customSiteTitle: 'GoLive DevOps API Documentation'
     }));
 
     // Serve raw swagger JSON
@@ -252,7 +252,7 @@ class APIGateway {
     this.app.get('/', (req: Request, res: Response) => {
       const response: ApiResponse = {
         success: true,
-        message: 'Comet DevOps Platform API Gateway',
+        message: 'GoLive DevOps Platform API Gateway',
         data: {
           name: 'API Gateway',
           version: process.env.APP_VERSION || '1.0.0',
@@ -408,7 +408,7 @@ class APIGateway {
     // Build table with precise formatting
     const lines = [
       topBorder,
-      formatLine('🚀 COMET DEVOPS PLATFORM', 'center'),
+      formatLine('🚀 GOLIVE DEVOPS PLATFORM', 'center'),
       formatLine('API Gateway', 'center'),
       middleBorder,
       formatLine('Status: ✅ RUNNING'),
@@ -454,7 +454,7 @@ class APIGateway {
     const version = process.env.APP_VERSION || '1.0.0';
 
     // Add all content
-    table.push([{ content: '🚀 COMET DEVOPS PLATFORM', hAlign: 'center' }]);
+    table.push([{ content: '🚀 GOLIVE DEVOPS PLATFORM', hAlign: 'center' }]);
     table.push([{ content: 'API Gateway', hAlign: 'center' }]);
     table.push(['Status: ✅ RUNNING']);
     table.push([`Port: ${port}`]);

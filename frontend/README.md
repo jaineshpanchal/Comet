@@ -1,6 +1,6 @@
-# Comet DevOps Platform - Frontend
+# GoLive DevOps Platform - Frontend
 
-A modern, comprehensive frontend application for the Comet DevOps Platform built with Next.js 14, React 18, and TypeScript.
+A modern, comprehensive frontend application for the GoLive DevOps Platform built with Next.js 14, React 18, and TypeScript.
 
 ## 🚀 Features
 
@@ -220,7 +220,7 @@ npm run type-check # Run TypeScript compiler
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_WS_URL=ws://localhost:3001
-NEXT_PUBLIC_APP_NAME=Comet DevOps
+NEXT_PUBLIC_APP_NAME=GoLive DevOps
 ```
 
 ### Docker Deployment
@@ -255,7 +255,7 @@ CMD ["npm", "start"]
 
 ## 📝 License
 
-This project is part of the Comet DevOps Platform and is proprietary software.
+This project is part of the GoLive DevOps Platform and is proprietary software.
 
 ## 📞 Support
 
@@ -266,4 +266,4 @@ For support and questions:
 
 ---
 
-**Comet DevOps Platform Frontend** - Built with ❤️ using Next.js, React, and TypeScript
+**GoLive DevOps Platform Frontend** - Built with ❤️ using Next.js, React, and TypeScript

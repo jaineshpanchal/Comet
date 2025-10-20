@@ -1,4 +1,4 @@
-# Comet DevOps Platform - Development Guide
+# GoLive DevOps Platform - Development Guide
 
 ## Service Management
 
@@ -45,7 +45,7 @@ cd frontend && npm run dev
 This happens when running from wrong directory. Solutions:
 1. **Always use**: `npm run dev:metrics` from root directory
 2. **Or use**: `./start-metrics.sh` script
-3. **Never run**: `npm run dev:metrics` from root Comet directory directly
+3. **Never run**: `npm run dev:metrics` from root GoLive directory directly
 
 #### Port Already in Use
 ```bash

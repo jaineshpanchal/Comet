@@ -43,7 +43,7 @@ export function WebSocketProvider({ children, url = 'http://localhost:8000' }: W
 
     try {
       // Get JWT token from localStorage for authentication
-      const token = localStorage.getItem('comet_jwt')
+      const token = localStorage.getItem('golive_jwt')
 
       // Create Socket.IO connection with authentication
       const socket = io(url, {

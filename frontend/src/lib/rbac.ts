@@ -1,4 +1,4 @@
-// RBAC permissions structure for Comet DevOps Platform
+// RBAC permissions structure for GoLive DevOps Platform
 // This can be used to drive UI for role/permission management
 
 export type Role = 'admin' | 'project_manager' | 'developer' | 'tester' | 'viewer';

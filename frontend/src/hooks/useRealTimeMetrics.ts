@@ -42,7 +42,7 @@ export function useRealTimeMetrics(channel: string = 'metrics') {
 
   const fetchInitialData = async () => {
     try {
-      const token = localStorage.getItem('comet_jwt')
+      const token = localStorage.getItem('golive_jwt')
       const response = await fetch(`http://localhost:8000/api/metrics/dashboard`, {
         headers: { Authorization: `Bearer ${token}` },
       })

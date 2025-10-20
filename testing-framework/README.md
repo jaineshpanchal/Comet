@@ -1,7 +1,7 @@
 # Testing Framework
 
 ## Overview
-The Testing Framework is a comprehensive AI-powered testing suite for the Comet DevOps Platform. It provides automated testing capabilities across API testing, end-to-end testing, and load testing with intelligent test generation and analysis.
+The Testing Framework is a comprehensive AI-powered testing suite for the GoLive DevOps Platform. It provides automated testing capabilities across API testing, end-to-end testing, and load testing with intelligent test generation and analysis.
 
 ## Architecture
 The framework consists of three microservices:
@@ -124,8 +124,8 @@ npm run test:coverage
 
 ## Integration
 
-### With Comet Platform
-The testing framework integrates with the main Comet platform services:
+### With GoLive Platform
+The testing framework integrates with the main GoLive platform services:
 - **API Gateway**: Routes testing requests through the main gateway
 - **User Management**: Uses platform authentication for test access
 - **Project Management**: Links tests to specific projects

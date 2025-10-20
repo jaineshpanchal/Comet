@@ -1,7 +1,7 @@
 {
-  "name": "@comet/api-gateway",
+  "name": "@golive/api-gateway",
   "version": "1.0.0",
-  "description": "Comet DevOps Platform API Gateway",
+  "description": "GoLive DevOps Platform API Gateway",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",

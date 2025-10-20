@@ -28,8 +28,8 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="Comet AI Services",
-    description="AI-powered services for the Comet DevOps Platform",
+    title="GoLive AI Services",
+    description="AI-powered services for the GoLive DevOps Platform",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -68,7 +68,7 @@ app.include_router(api_router, prefix="/api/v1")
 async def root():
     """Root endpoint"""
     return {
-        "message": "Comet AI Services",
+        "message": "GoLive AI Services",
         "version": "1.0.0",
         "docs": "/docs"
     }

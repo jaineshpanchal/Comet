@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Comet DevOps Platform includes a comprehensive database seed script that populates your development database with realistic sample data.
+The GoLive DevOps Platform includes a comprehensive database seed script that populates your development database with realistic sample data.
 
 ## What's Included
 
@@ -43,32 +43,32 @@ npm run seed
 
 | Email | Username | Role | Password |
 |-------|----------|------|----------|
-| admin@comet.dev | admin | ADMIN | password123 |
-| john.doe@comet.dev | johndoe | DEVELOPER | password123 |
-| jane.smith@comet.dev | janesmith | DEVELOPER | password123 |
-| alice.wilson@comet.dev | alicewilson | TESTER | password123 |
+| admin@golive.dev | admin | ADMIN | password123 |
+| john.doe@golive.dev | johndoe | DEVELOPER | password123 |
+| jane.smith@golive.dev | janesmith | DEVELOPER | password123 |
+| alice.wilson@golive.dev | alicewilson | TESTER | password123 |
 
 ### Projects
 
 1. **E-Commerce Web App** (Next.js/TypeScript)
    - Owner: John Doe
    - Team: Frontend Team
-   - Repository: https://github.com/comet-dev/ecommerce-web
+   - Repository: https://github.com/golive-dev/ecommerce-web
 
 2. **API Gateway Service** (Express/TypeScript)
    - Owner: Jane Smith
    - Team: Backend Team
-   - Repository: https://github.com/comet-dev/api-gateway
+   - Repository: https://github.com/golive-dev/api-gateway
 
 3. **Mobile App** (React Native/TypeScript)
    - Owner: John Doe
    - Team: Frontend Team
-   - Repository: https://github.com/comet-dev/mobile-app
+   - Repository: https://github.com/golive-dev/mobile-app
 
 4. **Data Analytics Service** (FastAPI/Python)
    - Owner: Alice Wilson
    - Team: Backend Team
-   - Repository: https://github.com/comet-dev/data-analytics
+   - Repository: https://github.com/golive-dev/data-analytics
 
 ### Metrics Generated
 

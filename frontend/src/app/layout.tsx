@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Comet DevOps Platform",
+  title: "GoLive DevOps Platform",
   description: "Complete end-to-end release management and DevOps automation platform",
 };
 

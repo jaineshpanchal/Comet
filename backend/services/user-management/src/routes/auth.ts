@@ -49,7 +49,7 @@ const generateTokens = (user: User) => {
     permissions: [] // Will be populated based on role
   };
 
-  const jwtSecret = process.env.JWT_SECRET || 'comet-jwt-secret-key';
+  const jwtSecret = process.env.JWT_SECRET || 'golive-jwt-secret-key';
   const jwtExpiresIn = process.env.JWT_EXPIRES_IN || '24h';
   const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || jwtSecret;
 
@@ -319,7 +319,7 @@ router.post('/refresh', asyncHandler(async (req: Request, res: Response) => {
   }
 
   try {
-    const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'comet-jwt-secret-key';
+    const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'golive-jwt-secret-key';
     const decoded = jwt.verify(refreshToken, jwtRefreshSecret) as any;
 
     // Find user
@@ -407,7 +407,7 @@ router.get('/verify', asyncHandler(async (req: Request, res: Response) => {
   }
 
   try {
-    const jwtSecret = process.env.JWT_SECRET || 'comet-jwt-secret-key';
+    const jwtSecret = process.env.JWT_SECRET || 'golive-jwt-secret-key';
     const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
     
     // Find user to ensure they still exist and are active

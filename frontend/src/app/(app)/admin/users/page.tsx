@@ -54,7 +54,7 @@ export default function AdminUsersPage() {
 
   const fetchCurrentUser = async () => {
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const res = await fetch("http://localhost:8000/api/auth/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -69,7 +69,7 @@ export default function AdminUsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const res = await fetch("http://localhost:8000/api/users?limit=100", {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -86,7 +86,7 @@ export default function AdminUsersPage() {
 
   const fetchAllPermissions = async () => {
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const res = await fetch("http://localhost:8000/api/users/permissions/all", {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -101,7 +101,7 @@ export default function AdminUsersPage() {
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const res = await fetch(`http://localhost:8000/api/users/${userId}/role`, {
         method: "PUT",
         headers: {
@@ -128,7 +128,7 @@ export default function AdminUsersPage() {
     setShowPermissionsModal(true)
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const res = await fetch(`http://localhost:8000/api/users/${user.id}/permissions`, {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -145,7 +145,7 @@ export default function AdminUsersPage() {
   const togglePermission = async (permission: string) => {
     if (!selectedUser) return
 
-    const token = localStorage.getItem("comet_jwt")
+    const token = localStorage.getItem("golive_jwt")
     const isCustom = customPermissions.includes(permission)
 
     try {

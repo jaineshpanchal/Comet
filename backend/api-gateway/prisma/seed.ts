@@ -32,7 +32,7 @@ async function main() {
 
   const admin = await prisma.user.create({
     data: {
-      email: 'admin@comet.dev',
+      email: 'admin@golive.dev',
       username: 'admin',
       firstName: 'Admin',
       lastName: 'User',
@@ -44,7 +44,7 @@ async function main() {
 
   const john = await prisma.user.create({
     data: {
-      email: 'john.doe@comet.dev',
+      email: 'john.doe@golive.dev',
       username: 'johndoe',
       firstName: 'John',
       lastName: 'Doe',
@@ -56,7 +56,7 @@ async function main() {
 
   const jane = await prisma.user.create({
     data: {
-      email: 'jane.smith@comet.dev',
+      email: 'jane.smith@golive.dev',
       username: 'janesmith',
       firstName: 'Jane',
       lastName: 'Smith',
@@ -68,7 +68,7 @@ async function main() {
 
   const alice = await prisma.user.create({
     data: {
-      email: 'alice.wilson@comet.dev',
+      email: 'alice.wilson@golive.dev',
       username: 'alicewilson',
       firstName: 'Alice',
       lastName: 'Wilson',
@@ -116,7 +116,7 @@ async function main() {
     data: {
       name: 'E-Commerce Web App',
       description: 'Next.js-based e-commerce platform with real-time inventory',
-      repositoryUrl: 'https://github.com/comet-dev/ecommerce-web',
+      repositoryUrl: 'https://github.com/golive-dev/ecommerce-web',
       branch: 'main',
       framework: 'Next.js',
       language: 'TypeScript',
@@ -129,7 +129,7 @@ async function main() {
     data: {
       name: 'API Gateway Service',
       description: 'GraphQL API gateway with authentication and rate limiting',
-      repositoryUrl: 'https://github.com/comet-dev/api-gateway',
+      repositoryUrl: 'https://github.com/golive-dev/api-gateway',
       branch: 'develop',
       framework: 'Express',
       language: 'TypeScript',
@@ -142,7 +142,7 @@ async function main() {
     data: {
       name: 'Mobile App (React Native)',
       description: 'Cross-platform mobile application for iOS and Android',
-      repositoryUrl: 'https://github.com/comet-dev/mobile-app',
+      repositoryUrl: 'https://github.com/golive-dev/mobile-app',
       branch: 'main',
       framework: 'React Native',
       language: 'TypeScript',
@@ -155,7 +155,7 @@ async function main() {
     data: {
       name: 'Data Analytics Service',
       description: 'Real-time data processing and analytics microservice',
-      repositoryUrl: 'https://github.com/comet-dev/data-analytics',
+      repositoryUrl: 'https://github.com/golive-dev/data-analytics',
       branch: 'main',
       framework: 'FastAPI',
       language: 'Python',
@@ -529,7 +529,7 @@ async function main() {
   console.log(`   - 67 Deployments`);
   console.log('\n🎉 Your dashboard is now populated with realistic data!\n');
   console.log('🔐 Login credentials:');
-  console.log('   Email: admin@comet.dev');
+  console.log('   Email: admin@golive.dev');
   console.log('   Password: password123\n');
 }
 

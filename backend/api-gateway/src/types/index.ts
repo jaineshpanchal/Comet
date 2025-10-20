@@ -1,4 +1,4 @@
-// Core types and interfaces for the Comet DevOps Platform
+// Core types and interfaces for the GoLive DevOps Platform
 
 export interface User {
   id: string;

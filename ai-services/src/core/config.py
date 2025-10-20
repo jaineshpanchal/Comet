@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     """Application settings"""
 
     # Basic settings
-    app_name: str = "Comet AI Services"
+    app_name: str = "GoLive AI Services"
     version: str = "1.0.0"
     debug: bool = True
 

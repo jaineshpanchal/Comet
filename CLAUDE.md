@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Comet is a flagship enterprise DevOps platform providing complete release management, AI-powered testing, code analysis, and seamless integrations. The platform combines a TypeScript/Node.js microservices backend, React/Next.js frontend, and Python AI services.
+GoLive is a flagship enterprise DevOps platform providing complete release management, AI-powered testing, code analysis, and seamless integrations. The platform combines a TypeScript/Node.js microservices backend, React/Next.js frontend, and Python AI services.
 
 ## Essential Commands
 
@@ -243,7 +243,7 @@ npm run test:load    # Load and performance tests
 - Elasticsearch (9200), Kibana (5601)
 - Prometheus (9090), Grafana (3001)
 
-**Network**: All services run on `comet-network` bridge network
+**Network**: All services run on `golive-network` bridge network
 
 **Volumes**: Persistent data for postgres, redis, elasticsearch, prometheus, grafana
 
@@ -284,7 +284,7 @@ npm run test:load    # Load and performance tests
 
 **Backend** (`.env` in `backend/api-gateway/`):
 ```
-DATABASE_URL=postgresql://user:pass@localhost:5432/comet_dev
+DATABASE_URL=postgresql://user:pass@localhost:5432/golive_dev
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=your-secret-key
 JWT_EXPIRATION=24h
@@ -303,7 +303,7 @@ NEXT_PUBLIC_AI_SERVICE_URL=http://localhost:8001
 **AI Services** (`.env` in `ai-services/`):
 ```
 OPENAI_API_KEY=your-openai-key
-DATABASE_URL=postgresql://user:pass@localhost:5432/comet_dev
+DATABASE_URL=postgresql://user:pass@localhost:5432/golive_dev
 REDIS_URL=redis://localhost:6379
 ```
 

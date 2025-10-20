@@ -9,12 +9,12 @@ services:
     environment:
       - NODE_ENV=development
       - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/comet_dev
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/golive_dev
     depends_on:
       - postgres
       - redis
     networks:
-      - comet-network
+      - golive-network
 
   pipeline-service:
     build: ./backend/services/pipeline-orchestration
@@ -23,12 +23,12 @@ services:
     environment:
       - NODE_ENV=development
       - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/comet_dev
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/golive_dev
     depends_on:
       - postgres
       - redis
     networks:
-      - comet-network
+      - golive-network
 
   testing-service:
     build: ./backend/services/testing-automation
@@ -37,12 +37,12 @@ services:
     environment:
       - NODE_ENV=development
       - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/comet_dev
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/golive_dev
     depends_on:
       - postgres
       - redis
     networks:
-      - comet-network
+      - golive-network
 
   # AI Services
   ai-service:
@@ -52,12 +52,12 @@ services:
     environment:
       - PYTHONPATH=/app
       - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/comet_dev
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/golive_dev
     depends_on:
       - postgres
       - redis
     networks:
-      - comet-network
+      - golive-network
 
   # Frontend
   frontend:
@@ -70,13 +70,13 @@ services:
     depends_on:
       - api-gateway
     networks:
-      - comet-network
+      - golive-network
 
   # Databases
   postgres:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_DB=comet_dev
+      - POSTGRES_DB=golive_dev
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     volumes:
@@ -85,7 +85,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - comet-network
+      - golive-network
 
   redis:
     image: redis:7-alpine
@@ -94,7 +94,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - comet-network
+      - golive-network
 
   # Monitoring & Logging
   elasticsearch:
@@ -108,7 +108,7 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - comet-network
+      - golive-network
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.0
@@ -119,7 +119,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - comet-network
+      - golive-network
 
   prometheus:
     image: prom/prometheus:latest
@@ -129,7 +129,7 @@ services:
       - ./infrastructure/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     networks:
-      - comet-network
+      - golive-network
 
   grafana:
     image: grafana/grafana:latest
@@ -143,7 +143,7 @@ services:
     depends_on:
       - prometheus
     networks:
-      - comet-network
+      - golive-network
 
 volumes:
   postgres_data:
@@ -153,5 +153,5 @@ volumes:
   grafana_data:
 
 networks:
-  comet-network:
+  golive-network:
     driver: bridge

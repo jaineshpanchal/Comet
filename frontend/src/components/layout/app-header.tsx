@@ -49,8 +49,8 @@ export function AppHeader() {
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 flex-shrink-0 relative overflow-hidden">
             <img
-              src="/Comet.png"
-              alt="Comet Logo"
+              src="/GoLive.png"
+              alt="GoLive Logo"
               className="w-10 h-10 object-contain"
               style={{
                 mixBlendMode: 'multiply',
@@ -59,7 +59,7 @@ export function AppHeader() {
             />
           </div>
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-sm font-bold tracking-tight text-slate-900 truncate">Comet DevOps</span>
+            <span className="text-sm font-bold tracking-tight text-slate-900 truncate">GoLive DevOps</span>
             <span className="text-[10px] font-medium tracking-wide text-slate-500 truncate">DEVOPS PLATFORM</span>
           </div>
         </div>

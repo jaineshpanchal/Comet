@@ -1,7 +1,7 @@
 {
-  "name": "@comet/user-management-service",
+  "name": "@golive/user-management-service",
   "version": "1.0.0",
-  "description": "User Management Microservice for Comet DevOps Platform",
+  "description": "User Management Microservice for GoLive DevOps Platform",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
@@ -59,9 +59,9 @@
     "authentication",
     "authorization",
     "devops",
-    "comet"
+    "golive"
   ],
-  "author": "Comet DevOps Team",
+  "author": "GoLive DevOps Team",
   "license": "PROPRIETARY",
   "engines": {
     "node": ">=18.0.0"

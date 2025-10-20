@@ -6,7 +6,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SERVICES_DIR="$SCRIPT_DIR/backend/services"
 
-echo "📊 Starting Comet Metrics Service..."
+echo "📊 Starting GoLive Metrics Service..."
 echo "🔧 Working directory: $SERVICES_DIR"
 
 # Kill existing metrics service

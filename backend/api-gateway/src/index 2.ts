@@ -46,7 +46,7 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Comet DevOps Platform API',
+      title: 'GoLive DevOps Platform API',
       version: '1.0.0',
       description: 'Enterprise DevOps Platform API Gateway'
     },

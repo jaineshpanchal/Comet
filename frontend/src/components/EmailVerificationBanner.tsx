@@ -15,7 +15,7 @@ export default function EmailVerificationBanner() {
 
   const fetchUserProfile = async () => {
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) return
 
       const response = await fetch("http://localhost:8000/api/auth/profile", {

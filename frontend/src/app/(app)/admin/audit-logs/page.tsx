@@ -62,7 +62,7 @@ export default function AuditLogsPage() {
     setError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setError("Not authenticated")
         return
@@ -101,7 +101,7 @@ export default function AuditLogsPage() {
     setStatsLoading(true)
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) return
 
       const response = await fetch("http://localhost:8000/api/audit-logs/statistics", {

@@ -1,8 +1,8 @@
-# 🏗️ Comet DevOps Platform - Technical Architecture
+# 🏗️ GoLive DevOps Platform - Technical Architecture
 
 ## 🎯 System Overview
 
-Comet is designed as a cloud-native, microservices-based platform with AI-first approach to DevOps automation. The architecture follows enterprise-grade patterns with scalability, security, and maintainability as core principles.
+GoLive is designed as a cloud-native, microservices-based platform with AI-first approach to DevOps automation. The architecture follows enterprise-grade patterns with scalability, security, and maintainability as core principles.
 
 ## 🏛️ High-Level Architecture
 
@@ -417,20 +417,20 @@ FROM base AS runner
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: comet-api-gateway
+  name: golive-api-gateway
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: comet-api-gateway
+      app: golive-api-gateway
   template:
     metadata:
       labels:
-        app: comet-api-gateway
+        app: golive-api-gateway
     spec:
       containers:
       - name: api-gateway
-        image: comet/api-gateway:latest
+        image: golive/api-gateway:latest
         ports:
         - containerPort: 3000
         env:
@@ -448,51 +448,51 @@ spec:
 ### Infrastructure as Code (Terraform)
 ```hcl
 # VPC Configuration
-resource "aws_vpc" "comet_vpc" {
+resource "aws_vpc" "golive_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
   
   tags = {
-    Name = "comet-vpc"
+    Name = "golive-vpc"
   }
 }
 
 # EKS Cluster
-resource "aws_eks_cluster" "comet_cluster" {
-  name     = "comet-cluster"
+resource "aws_eks_cluster" "golive_cluster" {
+  name     = "golive-cluster"
   role_arn = aws_iam_role.eks_cluster_role.arn
   version  = "1.28"
 
   vpc_config {
     subnet_ids = [
-      aws_subnet.comet_private_subnet_1.id,
-      aws_subnet.comet_private_subnet_2.id
+      aws_subnet.golive_private_subnet_1.id,
+      aws_subnet.golive_private_subnet_2.id
     ]
   }
 }
 
 # RDS PostgreSQL
-resource "aws_db_instance" "comet_postgres" {
-  identifier     = "comet-postgres"
+resource "aws_db_instance" "golive_postgres" {
+  identifier     = "golive-postgres"
   engine         = "postgres"
   engine_version = "15.4"
   instance_class = "db.t3.medium"
   allocated_storage = 100
   
-  db_name  = "comet"
-  username = "comet_user"
+  db_name  = "golive"
+  username = "golive_user"
   password = var.db_password
   
   vpc_security_group_ids = [aws_security_group.rds.id]
-  subnet_group_name      = aws_db_subnet_group.comet.name
+  subnet_group_name      = aws_db_subnet_group.golive.name
   
   backup_retention_period = 7
   backup_window          = "03:00-04:00"
   maintenance_window     = "sun:04:00-sun:05:00"
   
   tags = {
-    Name = "comet-postgres"
+    Name = "golive-postgres"
   }
 }
 ```

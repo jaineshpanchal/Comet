@@ -4,7 +4,7 @@ const http = require('http');
 function login() {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify({
-      email: 'admin@comet.dev',
+      email: 'admin@golive.dev',
       password: 'password123'
     });
 

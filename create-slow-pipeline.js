@@ -7,7 +7,7 @@ async function createSlowPipeline() {
     // Login
     console.log('🔐 Logging in...');
     const loginResponse = await axios.post(`${API_URL}/api/auth/login`, {
-      email: 'admin@comet.dev',
+      email: 'admin@golive.dev',
       password: 'password123'
     });
 

@@ -25,7 +25,7 @@ async def health_check() -> Dict[str, Any]:
 async def root() -> Dict[str, str]:
     """Root endpoint"""
     return {
-        "message": "Comet AI Services",
+        "message": "GoLive AI Services",
         "version": "1.0.0",
         "docs": "/docs"
     }

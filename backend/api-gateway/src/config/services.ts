@@ -87,7 +87,7 @@ export const APP_CONFIG = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   
   // Security
-  JWT_SECRET: process.env.JWT_SECRET || 'comet-jwt-secret-key',
+  JWT_SECRET: process.env.JWT_SECRET || 'golive-jwt-secret-key',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   

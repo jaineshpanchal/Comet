@@ -347,7 +347,7 @@ export default function IntegrationsPage() {
           <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
             <CardHeader>
               <CardTitle>Add New Integration</CardTitle>
-              <CardDescription>Connect a service to your Comet platform</CardDescription>
+              <CardDescription>Connect a service to your GoLive platform</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {!selectedType ? (

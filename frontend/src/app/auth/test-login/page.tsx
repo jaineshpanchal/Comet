@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function TestLoginPage() {
-  const [email, setEmail] = useState("admin@comet.dev");
+  const [email, setEmail] = useState("admin@golive.dev");
   const [password, setPassword] = useState("password123");
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function TestLoginPage() {
       setMessage(`Status: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`);
 
       if (response.ok && data?.data?.tokens?.accessToken) {
-        localStorage.setItem("comet_jwt", data.data.tokens.accessToken);
+        localStorage.setItem("golive_jwt", data.data.tokens.accessToken);
         setMessage("Login successful! Redirecting...");
         setTimeout(() => router.push("/dashboard"), 1000);
       }

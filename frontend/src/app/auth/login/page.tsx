@@ -69,7 +69,7 @@ export default function LoginPage() {
       // Store JWT in localStorage
       if (data?.data?.tokens?.accessToken) {
         console.log('Storing token...');
-        localStorage.setItem("comet_jwt", data.data.tokens.accessToken);
+        localStorage.setItem("golive_jwt", data.data.tokens.accessToken);
         api.setToken(data.data.tokens.accessToken);
         console.log('Token stored, redirecting to dashboard...');
         setLoading(false);
@@ -119,7 +119,7 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">Welcome to Comet</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Welcome to GoLive</h1>
             <p className="text-gray-600">
               Enterprise DevOps Platform
             </p>
@@ -258,7 +258,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                   <span className="text-xs font-medium text-gray-600">Email:</span>
-                  <code className="text-sm font-mono text-blue-700 font-semibold">admin@comet.dev</code>
+                  <code className="text-sm font-mono text-blue-700 font-semibold">admin@golive.dev</code>
                 </div>
                 <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                   <span className="text-xs font-medium text-gray-600">Password:</span>

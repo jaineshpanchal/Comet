@@ -36,7 +36,7 @@ export class SlackNotificationService {
         JSON.stringify({
           webhookUrl,
           channel,
-          username: 'Comet DevOps',
+          username: 'GoLive DevOps',
           iconEmoji: ':rocket:',
         } as SlackConfig)
       );
@@ -403,13 +403,13 @@ export class SlackNotificationService {
   static async testIntegration(integrationId: string): Promise<boolean> {
     try {
       await this.sendNotification(integrationId, {
-        text: ':wave: Test notification from Comet DevOps Platform',
+        text: ':wave: Test notification from GoLive DevOps Platform',
         blocks: [
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: ':white_check_mark: *Slack integration is working!*\n\nYour Comet DevOps platform is successfully connected to this Slack workspace.',
+              text: ':white_check_mark: *Slack integration is working!*\n\nYour GoLive DevOps platform is successfully connected to this Slack workspace.',
             },
           },
         ],

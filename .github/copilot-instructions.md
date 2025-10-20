@@ -1,7 +1,7 @@
-# Comet DevOps Platform - Development Instructions
+# GoLive DevOps Platform - Development Instructions
 
 ## Project Overview
-Comet is a flagship, state-of-the-art enterprise DevOps platform providing:
+GoLive is a flagship, state-of-the-art enterprise DevOps platform providing:
 - ✅ Complete end-to-end release management
 - ✅ Robotic/Agentic testing framework  
 - ✅ Code scanning and quality analysis

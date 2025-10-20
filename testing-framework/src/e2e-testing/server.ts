@@ -632,7 +632,7 @@ async function generateAIE2EScenarios(appUrl: string, userJourneys: string[], co
       {
         id: uuidv4(),
         type: 'title',
-        expected: 'Comet DevOps Platform',
+        expected: 'GoLive DevOps Platform',
         description: 'Verify page title'
       },
       {

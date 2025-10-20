@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Health Check Script for Comet Services
+# Health Check Script for GoLive Services
 
-echo "🔍 Checking Comet DevOps Platform Services..."
+echo "🔍 Checking GoLive DevOps Platform Services..."
 
 # Check metrics service
 echo "📊 Checking Metrics Service (port 9090)..."
@@ -23,7 +23,7 @@ fi
 # Show running processes
 echo ""
 echo "🔧 Active Node.js processes:"
-ps aux | grep -E "(metrics-service|next.*3030)" | grep -v grep | awk '{print $2, $11, $12, $13, $14}' || echo "No Comet services running"
+ps aux | grep -E "(metrics-service|next.*3030)" | grep -v grep | awk '{print $2, $11, $12, $13, $14}' || echo "No GoLive services running"
 
 echo ""
 echo "📋 Service URLs:"

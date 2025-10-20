@@ -51,7 +51,7 @@ export default function SettingsPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("comet_jwt")
+        const token = localStorage.getItem("golive_jwt")
         if (!token) throw new Error("No token")
 
         const res = await fetch("http://localhost:8000/api/auth/profile", {
@@ -95,7 +95,7 @@ export default function SettingsPage() {
   const fetchActivityLogs = async () => {
     setActivityLoading(true)
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token || !user) return
 
       const response = await fetch(`http://localhost:8000/api/audit-logs/user/${user.id}?limit=50`, {
@@ -120,7 +120,7 @@ export default function SettingsPage() {
     setIsLoading(true)
     setMessage(null)
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) throw new Error("Not authenticated")
 
       const res = await fetch("http://localhost:8000/api/auth/profile", {
@@ -160,7 +160,7 @@ export default function SettingsPage() {
         throw new Error("Password must be at least 8 characters long")
       }
 
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) throw new Error("Not authenticated")
 
       const res = await fetch("http://localhost:8000/api/auth/change-password", {

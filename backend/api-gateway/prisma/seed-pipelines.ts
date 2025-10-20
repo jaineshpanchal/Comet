@@ -7,7 +7,7 @@ async function main() {
 
   // Get the admin user
   const adminUser = await prisma.user.findFirst({
-    where: { email: 'admin@comet.dev' }
+    where: { email: 'admin@golive.dev' }
   });
 
   if (!adminUser) {
@@ -17,16 +17,16 @@ async function main() {
 
   // Get or create project
   let project = await prisma.project.findFirst({
-    where: { name: 'Comet Platform' }
+    where: { name: 'GoLive Platform' }
   });
 
   if (!project) {
     project = await prisma.project.create({
       data: {
-        name: 'Comet Platform',
+        name: 'GoLive Platform',
         description: 'Main DevOps platform',
         ownerId: adminUser.id,
-        repositoryUrl: 'https://github.com/example/comet',
+        repositoryUrl: 'https://github.com/example/golive',
         branch: 'main',
         language: 'TypeScript',
         framework: 'Next.js',

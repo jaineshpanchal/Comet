@@ -1,6 +1,6 @@
 # Security & Compliance Guide
 
-Complete guide to Comet's security and compliance features.
+Complete guide to GoLive's security and compliance features.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ Complete guide to Comet's security and compliance features.
 
 ## Overview
 
-Comet implements enterprise-grade security and compliance features including:
+GoLive implements enterprise-grade security and compliance features including:
 
 - **Role-Based Access Control (RBAC)** with 40+ granular permissions
 - **Encrypted Secrets Management** using AES-256-GCM encryption
@@ -28,7 +28,7 @@ Comet implements enterprise-grade security and compliance features including:
 
 ### User Roles
 
-Comet supports 5 hierarchical roles:
+GoLive supports 5 hierarchical roles:
 
 | Role | Description | Default Permissions |
 |------|-------------|---------------------|
@@ -338,7 +338,7 @@ Scans automatically:
 
 ### Accessing the Dashboard
 
-Navigate to `/security` in the Comet web interface.
+Navigate to `/security` in the GoLive web interface.
 
 ## Best Practices
 
@@ -494,5 +494,5 @@ If audit logs aren't being created:
 
 For security issues or questions:
 - Create an issue on GitHub
-- Contact: security@comet-devops.com
+- Contact: security@golive-devops.com
 - Review audit logs for troubleshooting

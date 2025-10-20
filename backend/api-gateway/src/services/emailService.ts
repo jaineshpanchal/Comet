@@ -88,22 +88,22 @@ export class EmailService {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🚀 Welcome to Comet DevOps!</h1>
+            <h1>🚀 Welcome to GoLive DevOps!</h1>
           </div>
           <div class="content">
             <p>Hi ${name},</p>
-            <p>Thank you for registering with Comet DevOps Platform! To complete your registration and start using our platform, please verify your email address.</p>
+            <p>Thank you for registering with GoLive DevOps Platform! To complete your registration and start using our platform, please verify your email address.</p>
             <p style="text-align: center;">
               <a href="${verificationUrl}" class="button">Verify Email Address</a>
             </p>
             <p>Or copy and paste this link into your browser:</p>
             <p style="word-break: break-all; color: #667eea;">${verificationUrl}</p>
             <p>This verification link will expire in 24 hours.</p>
-            <p>If you didn't create an account with Comet DevOps, you can safely ignore this email.</p>
-            <p>Best regards,<br>The Comet DevOps Team</p>
+            <p>If you didn't create an account with GoLive DevOps, you can safely ignore this email.</p>
+            <p>Best regards,<br>The GoLive DevOps Team</p>
           </div>
           <div class="footer">
-            <p>© 2025 Comet DevOps Platform. All rights reserved.</p>
+            <p>© 2025 GoLive DevOps Platform. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -113,7 +113,7 @@ export class EmailService {
     const text = `
 Hi ${name},
 
-Thank you for registering with Comet DevOps Platform!
+Thank you for registering with GoLive DevOps Platform!
 
 To complete your registration and start using our platform, please verify your email address by clicking the link below:
 
@@ -121,15 +121,15 @@ ${verificationUrl}
 
 This verification link will expire in 24 hours.
 
-If you didn't create an account with Comet DevOps, you can safely ignore this email.
+If you didn't create an account with GoLive DevOps, you can safely ignore this email.
 
 Best regards,
-The Comet DevOps Team
+The GoLive DevOps Team
     `.trim();
 
     return await this.sendEmail({
       to: email,
-      subject: '🚀 Verify your email - Comet DevOps Platform',
+      subject: '🚀 Verify your email - GoLive DevOps Platform',
       html,
       text,
     });
@@ -166,7 +166,7 @@ The Comet DevOps Team
           </div>
           <div class="content">
             <p>Hi ${name},</p>
-            <p>We received a request to reset your password for your Comet DevOps Platform account.</p>
+            <p>We received a request to reset your password for your GoLive DevOps Platform account.</p>
             <p style="text-align: center;">
               <a href="${resetUrl}" class="button">Reset Password</a>
             </p>
@@ -180,10 +180,10 @@ The Comet DevOps Team
                 <li>Your password will remain unchanged until you create a new one</li>
               </ul>
             </div>
-            <p>Best regards,<br>The Comet DevOps Team</p>
+            <p>Best regards,<br>The GoLive DevOps Team</p>
           </div>
           <div class="footer">
-            <p>© 2025 Comet DevOps Platform. All rights reserved.</p>
+            <p>© 2025 GoLive DevOps Platform. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -193,7 +193,7 @@ The Comet DevOps Team
     const text = `
 Hi ${name},
 
-We received a request to reset your password for your Comet DevOps Platform account.
+We received a request to reset your password for your GoLive DevOps Platform account.
 
 To reset your password, click the link below:
 
@@ -204,12 +204,12 @@ This password reset link will expire in 1 hour.
 If you didn't request this reset, please ignore this email. Your password will remain unchanged.
 
 Best regards,
-The Comet DevOps Team
+The GoLive DevOps Team
     `.trim();
 
     return await this.sendEmail({
       to: email,
-      subject: '🔐 Password Reset Request - Comet DevOps Platform',
+      subject: '🔐 Password Reset Request - GoLive DevOps Platform',
       html,
       text,
     });
@@ -239,11 +239,11 @@ The Comet DevOps Team
       <body>
         <div class="container">
           <div class="header">
-            <h1>🎉 Welcome to Comet DevOps!</h1>
+            <h1>🎉 Welcome to GoLive DevOps!</h1>
           </div>
           <div class="content">
             <p>Hi ${name},</p>
-            <p>Your email has been verified successfully! Welcome to the Comet DevOps Platform.</p>
+            <p>Your email has been verified successfully! Welcome to the GoLive DevOps Platform.</p>
             <div class="features">
               <h2>🚀 Get Started:</h2>
               <div class="feature">✅ Create your first project</div>
@@ -255,10 +255,10 @@ The Comet DevOps Team
               <a href="${dashboardUrl}" class="button">Go to Dashboard</a>
             </p>
             <p>If you have any questions or need assistance, our support team is here to help!</p>
-            <p>Best regards,<br>The Comet DevOps Team</p>
+            <p>Best regards,<br>The GoLive DevOps Team</p>
           </div>
           <div class="footer">
-            <p>© 2025 Comet DevOps Platform. All rights reserved.</p>
+            <p>© 2025 GoLive DevOps Platform. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -268,7 +268,7 @@ The Comet DevOps Team
     const text = `
 Hi ${name},
 
-Your email has been verified successfully! Welcome to the Comet DevOps Platform.
+Your email has been verified successfully! Welcome to the GoLive DevOps Platform.
 
 Get Started:
 - Create your first project
@@ -281,12 +281,12 @@ Visit your dashboard: ${dashboardUrl}
 If you have any questions or need assistance, our support team is here to help!
 
 Best regards,
-The Comet DevOps Team
+The GoLive DevOps Team
     `.trim();
 
     return await this.sendEmail({
       to: email,
-      subject: '🎉 Welcome to Comet DevOps Platform!',
+      subject: '🎉 Welcome to GoLive DevOps Platform!',
       html,
       text,
     });

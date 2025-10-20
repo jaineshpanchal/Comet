@@ -1,4 +1,4 @@
-# Comet DevOps Platform - Quick Start Guide
+# GoLive DevOps Platform - Quick Start Guide
 
 ## 🚀 Super Easy Startup
 

@@ -79,7 +79,7 @@ export default function PipelineExecutionMonitor({
 
   const fetchPipelineRun = async () => {
     try {
-      const token = localStorage.getItem("comet_jwt");
+      const token = localStorage.getItem("golive_jwt");
 
       // Fetch pipeline stages
       const stagesResponse = await fetch(

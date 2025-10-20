@@ -53,7 +53,7 @@ export default function ActivityFeed({ limit = 20, showLiveIndicator = true }: A
 
   const fetchActivities = async () => {
     try {
-      const token = localStorage.getItem("comet_jwt");
+      const token = localStorage.getItem("golive_jwt");
       const response = await fetch(
         `http://localhost:8000/api/metrics/activities?limit=${limit}&type=all`,
         {

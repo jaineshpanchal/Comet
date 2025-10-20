@@ -1,7 +1,7 @@
 {
-  "name": "@comet/backend",
+  "name": "@golive/backend",
   "version": "1.0.0",
-  "description": "Comet DevOps Platform Backend Services",
+  "description": "GoLive DevOps Platform Backend Services",
   "main": "dist/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:gateway\" \"npm run dev:services\"",

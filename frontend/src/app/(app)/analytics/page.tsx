@@ -37,7 +37,7 @@ export default function AnalyticsPage() {
   const fetchAnalytics = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("comet_jwt");
+      const token = localStorage.getItem("golive_jwt");
       const response = await fetch(
         `http://localhost:8000/api/analytics?timeRange=${timeRange}`,
         {

@@ -100,7 +100,7 @@ export default function PipelineDetailPage() {
     setError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setError("Not authenticated")
         return
@@ -132,7 +132,7 @@ export default function PipelineDetailPage() {
     setDeleteError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setDeleteError("Not authenticated")
         return
@@ -163,7 +163,7 @@ export default function PipelineDetailPage() {
     setRunningPipeline(true)
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const response = await fetch(`http://localhost:8000/api/pipelines/${pipelineId}/run`, {
         method: "POST",
         headers: {

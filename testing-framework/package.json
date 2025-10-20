@@ -1,7 +1,7 @@
 {
-  "name": "@comet/testing-framework",
+  "name": "@golive/testing-framework",
   "version": "1.0.0",
-  "description": "Advanced AI-powered testing framework for Comet DevOps Platform",
+  "description": "Advanced AI-powered testing framework for GoLive DevOps Platform",
   "main": "dist/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:e2e\" \"npm run dev:load\"",

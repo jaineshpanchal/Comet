@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 🚀 Comet DevOps Platform - Development Environment Setup
-# This script sets up the complete development environment for Comet
+# 🚀 GoLive DevOps Platform - Development Environment Setup
+# This script sets up the complete development environment for GoLive
 
 set -e
 
@@ -210,7 +210,7 @@ NODE_ENV=development
 PORT=3000
 
 # Database
-DATABASE_URL=postgresql://postgres:password@localhost:5432/comet_dev
+DATABASE_URL=postgresql://postgres:password@localhost:5432/golive_dev
 
 # Redis
 REDIS_URL=redis://localhost:6379
@@ -264,7 +264,7 @@ PYTHONPATH=/app
 ENVIRONMENT=development
 
 # Database
-DATABASE_URL=postgresql://postgres:password@localhost:5432/comet_dev
+DATABASE_URL=postgresql://postgres:password@localhost:5432/golive_dev
 
 # Redis
 REDIS_URL=redis://localhost:6379
@@ -285,10 +285,10 @@ EOF
     # Root .env
     if [ ! -f ".env" ]; then
         cat > .env << EOF
-# Comet DevOps Platform - Development Environment
+# GoLive DevOps Platform - Development Environment
 
 # Database Configuration
-POSTGRES_DB=comet_dev
+POSTGRES_DB=golive_dev
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=password
 
@@ -305,7 +305,7 @@ AI_SERVICES_PORT=8001
 
 # Docker Configuration
 DOCKER_REGISTRY=localhost:5000
-COMPOSE_PROJECT_NAME=comet
+COMPOSE_PROJECT_NAME=golive
 EOF
         log_success "Root .env created"
     fi
@@ -319,7 +319,7 @@ setup_git_hooks() {
         # Pre-commit hook
         cat > .git/hooks/pre-commit << EOF
 #!/bin/sh
-# Comet DevOps Platform - Pre-commit hook
+# GoLive DevOps Platform - Pre-commit hook
 
 echo "Running pre-commit checks..."
 
@@ -357,7 +357,7 @@ EOF
         # Pre-push hook
         cat > .git/hooks/pre-push << EOF
 #!/bin/sh
-# Comet DevOps Platform - Pre-push hook
+# GoLive DevOps Platform - Pre-push hook
 
 echo "Running pre-push checks..."
 
@@ -391,9 +391,9 @@ create_dev_scripts() {
     # Start script
     cat > start-dev.sh << EOF
 #!/bin/bash
-# Start Comet DevOps Platform in development mode
+# Start GoLive DevOps Platform in development mode
 
-echo "🚀 Starting Comet DevOps Platform..."
+echo "🚀 Starting GoLive DevOps Platform..."
 
 # Start databases
 echo "Starting databases..."
@@ -443,12 +443,12 @@ EOF
     # Stop script
     cat > stop-dev.sh << EOF
 #!/bin/bash
-# Stop Comet DevOps Platform development environment
+# Stop GoLive DevOps Platform development environment
 
-echo "🛑 Stopping Comet DevOps Platform..."
+echo "🛑 Stopping GoLive DevOps Platform..."
 
 # Stop Node.js processes
-pkill -f "node.*comet" || true
+pkill -f "node.*golive" || true
 pkill -f "next.*dev" || true
 
 # Stop Python processes
@@ -466,7 +466,7 @@ EOF
     # Reset script
     cat > reset-dev.sh << EOF
 #!/bin/bash
-# Reset Comet DevOps Platform development environment
+# Reset GoLive DevOps Platform development environment
 
 echo "🔄 Resetting development environment..."
 
@@ -500,11 +500,11 @@ EOF
 create_vscode_workspace() {
     log_info "Creating VS Code workspace configuration..."
     
-    cat > comet.code-workspace << EOF
+    cat > golive.code-workspace << EOF
 {
     "folders": [
         {
-            "name": "🚀 Comet DevOps Platform",
+            "name": "🚀 GoLive DevOps Platform",
             "path": "."
         },
         {
@@ -616,7 +616,7 @@ EOF
 
 # Main setup function
 main() {
-    echo "🚀 Comet DevOps Platform - Development Environment Setup"
+    echo "🚀 GoLive DevOps Platform - Development Environment Setup"
     echo "======================================================="
     echo ""
     
@@ -653,7 +653,7 @@ main() {
     echo "1. Review and update the .env files with your API keys"
     echo "2. Run './start-dev.sh' to start all services"
     echo "3. Open http://localhost:3030 to access the frontend"
-    echo "4. Open the VS Code workspace: code comet.code-workspace"
+    echo "4. Open the VS Code workspace: code golive.code-workspace"
     echo ""
     echo "Useful commands:"
     echo "  ./start-dev.sh  - Start all development services"

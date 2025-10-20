@@ -5,10 +5,10 @@ pkill -f "ts-node.*metrics-service" || true
 pkill -f "next dev" || true
 sleep 2
 
-echo "🚀 Starting Comet DevOps Dashboard..."
+echo "🚀 Starting GoLive DevOps Dashboard..."
 
 # Start metrics service in background
-cd /Users/jaineshpanchal/Documents/GitHub/Comet/backend/services
+cd /Users/jaineshpanchal/Documents/GitHub/GoLive/backend/services
 npx ts-node metrics-service.ts &
 METRICS_PID=$!
 
@@ -16,7 +16,7 @@ METRICS_PID=$!
 sleep 3
 
 # Start frontend
-cd /Users/jaineshpanchal/Documents/GitHub/Comet/frontend
+cd /Users/jaineshpanchal/Documents/GitHub/GoLive/frontend
 npm run dev &
 FRONTEND_PID=$!
 

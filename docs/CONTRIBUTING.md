@@ -1,6 +1,6 @@
-# 🚀 Contributing to Comet DevOps Platform
+# 🚀 Contributing to GoLive DevOps Platform
 
-Thank you for your interest in contributing to Comet! This document provides guidelines and instructions for contributing to our flagship DevOps platform.
+Thank you for your interest in contributing to GoLive! This document provides guidelines and instructions for contributing to our flagship DevOps platform.
 
 ## 📋 Table of Contents
 
@@ -31,8 +31,8 @@ We are committed to providing a welcoming and inspiring community for all. Pleas
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/comet-devops-platform.git
-   cd comet-devops-platform
+   git clone https://github.com/your-org/golive-devops-platform.git
+   cd golive-devops-platform
    ```
 
 2. **Run the setup script**
@@ -439,8 +439,8 @@ If you need help with contributing:
 
 ## 📝 License
 
-By contributing to Comet, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+By contributing to GoLive, you agree that your contributions will be licensed under the [MIT License](LICENSE).
 
 ---
 
-Thank you for contributing to Comet! Together, we're building the future of DevOps automation. 🚀
+Thank you for contributing to GoLive! Together, we're building the future of DevOps automation. 🚀

@@ -1,6 +1,6 @@
-# Comet DevOps Platform - Deployment Guide
+# GoLive DevOps Platform - Deployment Guide
 
-This guide provides comprehensive instructions for deploying the Comet DevOps Platform in production.
+This guide provides comprehensive instructions for deploying the GoLive DevOps Platform in production.
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
@@ -35,8 +35,8 @@ docker system df
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-org/comet.git
-cd comet
+git clone https://github.com/your-org/golive.git
+cd golive
 ```
 
 ### 2. Configure Environment Variables
@@ -88,9 +88,9 @@ Access the application:
 ### Database Configuration
 ```bash
 # PostgreSQL
-DATABASE_URL=postgresql://user:password@postgres:5432/comet_production
-POSTGRES_DB=comet_production
-POSTGRES_USER=comet_user
+DATABASE_URL=postgresql://user:password@postgres:5432/golive_production
+POSTGRES_DB=golive_production
+POSTGRES_USER=golive_user
 POSTGRES_PASSWORD=<strong-password>
 ```
 
@@ -137,7 +137,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=your-app-password
-SMTP_FROM=Comet DevOps <noreply@yourdomain.com>
+SMTP_FROM=GoLive DevOps <noreply@yourdomain.com>
 ```
 
 ## Deployment Options
@@ -165,14 +165,14 @@ docker-compose -f docker-compose.prod.yml down -v
 
 ```bash
 # Create namespace
-kubectl create namespace comet
+kubectl create namespace golive
 
 # Apply configurations
 kubectl apply -f kubernetes/
 
 # Check deployment status
-kubectl get pods -n comet
-kubectl get services -n comet
+kubectl get pods -n golive
+kubectl get services -n golive
 ```
 
 ### Option 3: Cloud Platforms
@@ -182,15 +182,15 @@ kubectl get services -n comet
 # Build and push images to ECR
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
 
-docker tag comet-api-gateway <account-id>.dkr.ecr.us-east-1.amazonaws.com/comet-api-gateway:latest
-docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/comet-api-gateway:latest
+docker tag golive-api-gateway <account-id>.dkr.ecr.us-east-1.amazonaws.com/golive-api-gateway:latest
+docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/golive-api-gateway:latest
 ```
 
 #### Google Cloud Run
 ```bash
 # Build and deploy
-gcloud builds submit --tag gcr.io/project-id/comet-api-gateway
-gcloud run deploy comet-api-gateway --image gcr.io/project-id/comet-api-gateway --platform managed
+gcloud builds submit --tag gcr.io/project-id/golive-api-gateway
+gcloud run deploy golive-api-gateway --image gcr.io/project-id/golive-api-gateway --platform managed
 ```
 
 ## Database Setup
@@ -207,10 +207,10 @@ docker-compose -f docker-compose.prod.yml run --rm api-gateway npx prisma db see
 ### Database Backup
 ```bash
 # Backup PostgreSQL
-docker exec comet-postgres pg_dump -U comet_user comet_production > backup_$(date +%Y%m%d_%H%M%S).sql
+docker exec golive-postgres pg_dump -U golive_user golive_production > backup_$(date +%Y%m%d_%H%M%S).sql
 
 # Restore from backup
-docker exec -i comet-postgres psql -U comet_user comet_production < backup.sql
+docker exec -i golive-postgres psql -U golive_user golive_production < backup.sql
 ```
 
 ### Database Migrations
@@ -256,7 +256,7 @@ curl http://localhost:8000/api/health/services
 docker stats
 
 # Service-specific stats
-docker stats comet-api-gateway comet-frontend comet-postgres
+docker stats golive-api-gateway golive-frontend golive-postgres
 ```
 
 ## Scaling
@@ -307,20 +307,20 @@ kill -9 <PID>
 #### 2. Database Connection Failed
 ```bash
 # Check PostgreSQL container
-docker logs comet-postgres
+docker logs golive-postgres
 
 # Verify database credentials in .env
 # Test connection
-docker exec -it comet-postgres psql -U comet_user -d comet_production
+docker exec -it golive-postgres psql -U golive_user -d golive_production
 ```
 
 #### 3. Redis Connection Failed
 ```bash
 # Check Redis container
-docker logs comet-redis
+docker logs golive-redis
 
 # Test Redis connection
-docker exec -it comet-redis redis-cli -a <password> ping
+docker exec -it golive-redis redis-cli -a <password> ping
 ```
 
 #### 4. Migration Failures
@@ -366,7 +366,7 @@ docker-compose -f docker-compose.prod.yml config
 ### Automated Backups
 ```bash
 # Add to crontab
-0 2 * * * /path/to/comet/scripts/backup.sh
+0 2 * * * /path/to/golive/scripts/backup.sh
 
 # Backup script location
 ./scripts/backup.sh
@@ -407,10 +407,10 @@ NODE_OPTIONS="--max-old-space-size=2048"
 ## Support
 
 For issues and questions:
-- **GitHub Issues**: https://github.com/your-org/comet/issues
-- **Documentation**: https://docs.comet.dev
-- **Community**: https://discord.gg/comet
+- **GitHub Issues**: https://github.com/your-org/golive/issues
+- **Documentation**: https://docs.golive.dev
+- **Community**: https://discord.gg/golive
 
 ## License
 
-Copyright © 2024 Comet DevOps Platform. All rights reserved.
+Copyright © 2024 GoLive DevOps Platform. All rights reserved.

@@ -1,6 +1,6 @@
 # User Management Service
 
-A comprehensive microservice for user authentication, authorization, and team management in the Comet DevOps platform.
+A comprehensive microservice for user authentication, authorization, and team management in the GoLive DevOps platform.
 
 ## Features
 
@@ -96,9 +96,9 @@ cp .env.example .env
 
 1. **Install PostgreSQL** and create database:
    ```sql
-   CREATE DATABASE comet_dev;
-   CREATE USER comet_user WITH PASSWORD 'your_password';
-   GRANT ALL PRIVILEGES ON DATABASE comet_dev TO comet_user;
+   CREATE DATABASE golive_dev;
+   CREATE USER golive_user WITH PASSWORD 'your_password';
+   GRANT ALL PRIVILEGES ON DATABASE golive_dev TO golive_user;
    ```
 
 2. **Generate Prisma Client**:
@@ -319,4 +319,4 @@ CMD ["npm", "start"]
 
 ## License
 
-This project is part of the Comet DevOps Platform and is proprietary software.
+This project is part of the GoLive DevOps Platform and is proprietary software.

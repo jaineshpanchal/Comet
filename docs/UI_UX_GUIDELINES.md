@@ -1,8 +1,8 @@
-# 🎨 UI/UX Design Guidelines - Comet DevOps Platform
+# 🎨 UI/UX Design Guidelines - GoLive DevOps Platform
 
 ## 🎯 Design Philosophy
 
-Comet follows Apple's design principles combined with modern DevOps workflow needs, creating an interface that's powerful yet intuitive, professional yet approachable.
+GoLive follows Apple's design principles combined with modern DevOps workflow needs, creating an interface that's powerful yet intuitive, professional yet approachable.
 
 ### Core Principles
 
@@ -18,9 +18,9 @@ Comet follows Apple's design principles combined with modern DevOps workflow nee
 
 ```css
 /* Primary Colors */
---comet-blue: #007AFF;           /* Primary brand color */
---comet-blue-dark: #005299;      /* Dark variant */
---comet-blue-light: #B3D7FF;     /* Light variant */
+--golive-blue: #007AFF;           /* Primary brand color */
+--golive-blue-dark: #005299;      /* Dark variant */
+--golive-blue-light: #B3D7FF;     /* Light variant */
 
 /* Semantic Colors */
 --success: #34C759;              /* Success states, passing tests */
@@ -388,7 +388,7 @@ Comet follows Apple's design principles combined with modern DevOps workflow nee
 
 /* Focus States */
 .interactive:focus {
-  outline: 2px solid var(--comet-blue);
+  outline: 2px solid var(--golive-blue);
   outline-offset: 2px;
 }
 ```
@@ -615,4 +615,4 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
 ---
 
-This design system ensures Comet delivers a consistent, accessible, and delightful user experience across all devices and use cases, maintaining the high standards users expect from enterprise DevOps platforms.
+This design system ensures GoLive delivers a consistent, accessible, and delightful user experience across all devices and use cases, maintaining the high standards users expect from enterprise DevOps platforms.

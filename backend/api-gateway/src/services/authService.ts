@@ -102,10 +102,10 @@ export class AuthService {
     const { email, password } = loginRequest;
 
     // Demo mode: Allow demo credentials without database
-    if (email === 'demo@comet.dev' && password === 'Demo#2025!Comet') {
+    if (email === 'demo@golive.dev' && password === 'Demo#2025!GoLive') {
       const demoUser = {
         id: 'demo-user-id',
-        email: 'demo@comet.dev',
+        email: 'demo@golive.dev',
         username: 'demo',
         firstName: 'Demo',
         lastName: 'User',
@@ -284,7 +284,7 @@ export class AuthService {
       if (decoded.userId === 'demo-user-id') {
         const demoUser = {
           id: 'demo-user-id',
-          email: 'demo@comet.dev',
+          email: 'demo@golive.dev',
           username: 'demo',
           firstName: 'Demo',
           lastName: 'User',

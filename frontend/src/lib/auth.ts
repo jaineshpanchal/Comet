@@ -1,7 +1,7 @@
 'use client';
 
-const AUTH_TOKEN_STORAGE_KEY = 'comet_jwt';
-const AUTH_EVENT_NAME = 'comet-auth-change';
+const AUTH_TOKEN_STORAGE_KEY = 'golive_jwt';
+const AUTH_EVENT_NAME = 'golive-auth-change';
 
 export type AuthChangeDetail = {
   isAuthenticated: boolean;
@@ -77,7 +77,7 @@ export const clearAuthState = (options?: { preservePreferences?: boolean; additi
 
     if (typeof window.sessionStorage !== 'undefined') {
       try {
-        window.sessionStorage.removeItem('comet-session');
+        window.sessionStorage.removeItem('golive-session');
       } catch (error) {
         console.warn('Unable to clear session storage', error);
       }

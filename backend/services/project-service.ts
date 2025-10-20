@@ -33,7 +33,7 @@ app.get('/api/projects', authMiddleware, (req, res) => {
     projects: [
       {
         id: '1',
-        name: 'Comet Platform',
+        name: 'GoLive Platform',
         description: 'DevOps Platform Project',
         status: 'active',
         created_at: new Date().toISOString()

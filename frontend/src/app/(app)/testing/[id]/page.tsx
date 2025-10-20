@@ -63,7 +63,7 @@ export default function TestSuiteDetailPage() {
     if (!id) return;
     setLoading(true);
     try {
-      const token = localStorage.getItem("comet_jwt");
+      const token = localStorage.getItem("golive_jwt");
       const response = await fetch(`http://localhost:8000/api/tests/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -89,7 +89,7 @@ export default function TestSuiteDetailPage() {
     // This would ideally show a toast and update via WebSocket
     await fetch(`http://localhost:8000/api/tests/${id}/run`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${localStorage.getItem("comet_jwt")}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem("golive_jwt")}` },
     });
     fetchSuiteDetails(); // Re-fetch for now
   };

@@ -33,7 +33,7 @@ export default function LoginPage() {
 
       if (data.success && data.data.tokens?.accessToken) {
         // Store JWT token
-        localStorage.setItem("comet_jwt", data.data.tokens.accessToken)
+        localStorage.setItem("golive_jwt", data.data.tokens.accessToken)
         localStorage.setItem("isAuthenticated", "true")
 
         // Redirect to dashboard
@@ -68,7 +68,7 @@ export default function LoginPage() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Comet DevOps</h1>
+          <h1 className="text-3xl font-bold text-gray-900">GoLive DevOps</h1>
           <p className="text-gray-600 mt-2">Sign in to your account</p>
         </div>
 
@@ -92,7 +92,7 @@ export default function LoginPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Email:</span>
-                  <span className="font-semibold text-blue-600">admin@comet.dev</span>
+                  <span className="font-semibold text-blue-600">admin@golive.dev</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Password:</span>
@@ -163,7 +163,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          <p>© 2025 Comet DevOps Platform. All rights reserved.</p>
+          <p>© 2025 GoLive DevOps Platform. All rights reserved.</p>
         </div>
       </div>
     </div>

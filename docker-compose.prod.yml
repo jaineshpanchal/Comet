@@ -6,7 +6,7 @@ services:
     build:
       context: ./backend/api-gateway
       dockerfile: Dockerfile
-    container_name: comet-api-gateway
+    container_name: golive-api-gateway
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -25,7 +25,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - comet-network
+      - golive-network
     logging:
       driver: "json-file"
       options:
@@ -37,7 +37,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: comet-frontend
+    container_name: golive-frontend
     restart: unless-stopped
     ports:
       - "3030:3030"
@@ -49,7 +49,7 @@ services:
     depends_on:
       - api-gateway
     networks:
-      - comet-network
+      - golive-network
     logging:
       driver: "json-file"
       options:
@@ -61,7 +61,7 @@ services:
     build:
       context: ./ai-services
       dockerfile: Dockerfile
-    container_name: comet-ai-service
+    container_name: golive-ai-service
     restart: unless-stopped
     ports:
       - "8001:8001"
@@ -76,7 +76,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - comet-network
+      - golive-network
     logging:
       driver: "json-file"
       options:
@@ -86,7 +86,7 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: comet-postgres
+    container_name: golive-postgres
     restart: unless-stopped
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
@@ -98,7 +98,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/api-gateway/prisma/migrations:/docker-entrypoint-initdb.d
     networks:
-      - comet-network
+      - golive-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -113,14 +113,14 @@ services:
   # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: comet-redis
+    container_name: golive-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - comet-network
+      - golive-network
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
@@ -136,7 +136,7 @@ services:
   # Nginx Reverse Proxy (Optional - for production load balancing)
   nginx:
     image: nginx:alpine
-    container_name: comet-nginx
+    container_name: golive-nginx
     restart: unless-stopped
     ports:
       - "80:80"
@@ -148,7 +148,7 @@ services:
       - frontend
       - api-gateway
     networks:
-      - comet-network
+      - golive-network
     logging:
       driver: "json-file"
       options:
@@ -162,5 +162,5 @@ volumes:
     driver: local
 
 networks:
-  comet-network:
+  golive-network:
     driver: bridge

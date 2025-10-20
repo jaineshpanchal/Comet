@@ -132,7 +132,7 @@ export default function RegisterPage() {
 
       // If backend returns a token on registration, set it for api client
       if (data?.data?.tokens?.accessToken) {
-        localStorage.setItem("comet_jwt", data.data.tokens.accessToken);
+        localStorage.setItem("golive_jwt", data.data.tokens.accessToken);
         api.setToken(data.data.tokens.accessToken);
       }
 
@@ -194,7 +194,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">Join Comet</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Join GoLive</h1>
             <p className="text-gray-600">
               Create your account to start building amazing things
             </p>

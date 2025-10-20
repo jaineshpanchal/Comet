@@ -81,7 +81,7 @@ export default function TeamDetailPage() {
     setError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setError("Not authenticated")
         return
@@ -112,7 +112,7 @@ export default function TeamDetailPage() {
     setDeleteError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setDeleteError("Not authenticated")
         return
@@ -145,7 +145,7 @@ export default function TeamDetailPage() {
     setAddMemberError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setAddMemberError("Not authenticated")
         return
@@ -180,7 +180,7 @@ export default function TeamDetailPage() {
     if (!confirm("Are you sure you want to remove this member?")) return
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       const response = await fetch(`http://localhost:8000/api/teams/${teamId}/members/${memberId}`, {
         method: "DELETE",
         headers: {

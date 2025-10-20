@@ -1,5 +1,5 @@
 /**
- * Custom Error Classes for the Comet DevOps Platform
+ * Custom Error Classes for the GoLive DevOps Platform
  * Provides standardized error handling with proper HTTP status codes
  */
 

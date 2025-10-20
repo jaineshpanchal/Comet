@@ -377,99 +377,87 @@ export function Sidebar({ children, className }: SidebarProps) {
     };
 
     if (level > 0) {
-      // Sub-item styling - modern industry standard design with full names
+      // Sub-item styling - Apple-inspired premium design with perfect alignment
       return (
         <Link
           href={item.href}
           className={cn(
-            "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 ml-2 text-sm font-medium transition-all duration-75 ease-out",
+            "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 ml-3 text-sm font-medium transition-all duration-200 ease-out",
             isActive
-              ? "bg-gradient-to-r from-blue-500/10 to-indigo-500/5 text-blue-700 border border-blue-200/50 backdrop-blur-sm"
-              : "text-slate-600 border border-transparent hover:text-slate-800 hover:bg-white/70 hover:border-slate-200/30"
+              ? "bg-blue-50/80 text-blue-700"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50/60"
           )}
           onClick={() => {
             markAsViewed(item.href);
             setMobileOpen(false);
           }}
         >
-          {/* Enhanced icon with background */}
+          {/* Minimal active indicator - left accent */}
           <div className={cn(
-            "flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-75 shrink-0",
-            isActive
-              ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white"
-              : "bg-slate-100 text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-700"
+            "absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 rounded-r-full transition-all duration-200",
+            isActive ? "bg-blue-600" : "bg-transparent"
+          )}></div>
+
+          {/* Icon - consistent sizing */}
+          <div className={cn(
+            "flex items-center justify-center w-5 h-5 transition-all duration-200 shrink-0",
+            isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"
           )}>
-            <item.icon className="w-4 h-4 stroke-2" />
+            <item.icon className="w-5 h-5 stroke-[1.5]" />
           </div>
 
-          {/* Text content with green dot - NO TRUNCATION */}
+          {/* Text content with perfect alignment */}
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <span className="font-medium whitespace-nowrap overflow-visible">{item.label}</span>
-            {/* Green dot for sub-items with updates */}
+            <span className={cn(
+              "font-medium text-[13px] leading-none",
+              isActive ? "text-blue-700" : "text-gray-700 group-hover:text-gray-900"
+            )}>{item.label}</span>
+
+            {/* Notification dot - aligned properly */}
             {(() => {
-              // Get parent key from the current navigation structure
               const parentItem = navigationItems.find(nav => nav.subItems?.some(sub => sub.href === item.href));
               const parentKey = parentItem?.href.replace('/', '');
               return parentKey && hasSubItemNotification(item, parentKey) && (
-                <div className="relative shrink-0 ml-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
-                  <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                <div className="relative w-1.5 h-1.5 shrink-0">
+                  <div className="absolute inset-0 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                 </div>
               );
             })()}
           </div>
-
-          {/* Status indicator for active state */}
-          {isActive && (
-            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full shadow-sm shadow-blue-500/50 animate-pulse shrink-0"></div>
-          )}
-
-          {/* Subtle border accent */}
-          <div className={cn(
-            "absolute left-0 top-0 bottom-0 w-0.5 rounded-r-full transition-all duration-300",
-            isActive ? "bg-gradient-to-b from-blue-500 to-indigo-600" : "bg-transparent"
-          )}></div>
         </Link>
       );
     }
 
-    // Main item styling - premium professional design
+    // Main item styling - Apple-inspired premium design
     return (
       <div>
         {item.subItems ? (
-          // Items with submenus - smart navigation logic
+          // Items with submenus - clean, professional navigation
           <div
             className={cn(
-              "group relative flex items-center transition-all duration-75 ease-out w-full text-left cursor-pointer",
+              "group relative flex items-center transition-all duration-200 ease-out w-full text-left cursor-pointer",
               collapsed
-                ? "justify-center w-12 h-12 rounded-xl mx-auto my-1"
-                : "justify-between rounded-2xl px-4 py-5",
+                ? "justify-center w-12 h-12 rounded-xl mx-auto my-1.5"
+                : "justify-between rounded-xl px-3 py-2.5 my-0.5",
               isActive || expanded
                 ? collapsed
-                  ? (itemKey === 'dashboard' || itemKey === 'settings')
-                    ? "text-blue-600 bg-gradient-to-br from-blue-50 to-indigo-50/80 border border-blue-200/50 ring-1 ring-blue-300/30 backdrop-blur-sm"
-                    : "bg-gradient-to-br from-blue-500/90 to-indigo-600/90 text-white border border-blue-400/30 ring-1 ring-blue-300/40 backdrop-blur-sm"
-                  : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20"
+                  ? "bg-blue-600 text-white"
+                  : "bg-blue-50/80 text-blue-700"
                 : collapsed
-                  ? "text-blue-600 bg-gradient-to-br from-blue-50 to-indigo-50/80 border border-blue-200/50 ring-1 ring-blue-300/30 backdrop-blur-sm"
-                  : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20",
-              "text-sm font-semibold backdrop-blur-sm"
+                  ? "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+                  : "text-gray-700 hover:bg-gray-50/60 hover:text-gray-900",
+              "text-sm font-medium"
             )}
             onClick={() => {
-              // Smart navigation logic
               if (collapsed) {
-                // If sidebar is collapsed, open it and expand this menu
                 handleSidebarToggle(false);
               }
 
-              // Check if we're already on this page
               const isCurrentPage = pathname === item.href || pathname.startsWith(item.href + "/");
 
               if (isCurrentPage) {
-                // Already on this page - just toggle the dropdown
                 toggleExpanded();
               } else {
-                // Not on this page - navigate to it and expand dropdown
                 setExpandedItems(prev => ({
                   ...prev,
                   [itemKey]: true
@@ -482,86 +470,70 @@ export function Sidebar({ children, className }: SidebarProps) {
             }}
           >
             {collapsed ? (
-              // Collapsed state - enhanced icon with tooltip
+              // Collapsed state - clean icon with tooltip
               <SidebarTooltip content={item.label} side="right" delayDuration={150}>
                 <div className="relative">
-                  <item.icon className="h-6 w-6 shrink-0 stroke-2" />
+                  <item.icon className="h-5 w-5 shrink-0 stroke-[1.5]" />
                   {hasMainItemNotification(item) && (
-                    <div className="absolute -top-1 -right-1">
-                      <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse border-2 border-white ring-1 ring-green-300/50"></div>
-                      <div className="absolute inset-0 w-2.5 h-2.5 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                    <div className="absolute -top-0.5 -right-0.5">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                     </div>
                   )}
                 </div>
               </SidebarTooltip>
             ) : (
-              // Expanded state - full layout
+              // Expanded state - perfect alignment
               <>
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className={cn(
-                    "flex items-center justify-center rounded-xl p-2.5 transition-all duration-75 ease-out relative shrink-0",
-                    "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40"
+                    "flex items-center justify-center w-5 h-5 transition-all duration-200 shrink-0",
+                    isActive || expanded ? "text-blue-600" : "text-gray-500 group-hover:text-gray-700"
                   )}>
-                    <item.icon className="h-6 w-6 shrink-0 stroke-2" />
-                    {/* Subtle glow effect for active state */}
-                    {(isActive || expanded) && (
-                      <div className="absolute inset-0 rounded-xl bg-blue-100/30 animate-pulse"></div>
-                    )}
+                    <item.icon className="h-5 w-5 shrink-0 stroke-[1.5]" />
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className={cn(
-                      "font-semibold text-sm tracking-tight whitespace-nowrap inline-block",
-                      isActive ? "text-slate-800" : "text-slate-700"
-                    )} style={{ lineHeight: '1.75' }}>{item.label}</span>
+                      "font-medium text-[13px] leading-none",
+                      isActive || expanded ? "text-blue-700" : "text-gray-700 group-hover:text-gray-900"
+                    )}>{item.label}</span>
                     {hasMainItemNotification(item) && (
-                      <div className="relative shrink-0">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
-                        <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                      <div className="relative w-1.5 h-1.5 shrink-0">
+                        <div className="absolute inset-0 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center shrink-0">
                   {item.subItems && (
-                    <div
+                    <ChevronRightIcon
                       className={cn(
-                        "flex items-center justify-center w-7 h-7 rounded-lg transition-all duration-300 ease-in-out shrink-0 pointer-events-none",
-                        expanded
-                          ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white ring-2 ring-blue-300/50"
-                          : "bg-slate-200/80 text-slate-700 group-hover:bg-gradient-to-br group-hover:from-blue-500 group-hover:to-indigo-600 group-hover:text-white group-hover:ring-2 group-hover:ring-blue-300/50"
+                        "h-4 w-4 shrink-0 stroke-[2] transition-transform duration-200 ease-out",
+                        isActive || expanded ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600",
+                        expanded ? "rotate-90" : "rotate-0"
                       )}
-                    >
-                      <ChevronRightIcon
-                        className={cn(
-                          "h-3.5 w-3.5 shrink-0 stroke-[2.5] transition-transform duration-300 ease-in-out",
-                          expanded ? "rotate-90" : "rotate-0"
-                        )}
-                      />
-                    </div>
+                    />
                   )}
                 </div>
               </>
             )}
           </div>
         ) : (
-          // Items without submenus - regular link
+          // Items without submenus - clean link design
           <Link
             href={item.href}
             className={cn(
-              "group relative flex items-center transition-all duration-75 ease-out",
+              "group relative flex items-center transition-all duration-200 ease-out",
               collapsed
-                ? "justify-center w-12 h-12 rounded-xl mx-auto my-1"
-                : "justify-between w-full rounded-2xl px-4 py-5",
+                ? "justify-center w-12 h-12 rounded-xl mx-auto my-1.5"
+                : "justify-between rounded-xl px-3 py-2.5 my-0.5",
               isActive
                 ? collapsed
-                  ? (itemKey === 'dashboard' || itemKey === 'settings')
-                    ? "text-blue-600 bg-gradient-to-br from-blue-50 to-indigo-50/80 border border-blue-200/50 ring-1 ring-blue-300/30 backdrop-blur-sm"
-                    : "bg-gradient-to-br from-blue-500/90 to-indigo-600/90 text-white border border-blue-400/30 ring-1 ring-blue-300/40 backdrop-blur-sm"
-                  : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20"
+                  ? "bg-blue-600 text-white"
+                  : "bg-blue-50/80 text-blue-700"
                 : collapsed
-                  ? "text-blue-600 bg-gradient-to-br from-blue-50 to-indigo-50/80 border border-blue-200/50 ring-1 ring-blue-300/30 backdrop-blur-sm"
-                  : "bg-gradient-to-r from-white to-blue-50/50 text-slate-800 border border-blue-200/50 ring-1 ring-blue-300/20",
-              "text-sm font-semibold backdrop-blur-sm"
+                  ? "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+                  : "text-gray-700 hover:bg-gray-50/60 hover:text-gray-900",
+              "text-sm font-medium"
             )}
             onClick={() => {
               markAsViewed(item.href);
@@ -569,40 +541,35 @@ export function Sidebar({ children, className }: SidebarProps) {
             }}
           >
             {collapsed ? (
-              // Collapsed state with tooltip
+              // Collapsed state - clean icon with tooltip
               <SidebarTooltip content={item.label} side="right" delayDuration={150}>
                 <div className="relative">
-                  <item.icon className="h-6 w-6 shrink-0 stroke-2" />
+                  <item.icon className="h-5 w-5 shrink-0 stroke-[1.5]" />
                   {hasMainItemNotification(item) && (
-                    <div className="absolute -top-1 -right-1">
-                      <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse border-2 border-white ring-1 ring-green-300/50"></div>
-                      <div className="absolute inset-0 w-2.5 h-2.5 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                    <div className="absolute -top-0.5 -right-0.5">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                     </div>
                   )}
                 </div>
               </SidebarTooltip>
             ) : (
-              // Expanded state
+              // Expanded state - perfect alignment
               <>
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className={cn(
-                    "flex items-center justify-center rounded-xl p-2.5 transition-all duration-75 ease-out relative shrink-0",
-                    "bg-blue-50 text-blue-600 ring-2 ring-blue-200/30 border border-blue-200/40"
+                    "flex items-center justify-center w-5 h-5 transition-all duration-200 shrink-0",
+                    isActive ? "text-blue-600" : "text-gray-500 group-hover:text-gray-700"
                   )}>
-                    <item.icon className="h-6 w-6 shrink-0 stroke-2" />
-                    {isActive && (
-                      <div className="absolute inset-0 rounded-xl bg-blue-100/30 animate-pulse"></div>
-                    )}
+                    <item.icon className="h-5 w-5 shrink-0 stroke-[1.5]" />
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <span className={cn(
-                      "font-semibold text-sm tracking-tight whitespace-nowrap inline-block",
-                      isActive ? "text-slate-800" : "text-slate-700"
-                    )} style={{ lineHeight: '1.75' }}>{item.label}</span>
+                      "font-medium text-[13px] leading-none",
+                      isActive ? "text-blue-700" : "text-gray-700 group-hover:text-gray-900"
+                    )}>{item.label}</span>
                     {hasMainItemNotification(item) && (
-                      <div className="relative shrink-0">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/80"></div>
-                        <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping opacity-80"></div>
+                      <div className="relative w-1.5 h-1.5 shrink-0">
+                        <div className="absolute inset-0 w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                       </div>
                     )}
                   </div>
@@ -611,16 +578,16 @@ export function Sidebar({ children, className }: SidebarProps) {
             )}
           </Link>
         )}
-        
-        {/* Sub-menu items with smooth animation */}
+
+        {/* Sub-menu items with clean animation */}
         {item.subItems && !collapsed && (
           <div
             className={cn(
-              "overflow-hidden transition-all duration-300 ease-in-out",
-              expanded ? "max-h-[1000px] opacity-100 mt-2 mb-4" : "max-h-0 opacity-0 mt-0 mb-0"
+              "overflow-hidden transition-all duration-200 ease-out",
+              expanded ? "max-h-[1000px] opacity-100 mt-1 mb-1" : "max-h-0 opacity-0 mt-0 mb-0"
             )}
           >
-            <div className="space-y-1 pl-3 pr-2 py-2 bg-gradient-to-b from-slate-50/50 to-white/30 rounded-xl border border-slate-100/50 backdrop-blur-sm">
+            <div className="space-y-0.5 py-1">
               {item.subItems.map((subItem) => (
                 <NavItemComponent key={subItem.href} item={subItem} level={level + 1} />
               ))}
@@ -633,13 +600,13 @@ export function Sidebar({ children, className }: SidebarProps) {
 
   // Set CSS custom property for sidebar width
   React.useEffect(() => {
-    const sidebarWidth = collapsed ? '64px' : '320px';
+    const sidebarWidth = collapsed ? '64px' : '256px';
     document.documentElement.style.setProperty('--sidebar-width', sidebarWidth);
   }, [collapsed]);
 
   // Initialize CSS custom property on mount
   React.useEffect(() => {
-    document.documentElement.style.setProperty('--sidebar-width', '320px');
+    document.documentElement.style.setProperty('--sidebar-width', '256px');
   }, []);
 
   // Prevent page scroll when sidebar is hovered
@@ -683,18 +650,17 @@ export function Sidebar({ children, className }: SidebarProps) {
           <Bars3Icon className="h-6 w-6" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-lg font-semibold">Comet DevOps</h1>
+          <h1 className="text-lg font-semibold">GoLive DevOps</h1>
         </div>
       </div>
 
-      {/* Sidebar */}
+      {/* Sidebar - Apple-inspired premium design */}
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-300",
-          "bg-white/95 backdrop-blur-xl border-r border-slate-200/50",
-          "shadow-xl shadow-slate-200/20",
+          "bg-white border-r border-gray-200/80",
           "overscroll-contain sidebar-hover-no-scroll",
-          collapsed ? "w-16" : "w-80",
+          collapsed ? "w-16" : "w-64",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0",
           className
@@ -704,57 +670,52 @@ export function Sidebar({ children, className }: SidebarProps) {
         onWheel={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          
-          // Allow scrolling within sidebar if it has scrollable content
+
           const nav = e.currentTarget.querySelector('nav');
           if (nav && nav.scrollHeight > nav.clientHeight) {
             nav.scrollTop += e.deltaY;
           }
         }}
       >
-        {/* Header */}
+        {/* Header - Apple-style clean design */}
         <div className={cn(
-          "h-16 flex items-center border-b border-slate-200/50 bg-gradient-to-r from-slate-50/50 to-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 box-border",
+          "h-16 flex items-center border-b border-gray-200/80 transition-all duration-300",
           collapsed ? "justify-center px-2" : "justify-between px-4"
         )}>
           {!collapsed ? (
             <>
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 flex-shrink-0 relative overflow-hidden">
-                  <img 
-                    src="/Comet.png" 
-                    alt="Comet Logo" 
-                    className="w-10 h-10 object-contain"
-                    style={{ 
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-900 flex-shrink-0 relative overflow-hidden">
+                  <img
+                    src="/GoLive.png"
+                    alt="GoLive Logo"
+                    className="w-7 h-7 object-contain"
+                    style={{
                       mixBlendMode: 'multiply',
                       filter: 'brightness(0) invert(1)'
                     }}
                   />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-sm font-bold tracking-tight text-slate-900 truncate">Comet DevOps</span>
-                  <span className="text-[10px] font-medium tracking-wide text-slate-500 truncate">DEVOPS PLATFORM</span>
+                  <span className="text-sm font-semibold text-gray-900 truncate">GoLive DevOps</span>
+                  <span className="text-[10px] font-medium text-gray-500 truncate uppercase tracking-wider">Platform</span>
                 </div>
               </div>
-              {/* Desktop collapse button - aligned with menu chevrons */}
-              <div className="group flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-300 ease-out bg-slate-200/80 hover:bg-gradient-to-br hover:from-blue-500 hover:to-indigo-600 hover:ring-2 hover:ring-blue-300/50 cursor-pointer mr-4" onClick={() => handleSidebarToggle(!collapsed)}>
-                <ChevronLeftIcon className="h-4 w-4 shrink-0 stroke-[2.5] text-slate-700 group-hover:text-white" />
-              </div>
+              {/* Desktop collapse button */}
+              <button
+                onClick={() => handleSidebarToggle(!collapsed)}
+                className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <ChevronLeftIcon className="h-4 w-4 text-gray-500" />
+              </button>
             </>
           ) : (
             <button
               type="button"
-              className={cn(
-                "group relative flex items-center transition-all duration-300 ease-out overflow-hidden text-left hidden lg:flex",
-                "justify-center w-12 h-12 min-w-12 min-h-12 max-w-12 max-h-12 rounded-xl flex-shrink-0",
-                "text-blue-600 hover:bg-gradient-to-br hover:from-blue-500 hover:to-indigo-600 hover:text-white hover:ring-2 hover:ring-blue-300/50",
-                "text-sm font-semibold backdrop-blur-sm"
-              )}
+              className="hidden lg:flex items-center justify-center w-12 h-12 rounded-lg hover:bg-gray-100 transition-colors"
               onClick={() => handleSidebarToggle(false)}
             >
-              <div className="relative flex items-center justify-center">
-                <ChevronRightIcon className="h-6 w-6 shrink-0 stroke-2" />
-              </div>
+              <ChevronRightIcon className="h-4 w-4 text-gray-500" />
             </button>
           )}
 
@@ -769,41 +730,37 @@ export function Sidebar({ children, className }: SidebarProps) {
           </Button>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - Clean scrollable area */}
         <nav className={cn(
-          "flex-1 overflow-y-auto overscroll-contain sidebar-scroll-container scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent",
-          "will-change-scroll transform-gpu",
-          collapsed ? "p-2 space-y-3" : "p-4 space-y-3"
-        )} style={{ 
-          transform: 'translate3d(0,0,0)',
-          scrollBehavior: 'auto',
+          "flex-1 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent",
+          collapsed ? "px-2 py-3" : "px-3 py-3"
+        )} style={{
+          scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch'
         }}>
-          <div className="space-y-2" style={{ containIntrinsicSize: 'auto 1000px' }}>
+          <div className="space-y-1">
             {navigationItems.map((item) => (
-              <div key={item.href}>
-                <NavItemComponent item={item} />
-              </div>
+              <NavItemComponent key={item.href} item={item} />
             ))}
           </div>
         </nav>
 
-        {/* Footer */}
+        {/* Footer - Clean user profile */}
         <div className={cn(
-          "border-t border-slate-200/50 transition-all duration-300 bg-gradient-to-r from-slate-50/30 to-white/30 backdrop-blur-sm",
-          collapsed ? "p-2" : "p-4"
+          "border-t border-gray-200/80 transition-all duration-300 bg-white",
+          collapsed ? "p-2" : "p-3"
         )}>
           <div className="flex items-center gap-3">
             <div className={cn(
-              "flex items-center justify-center bg-slate-200 text-slate-700 font-semibold transition-all duration-300",
-              collapsed ? "h-12 w-12 mx-auto rounded-xl text-sm" : "h-8 w-8 rounded-lg text-xs"
+              "flex items-center justify-center bg-gray-200 text-gray-700 font-semibold transition-all duration-300",
+              collapsed ? "h-10 w-10 mx-auto rounded-lg text-xs" : "h-8 w-8 rounded-lg text-xs"
             )}>
               <span>JD</span>
             </div>
             {!collapsed && (
               <div className="flex-1 truncate">
-                <p className="text-sm font-medium">John Doe</p>
-                <p className="text-xs text-muted-foreground">john@comet.dev</p>
+                <p className="text-[13px] font-medium text-gray-900">John Doe</p>
+                <p className="text-[11px] text-gray-500">john@golive.dev</p>
               </div>
             )}
           </div>
@@ -814,7 +771,7 @@ export function Sidebar({ children, className }: SidebarProps) {
       <div
         className={cn(
           "flex-1 transition-all duration-300",
-          collapsed ? "lg:ml-16" : "lg:ml-80"
+          collapsed ? "lg:ml-16" : "lg:ml-64"
         )}
       >
         {children}

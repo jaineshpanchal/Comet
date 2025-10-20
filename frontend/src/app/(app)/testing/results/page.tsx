@@ -42,7 +42,7 @@ export default function TestResultsPage() {
     setError("")
 
     try {
-      const token = localStorage.getItem("comet_jwt")
+      const token = localStorage.getItem("golive_jwt")
       if (!token) {
         setError("Not authenticated")
         return

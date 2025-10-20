@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ===========================================
-# COMET DEVOPS PLATFORM - DEVELOPMENT MANAGER
+# GOLIVE DEVOPS PLATFORM - DEVELOPMENT MANAGER
 # ===========================================
 
 set -e
@@ -116,7 +116,7 @@ start_ai_services() {
 # Show status
 show_status() {
     echo ""
-    echo "=== COMET DEVOPS PLATFORM STATUS ==="
+    echo "=== GOLIVE DEVOPS PLATFORM STATUS ==="
     echo ""
     
     # Check backend dependencies
@@ -156,7 +156,7 @@ show_status() {
 
 # Show help
 show_help() {
-    echo "Comet DevOps Platform - Development Manager"
+    echo "GoLive DevOps Platform - Development Manager"
     echo ""
     echo "Usage: $0 [command]"
     echo ""
@@ -179,11 +179,11 @@ show_help() {
 # Main command handler
 case "$1" in
     "setup")
-        print_status "Running Comet DevOps Platform setup..."
+        print_status "Running GoLive DevOps Platform setup..."
         ./setup-dev.sh
         ;;
     "start")
-        print_status "Starting Comet DevOps Platform..."
+        print_status "Starting GoLive DevOps Platform..."
         start_databases
         sleep 5
         start_backend
@@ -192,7 +192,7 @@ case "$1" in
         show_status
         ;;
     "stop")
-        print_status "Stopping Comet DevOps Platform..."
+        print_status "Stopping GoLive DevOps Platform..."
         stop_databases
         # Kill background processes
         pkill -f "npm run dev" 2>/dev/null || true

@@ -173,7 +173,7 @@ export class DockerExecutor extends EventEmitter {
     const args = ['run', '--rm'];
 
     // Add name for easier tracking
-    args.push('--name', `comet-pipeline-${Date.now()}`);
+    args.push('--name', `golive-pipeline-${Date.now()}`);
 
     // Add environment variables
     if (options.environment) {
@@ -345,7 +345,7 @@ Simulated execution completed successfully
         'ps',
         '-a',
         '--filter',
-        'name=comet-pipeline-',
+        'name=golive-pipeline-',
         '--format',
         '{{.ID}}',
       ]);
