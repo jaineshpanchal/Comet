@@ -172,4 +172,56 @@ export class TestService {
   static async cancelTestRun(runId: string): Promise<void> {
     await api.post(`/api/tests/runs/${runId}/cancel`);
   }
+
+  /**
+   * Generate tests using AI
+   */
+  static async generateTestsWithAI(data: GenerateTestsRequest): Promise<GenerateTestsResponse> {
+    const response = await api.post<GenerateTestsResponse>('/api/ai/generate-tests', data);
+    return response.data!;
+  }
+
+  /**
+   * Analyze test failures using AI
+   */
+  static async analyzeFailures(data: AnalyzeFailuresRequest): Promise<AnalyzeFailuresResponse> {
+    const response = await api.post<AnalyzeFailuresResponse>('/api/ai/analyze-failures', data);
+    return response.data!;
+  }
+}
+
+// AI Types
+export interface GenerateTestsRequest {
+  code: string;
+  language: string;
+  framework?: string;
+  testType?: string;
+  description?: string;
+}
+
+export interface GeneratedTest {
+  fileName: string;
+  testCode: string;
+  description: string;
+  framework: string;
+}
+
+export interface GenerateTestsResponse {
+  tests: GeneratedTest[];
+  totalTests: number;
+  language: string;
+  framework: string;
+}
+
+export interface AnalyzeFailuresRequest {
+  testResults?: any;
+  errorMessage?: string;
+  stackTrace?: string;
+}
+
+export interface AnalyzeFailuresResponse {
+  analysis: string;
+  suggestedFixes: string[];
+  rootCause: string;
+  severity: string;
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { BeakerIcon, CheckCircleIcon, ClockIcon, PlusIcon } from "@heroicons/react/24/outline"
+import { BeakerIcon, CheckCircleIcon, ClockIcon, PlusIcon, SparklesIcon } from "@heroicons/react/24/outline"
 import Link from "next/link"
 import { TestService, type TestSuite, type TestRun } from "@/services/test.service"
 
@@ -80,13 +80,22 @@ export default function TestingPage() {
             <span className="text-gray-700 font-medium">code coverage</span>
           </p>
         </div>
-        <Link
-          href="/testing/suites/new"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all shadow-sm"
-        >
-          <PlusIcon className="w-5 h-5" />
-          Create Test Suite
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/testing/ai-generate"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition-all shadow-sm"
+          >
+            <SparklesIcon className="w-5 h-5" />
+            AI Generate Tests
+          </Link>
+          <Link
+            href="/testing/suites/new"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all shadow-sm"
+          >
+            <PlusIcon className="w-5 h-5" />
+            Create Test Suite
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards */}

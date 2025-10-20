@@ -37,6 +37,7 @@ import permissionsRoutes from './routes/permissions';
 import secretsRoutes from './routes/secrets';
 import securityScansRoutes from './routes/securityScans';
 import integrationsRoutes from './routes/integrations';
+import aiRoutes from './routes/ai';
 
 class APIGateway {
   private app: Express;
@@ -281,6 +282,7 @@ class APIGateway {
     this.app.use('/api/deployments', deploymentRoutes);
     this.app.use('/api/metrics', metricsRoutes);
     this.app.use('/api/audit-logs', auditLogsRoutes);
+    this.app.use('/api/ai', aiRoutes);
 
     // Microservice proxy routes
     this.app.use('/', proxyRoutes);

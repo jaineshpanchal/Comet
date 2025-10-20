@@ -194,16 +194,16 @@ export class ServiceProxy {
     return this.makeRequest('AI_SERVICES', {
       method: 'POST',
       url: '/generate-tests',
-      data: { projectId, options },
+      data: options,
       timeout: 60000 // AI services may take longer
     });
   }
 
-  static async analyzeFailures(testResults: any): Promise<ServiceResponse> {
+  static async analyzeFailures(data: any): Promise<ServiceResponse> {
     return this.makeRequest('AI_SERVICES', {
       method: 'POST',
       url: '/analyze-failures',
-      data: { testResults },
+      data: data,
       timeout: 30000
     });
   }

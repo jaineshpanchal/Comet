@@ -9,9 +9,10 @@ import {
   XCircleIcon,
   ClockIcon,
   BeakerIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  SparklesIcon
 } from "@heroicons/react/24/outline"
-import { TestService, type TestRun } from "@/services/test.service"
+import { TestService, type TestRun, type AnalyzeFailuresResponse } from "@/services/test.service"
 
 export default function TestRunDetailsPage() {
   const params = useParams()
@@ -20,6 +21,8 @@ export default function TestRunDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [testRun, setTestRun] = useState<TestRun | null>(null)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const [aiAnalysis, setAiAnalysis] = useState<AnalyzeFailuresResponse | null>(null)
+  const [analyzingFailure, setAnalyzingFailure] = useState(false)
 
   useEffect(() => {
     if (runId) {
@@ -52,6 +55,25 @@ export default function TestRunDetailsPage() {
       }
     } catch (error) {
       console.error('Error fetching test run:', error)
+    }
+  }
+
+  const analyzeFailure = async () => {
+    if (!testRun) return
+
+    try {
+      setAnalyzingFailure(true)
+      const analysis = await TestService.analyzeFailures({
+        testResults: testRun.results,
+        errorMessage: testRun.errorMessage || undefined,
+        stackTrace: testRun.errorStack || undefined
+      })
+      setAiAnalysis(analysis)
+    } catch (error) {
+      console.error('Error analyzing failure:', error)
+      alert('Failed to analyze test failure')
+    } finally {
+      setAnalyzingFailure(false)
     }
   }
 
@@ -274,7 +296,28 @@ export default function TestRunDetailsPage() {
             {/* Success/Error Summary */}
             {testRun.status === 'FAILED' && testRun.errorMessage && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <h3 className="text-sm font-semibold text-red-900 mb-2">Error Message</h3>
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-sm font-semibold text-red-900">Error Message</h3>
+                  {!aiAnalysis && (
+                    <button
+                      onClick={analyzeFailure}
+                      disabled={analyzingFailure}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {analyzingFailure ? (
+                        <>
+                          <div className="animate-spin h-3 w-3 border border-white border-t-transparent rounded-full" />
+                          Analyzing...
+                        </>
+                      ) : (
+                        <>
+                          <SparklesIcon className="w-3 h-3" />
+                          AI Analyze
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
                 <p className="text-sm text-red-700 font-mono">{testRun.errorMessage}</p>
                 {testRun.errorStack && (
                   <details className="mt-3">
@@ -286,6 +329,50 @@ export default function TestRunDetailsPage() {
                     </pre>
                   </details>
                 )}
+              </div>
+            )}
+
+            {/* AI Analysis Results */}
+            {aiAnalysis && (
+              <div className="mb-6 p-5 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
+                <div className="flex items-center gap-2 mb-4">
+                  <SparklesIcon className="w-5 h-5 text-purple-600" />
+                  <h3 className="text-lg font-semibold text-purple-900">AI Failure Analysis</h3>
+                  <span className={`ml-auto px-2 py-1 text-xs font-medium rounded ${
+                    aiAnalysis.severity === 'high' ? 'bg-red-100 text-red-700' :
+                    aiAnalysis.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-blue-100 text-blue-700'
+                  }`}>
+                    {aiAnalysis.severity.toUpperCase()} SEVERITY
+                  </span>
+                </div>
+
+                {/* Root Cause */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-purple-900 mb-2">Root Cause</h4>
+                  <p className="text-sm text-purple-800 bg-white/50 p-3 rounded">{aiAnalysis.rootCause}</p>
+                </div>
+
+                {/* Analysis */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-purple-900 mb-2">Analysis</h4>
+                  <p className="text-sm text-purple-800 bg-white/50 p-3 rounded">{aiAnalysis.analysis}</p>
+                </div>
+
+                {/* Suggested Fixes */}
+                <div>
+                  <h4 className="text-sm font-semibold text-purple-900 mb-2">Suggested Fixes</h4>
+                  <ul className="space-y-2">
+                    {aiAnalysis.suggestedFixes.map((fix, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm text-purple-800 bg-white/50 p-3 rounded">
+                        <span className="flex-shrink-0 w-5 h-5 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                          {index + 1}
+                        </span>
+                        <span>{fix}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             )}
 
