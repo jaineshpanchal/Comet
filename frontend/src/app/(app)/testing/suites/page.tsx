@@ -11,6 +11,7 @@ import {
   MagnifyingGlassIcon,
   FunnelIcon,
   PlayIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/24/outline"
 import { TestService, type TestSuite } from "@/services/test.service"
 
@@ -83,6 +84,13 @@ export default function TestSuitesPage() {
     <div className="space-y-8 pb-12">
       {/* Header */}
       <div className="space-y-4">
+        <Link
+          href="/testing"
+          className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-2"
+        >
+          <ArrowLeftIcon className="h-4 w-4 mr-1" />
+          Back to Testing
+        </Link>
         <div className="flex items-end justify-between">
           <div>
             <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
@@ -92,13 +100,13 @@ export default function TestSuitesPage() {
               Create and manage <span className="text-gray-700 font-medium">test collections</span> for your projects
             </p>
           </div>
-          <button
+          <Link
+            href="/testing/suites/new"
             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
-            onClick={() => alert('Create Test Suite functionality coming soon!')}
           >
             <PlusIcon className="w-5 h-5" />
             Create Test Suite
-          </button>
+          </Link>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { BeakerIcon, CheckCircleIcon, ClockIcon, PlusIcon, SparklesIcon } from "@heroicons/react/24/outline"
+import { BeakerIcon, CheckCircleIcon, ClockIcon, PlusIcon, SparklesIcon, PlayIcon } from "@heroicons/react/24/outline"
 import Link from "next/link"
 import { TestService, type TestSuite, type TestRun } from "@/services/test.service"
 
@@ -81,6 +81,13 @@ export default function TestingPage() {
           </p>
         </div>
         <div className="flex gap-3">
+          <Link
+            href="/testing/playwright-recorder"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all shadow-sm"
+          >
+            <PlayIcon className="w-5 h-5" />
+            Record E2E Test
+          </Link>
           <Link
             href="/testing/ai-generate"
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition-all shadow-sm"
