@@ -45,6 +45,8 @@ export interface TestRun {
   coverage: number | null;
   results: any;
   metadata: any;
+  errorMessage?: string | null;
+  errorStack?: string | null;
   testSuite?: {
     name: string;
     type: string;
