@@ -220,6 +220,14 @@ export function useMetrics(timeRange: string = '24h') {
     const wsUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
     websocketService.connect({ url: wsUrl, token })
 
+    // Set initial connection status after a short delay to allow connection
+    setTimeout(() => {
+      if (websocketService.connected) {
+        setWsConnected(true)
+        console.log('✅ WebSocket connected - Live updates enabled')
+      }
+    }, 1000)
+
     // Handle connection status
     const handleConnectionStatus = (data: { connected: boolean }) => {
       setWsConnected(data.connected)

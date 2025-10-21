@@ -229,9 +229,9 @@ export default function DashboardPage() {
         <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200 shadow-sm rounded-lg p-1.5">
           <TabsTrigger
             value="overview"
-            className="group px-4 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
+            className="group px-4 py-2.5 text-blue-600 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <LayoutGrid className="h-4 w-4 text-gray-500 group-hover:text-gray-700 group-data-[state=active]:text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
+            <LayoutGrid className="h-4 w-4 text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
             <span className="text-sm font-medium">Overview</span>
             {getNotificationCount('overview') > 0 && (
               <div className="ml-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
@@ -239,9 +239,9 @@ export default function DashboardPage() {
           </TabsTrigger>
           <TabsTrigger
             value="pipelines"
-            className="group px-4 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
+            className="group px-4 py-2.5 text-blue-600 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <Workflow className="h-4 w-4 text-gray-500 group-hover:text-gray-700 group-data-[state=active]:text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
+            <Workflow className="h-4 w-4 text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
             <span className="text-sm font-medium">Pipelines</span>
             {getNotificationCount('pipelines') > 0 && (
               <div className="ml-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
@@ -249,9 +249,9 @@ export default function DashboardPage() {
           </TabsTrigger>
           <TabsTrigger
             value="activity"
-            className="group px-4 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
+            className="group px-4 py-2.5 text-blue-600 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <History className="h-4 w-4 text-gray-500 group-hover:text-gray-700 group-data-[state=active]:text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
+            <History className="h-4 w-4 text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
             <span className="text-sm font-medium">Activity</span>
             {getNotificationCount('activity') > 0 && (
               <div className="ml-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
@@ -259,9 +259,9 @@ export default function DashboardPage() {
           </TabsTrigger>
           <TabsTrigger
             value="analytics"
-            className="group px-4 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
+            className="group px-4 py-2.5 text-blue-600 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <TrendingUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700 group-data-[state=active]:text-blue-600 transition-colors duration-200" />
+            <TrendingUp className="h-4 w-4 text-blue-600 transition-colors duration-200" />
             <span className="text-sm font-medium">Analytics</span>
             {getNotificationCount('analytics') > 0 && (
               <div className="ml-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
