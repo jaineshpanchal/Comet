@@ -392,8 +392,11 @@ export function Sidebar({ children, className }: SidebarProps) {
               ? "bg-gradient-to-r from-blue-50 to-blue-50/50 text-blue-700 shadow-md"
               : "text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-50 hover:shadow-md hover:scale-[1.03]"
           )}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             markAsViewed(item.href);
+            // Navigate without scrolling
+            router.push(item.href, { scroll: false });
             setMobileOpen(false);
           }}
         >
@@ -463,23 +466,53 @@ export function Sidebar({ children, className }: SidebarProps) {
                   : "text-gray-700 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-50 hover:text-gray-900 hover:shadow-md hover:scale-[1.02]",
               "text-sm font-medium"
             )}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+
+              // Save current scroll position
+              const sidebar = e.currentTarget.closest('nav');
+              const currentScrollTop = sidebar?.scrollTop || 0;
+
               if (collapsed) {
                 handleSidebarToggle(false);
+                return;
               }
 
-              const isCurrentPage = pathname === item.href || pathname.startsWith(item.href + "/");
+              const isCurrentlyExpanded = expandedItems[itemKey] || false;
 
-              if (isCurrentPage) {
+              // If clicking on an already-opened item (anywhere including arrow), collapse it
+              if (isCurrentlyExpanded) {
                 toggleExpanded();
-              } else {
-                setExpandedItems(prev => ({
-                  ...prev,
-                  [itemKey]: true
-                }));
-                markAsViewed(item.href);
-                router.push(item.href);
+                // Restore scroll position after state update
+                requestAnimationFrame(() => {
+                  if (sidebar) sidebar.scrollTop = currentScrollTop;
+                });
+                return;
               }
+
+              // Close all other expanded items
+              const newExpandedItems: Record<string, boolean> = {};
+              Object.keys(expandedItems).forEach(key => {
+                newExpandedItems[key] = false;
+              });
+
+              // Open this item's dropdown and navigate to the page
+              newExpandedItems[itemKey] = true;
+
+              setExpandedItems(newExpandedItems);
+              markAsViewed(item.href);
+
+              // Navigate without scrolling only if not on the current page
+              const isCurrentPage = pathname === item.href || pathname.startsWith(item.href + "/");
+              if (!isCurrentPage) {
+                router.push(item.href, { scroll: false });
+              }
+
+              // Restore scroll position after state update
+              requestAnimationFrame(() => {
+                if (sidebar) sidebar.scrollTop = currentScrollTop;
+              });
 
               setMobileOpen(false);
             }}
@@ -530,7 +563,7 @@ export function Sidebar({ children, className }: SidebarProps) {
                   {item.subItems && (
                     <ChevronRight
                       className={cn(
-                        "h-4 w-4 shrink-0 stroke-[2] transition-all duration-300 ease-out",
+                        "lucide-chevron-right h-4 w-4 shrink-0 stroke-[2] transition-all duration-300 ease-out",
                         isActive || expanded
                           ? "text-blue-600 scale-110"
                           : "text-gray-400 group-hover:text-blue-600 group-hover:scale-110",
@@ -562,8 +595,13 @@ export function Sidebar({ children, className }: SidebarProps) {
                   : "text-gray-700 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-50 hover:text-gray-900 hover:shadow-md hover:scale-[1.02]",
               "text-sm font-medium"
             )}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              // Close all expanded dropdowns when clicking on items without submenus
+              setExpandedItems({});
               markAsViewed(item.href);
+              // Navigate without scrolling
+              router.push(item.href, { scroll: false });
               setMobileOpen(false);
             }}
           >
@@ -775,7 +813,7 @@ export function Sidebar({ children, className }: SidebarProps) {
           "flex-1 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent",
           collapsed ? "px-2 py-3" : "px-3 py-3"
         )} style={{
-          scrollBehavior: 'smooth',
+          scrollBehavior: 'auto',
           WebkitOverflowScrolling: 'touch'
         }}>
           <div className="space-y-1">
