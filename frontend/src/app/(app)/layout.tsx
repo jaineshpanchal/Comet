@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/layout/app-header";
 import EmailVerificationBanner from "@/components/EmailVerificationBanner";
 import { WebSocketProvider } from "@/contexts/WebSocketContext";
 import { RealTimeNotifications } from "@/components/RealTimeNotifications";
+import { PageTransition } from "@/components/PageTransition";
 
 export default function AppSectionLayout({
   children,
@@ -20,7 +21,9 @@ export default function AppSectionLayout({
           <main className="pt-16">
             <EmailVerificationBanner />
             <AppHeader />
-            <div className="px-6 py-8 lg:px-8">{children}</div>
+            <PageTransition>
+              <div className="px-6 py-8 lg:px-8">{children}</div>
+            </PageTransition>
           </main>
         </Sidebar>
       </div>

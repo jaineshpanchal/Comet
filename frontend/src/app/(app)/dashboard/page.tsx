@@ -11,8 +11,40 @@ import { Badge } from "@/components/ui/badge"
 import { useMetrics } from "@/hooks/use-metrics"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ActivityFeed, useActivityFeed } from "@/components/ui/activity-feed"
-import { SimpleChart, PieChart } from "@/components/ui/simple-chart"
-import { RefreshCw, BarChart3, Clock, Shield, Rocket, CheckCircle2, Timer, Gauge, PieChart as PieChartIcon } from "lucide-react"
+import { ProfessionalActivity } from "@/components/ui/professional-activity"
+import {
+  ProfessionalAreaChart,
+  ProfessionalLineChart,
+  ProfessionalBarChart,
+  ProfessionalPieChart,
+} from "@/components/ui/professional-charts"
+import {
+  RefreshCw,
+  LayoutGrid,
+  Activity,
+  Shield,
+  Rocket,
+  CheckCircle2,
+  Timer,
+  Gauge,
+  TrendingUp,
+  Workflow,
+  History,
+  BarChart3,
+  Target,
+  Zap,
+  Play,
+  FlaskConical,
+  Loader2,
+  XCircle,
+  CircleDot,
+  GitCommit,
+  Package,
+  AlertTriangle,
+  FolderKanban,
+  PercentCircle,
+  Briefcase
+} from "lucide-react"
 
 export default function DashboardPage() {
   useAuthGuard();
@@ -105,9 +137,9 @@ export default function DashboardPage() {
         <div className="text-center">
           <div className="text-red-500 mb-4">⚠️ Connection Error</div>
           <p className="text-neutral-600 mb-4">{error}</p>
-          <button 
+          <button
             onClick={refresh}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Retry Connection
           </button>
@@ -118,20 +150,27 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 space-y-10 p-8 pb-12">
-      {/* Header */}
+      {/* Header - Clean & Professional */}
       <div className="space-y-4">
         <div>
-          <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-2 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             Dashboard
           </h1>
-          <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
-            Real-time insights into your <span className="text-gray-700 font-medium">DevOps</span> performance
+          <p className="text-base text-gray-600 tracking-normal leading-relaxed">
+            Real-time insights into your <span className="text-gray-800 font-medium">DevOps</span> performance
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
-            <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+            {wsConnected ? (
+              <div className="relative w-2 h-2">
+                <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+              </div>
+            ) : (
+              <div className="w-2 h-2 rounded-full bg-gray-400" />
+            )}
             <span className="text-sm font-medium text-gray-600">
               {wsConnected ? 'Live' : 'Polling Mode'}
             </span>
@@ -139,24 +178,30 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* KPI Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      {/* KPI Metrics Grid - Clean 2x2 layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-36 rounded-xl" />
+            <Skeleton key={i} className="h-32 rounded-xl" />
           ))
         ) : (
-          kpis.map((kpi) => {
+          kpis.slice(0, 4).map((kpi) => {
             // Map KPI IDs to appropriate icons with enhanced aesthetics
             const getIcon = (kpiId: string) => {
               switch (kpiId) {
-                case 'deployment-success':
+                case 'projects':
+                  return <Briefcase className="h-6 w-6" strokeWidth={2.5} />;
+                case 'pipelines':
+                  return <Workflow className="h-6 w-6" strokeWidth={2.5} />;
+                case 'pipelineSuccess':
+                  return <BarChart3 className="h-6 w-6" strokeWidth={2.5} />;
+                case 'testPass':
+                  return <FlaskConical className="h-6 w-6" strokeWidth={2.5} />;
+                case 'deploymentSuccess':
                   return <CheckCircle2 className="h-6 w-6" strokeWidth={2.5} />;
-                case 'lead-time':
+                case 'avgDuration':
                   return <Timer className="h-6 w-6" strokeWidth={2.5} />;
-                case 'test-coverage':
-                  return <Shield className="h-6 w-6" strokeWidth={2.5} />;
-                case 'active-deployments':
+                case 'deploymentFreq':
                   return <Rocket className="h-6 w-6" strokeWidth={2.5} />;
                 default:
                   return <Gauge className="h-6 w-6" strokeWidth={2.5} />;
@@ -179,153 +224,151 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Main Content Tabs */}
+      {/* Main Content Tabs - Clean Monochromatic Theme */}
       <Tabs defaultValue="overview" value={activeTab} onValueChange={handleTabChange} className="space-y-8">
-        <TabsList className="grid w-full grid-cols-4 bg-white/80 backdrop-blur-md border border-slate-200/50 shadow-lg shadow-slate-900/5 rounded-2xl p-2">
-          <TabsTrigger 
-            value="overview" 
-            className="group px-3 py-2.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50/70 data-[state=active]:text-blue-800 data-[state=active]:bg-blue-100/80 data-[state=active]:shadow-sm data-[state=active]:shadow-blue-200/50 rounded-xl transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
+        <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200 shadow-sm rounded-lg p-1.5">
+          <TabsTrigger
+            value="overview"
+            className="group px-4 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <BarChart3 className="h-5 w-5 text-blue-600 group-hover:text-blue-600 group-data-[state=active]:text-blue-700 transition-colors duration-200" strokeWidth={2.5} />
+            <LayoutGrid className="h-4 w-4 text-gray-500 group-hover:text-gray-700 group-data-[state=active]:text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
             <span className="text-sm font-medium">Overview</span>
             {getNotificationCount('overview') > 0 && (
-              <div className="ml-2 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="ml-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
             )}
           </TabsTrigger>
-          <TabsTrigger 
-            value="pipelines" 
-            className="group px-3 py-2.5 text-green-600 hover:text-green-700 hover:bg-green-50/70 data-[state=active]:text-green-800 data-[state=active]:bg-green-100/80 data-[state=active]:shadow-sm data-[state=active]:shadow-green-200/50 rounded-xl transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
+          <TabsTrigger
+            value="pipelines"
+            className="group px-4 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <Rocket className="h-5 w-5 text-green-600 group-hover:text-green-600 group-data-[state=active]:text-green-700 transition-colors duration-200" strokeWidth={2.5} />
+            <Workflow className="h-4 w-4 text-gray-500 group-hover:text-gray-700 group-data-[state=active]:text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
             <span className="text-sm font-medium">Pipelines</span>
             {getNotificationCount('pipelines') > 0 && (
-              <div className="ml-2 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="ml-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
             )}
           </TabsTrigger>
-          <TabsTrigger 
-            value="activity" 
-            className="group px-3 py-2.5 text-purple-600 hover:text-purple-700 hover:bg-purple-50/70 data-[state=active]:text-purple-800 data-[state=active]:bg-purple-100/80 data-[state=active]:shadow-sm data-[state=active]:shadow-purple-200/50 rounded-xl transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
+          <TabsTrigger
+            value="activity"
+            className="group px-4 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <Clock className="h-5 w-5 text-purple-600 group-hover:text-purple-600 group-data-[state=active]:text-purple-700 transition-colors duration-200" strokeWidth={2.5} />
+            <History className="h-4 w-4 text-gray-500 group-hover:text-gray-700 group-data-[state=active]:text-blue-600 transition-colors duration-200" strokeWidth={2.5} />
             <span className="text-sm font-medium">Activity</span>
             {getNotificationCount('activity') > 0 && (
-              <div className="ml-2 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="ml-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
             )}
           </TabsTrigger>
-          <TabsTrigger 
-            value="analytics" 
-            className="group px-3 py-2.5 text-orange-600 hover:text-orange-700 hover:bg-orange-50/70 data-[state=active]:text-orange-800 data-[state=active]:bg-orange-100/80 data-[state=active]:shadow-sm data-[state=active]:shadow-orange-200/50 rounded-xl transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
+          <TabsTrigger
+            value="analytics"
+            className="group px-4 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 data-[state=active]:text-blue-600 data-[state=active]:bg-blue-50 data-[state=active]:shadow-sm rounded-md transition-all duration-200 [&>span]:flex [&>span]:flex-row [&>span]:items-center [&>span]:justify-center [&>span]:gap-2"
           >
-            <PieChartIcon className="h-5 w-5 text-orange-600 group-hover:text-orange-600 group-data-[state=active]:text-orange-700 transition-colors duration-200" />
+            <TrendingUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700 group-data-[state=active]:text-blue-600 transition-colors duration-200" />
             <span className="text-sm font-medium">Analytics</span>
             {getNotificationCount('analytics') > 0 && (
-              <div className="ml-2 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="ml-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
             )}
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Pipeline Status Card */}
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                Pipeline Status Overview
-              </h3>
-              <div className="space-y-3">
+            {/* Pipeline Status Card - Clean & Professional */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-semibold text-blue-600">Pipeline Status</h3>
+                <span className="text-xs text-gray-500">Recent 5</span>
+              </div>
+              <div className="space-y-2.5">
                 {isLoading ? (
-                  Array.from({ length: 3 }).map((_, i) => (
-                    <Skeleton key={i} className="h-16 rounded-lg" />
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <Skeleton key={i} className="h-16 rounded-md" />
                   ))
                 ) : (
                   pipelines.slice(0, 5).map((pipeline) => (
                     <div
                       key={pipeline.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-neutral-50/50 hover:bg-neutral-100/50 transition-colors"
+                      className="flex items-center justify-between p-3.5 rounded-md border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 cursor-pointer group"
                     >
-                      <div className="flex items-center space-x-3">
-                        <div
-                          className={`w-3 h-3 rounded-full ${
-                            pipeline.status === 'deployed'
-                              ? 'bg-green-500'
-                              : pipeline.status === 'testing'
-                              ? 'bg-blue-500'
-                              : pipeline.status === 'building'
-                              ? 'bg-orange-500'
-                              : pipeline.status === 'failed'
-                              ? 'bg-red-500'
-                              : 'bg-gray-400'
-                          }`}
-                        />
-                        <div>
-                          <p className="font-medium text-neutral-900">
+                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                        <div className="flex-shrink-0">
+                          {pipeline.status === 'deployed' ? (
+                            <CheckCircle2 className="w-4 h-4 text-green-500" strokeWidth={2.5} />
+                          ) : pipeline.status === 'testing' ? (
+                            <FlaskConical className="w-4 h-4 text-blue-600" strokeWidth={2.5} />
+                          ) : pipeline.status === 'building' ? (
+                            <Loader2 className="w-4 h-4 text-gray-400 animate-spin" strokeWidth={2.5} />
+                          ) : pipeline.status === 'failed' ? (
+                            <XCircle className="w-4 h-4 text-red-500" strokeWidth={2.5} />
+                          ) : (
+                            <CircleDot className="w-4 h-4 text-gray-300" strokeWidth={2.5} />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 text-sm truncate">
                             {pipeline.name}
                           </p>
-                          <p className="text-sm text-neutral-600">
-                            Last run: {pipeline.lastRun.toLocaleTimeString()}
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {pipeline.lastRun.toLocaleTimeString()} • {pipeline.duration}
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <Badge
-                          variant={
-                            pipeline.status === 'deployed'
-                              ? 'default'
-                              : pipeline.status === 'failed'
-                              ? 'destructive'
-                              : 'secondary'
-                          }
-                        >
-                          {pipeline.status}
-                        </Badge>
-                        <p className="text-sm text-neutral-600 mt-1">
-                          {pipeline.duration}
-                        </p>
-                      </div>
+                      <Badge
+                        variant={
+                          pipeline.status === 'deployed'
+                            ? 'default'
+                            : pipeline.status === 'failed'
+                            ? 'destructive'
+                            : 'secondary'
+                        }
+                        className="text-xs ml-3"
+                      >
+                        {pipeline.status}
+                      </Badge>
                     </div>
                   ))
                 )}
               </div>
             </div>
 
-            {/* Recent Activity Card */}
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                Recent Activity
-              </h3>
-              <div className="space-y-3">
+            {/* Recent Activity Card - Clean & Professional */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-semibold text-blue-600">Recent Activity</h3>
+                <span className="text-xs text-gray-500">Recent 6</span>
+              </div>
+              <div className="space-y-2.5">
                 {isLoading ? (
-                  Array.from({ length: 4 }).map((_, i) => (
-                    <Skeleton key={i} className="h-16 rounded-lg" />
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <Skeleton key={i} className="h-16 rounded-md" />
                   ))
                 ) : (
                   activities.slice(0, 6).map((activity) => (
                     <div
                       key={activity.id}
-                      className="flex items-start space-x-3 p-3 rounded-lg hover:bg-neutral-50/50 transition-colors"
+                      className="flex items-start space-x-3 p-3.5 rounded-md border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 cursor-pointer"
                     >
-                      <div
-                        className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                          activity.severity === 'high'
-                            ? 'bg-red-500'
-                            : activity.severity === 'medium'
-                            ? 'bg-orange-500'
-                            : 'bg-green-500'
-                        }`}
-                      />
+                      <div className="flex-shrink-0 mt-0.5">
+                        {activity.severity === 'high' ? (
+                          <AlertTriangle className="w-4 h-4 text-red-500" strokeWidth={2.5} />
+                        ) : activity.severity === 'medium' ? (
+                          <GitCommit className="w-4 h-4 text-gray-400" strokeWidth={2.5} />
+                        ) : (
+                          <CheckCircle2 className="w-4 h-4 text-green-500" strokeWidth={2.5} />
+                        )}
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-neutral-900 truncate">
+                        <p className="font-medium text-gray-900 text-sm truncate">
                           {activity.title}
                         </p>
-                        <p className="text-sm text-neutral-600 truncate">
+                        <p className="text-xs text-gray-500 truncate mt-0.5">
                           {activity.description}
                         </p>
-                        <div className="flex items-center justify-between mt-1">
-                          <p className="text-xs text-neutral-500">
-                            by {activity.user}
-                          </p>
-                          <p className="text-xs text-neutral-500">
+                        <div className="flex items-center gap-3 mt-2">
+                          <span className="text-xs text-gray-400">
+                            {activity.user}
+                          </span>
+                          <span className="text-xs text-gray-400">
                             {activity.timestamp.toLocaleTimeString()}
-                          </p>
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -337,11 +380,11 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="pipelines" className="space-y-6">
-          <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-blue-600 mb-5">
               All Pipelines
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {isLoading ? (
                 Array.from({ length: 6 }).map((_, i) => (
                   <Skeleton key={i} className="h-20 rounded-lg" />
@@ -350,35 +393,35 @@ export default function DashboardPage() {
                 pipelines.map((pipeline) => (
                   <div
                     key={pipeline.id}
-                    className="flex items-center justify-between p-4 rounded-lg bg-neutral-50/50 hover:bg-neutral-100/50 transition-all duration-200"
+                    className="flex items-center justify-between p-4 rounded-md border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 cursor-pointer"
                   >
                     <div className="flex items-center space-x-4">
                       <div
-                        className={`w-4 h-4 rounded-full ${
+                        className={`w-2.5 h-2.5 rounded-full ${
                           pipeline.status === 'deployed'
                             ? 'bg-green-500'
                             : pipeline.status === 'testing'
-                            ? 'bg-blue-500'
+                            ? 'bg-blue-600'
                             : pipeline.status === 'building'
-                            ? 'bg-orange-500'
+                            ? 'bg-gray-400 animate-pulse'
                             : pipeline.status === 'failed'
                             ? 'bg-red-500'
-                            : 'bg-gray-400'
+                            : 'bg-gray-300'
                         }`}
                       />
                       <div>
-                        <p className="font-medium text-neutral-900">
+                        <p className="font-medium text-gray-900 text-sm">
                           {pipeline.name}
                         </p>
-                        <p className="text-sm text-neutral-600">
+                        <p className="text-xs text-gray-500 mt-0.5">
                           Last run: {pipeline.lastRun.toLocaleString()} • Duration: {pipeline.duration}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
                       <div className="text-right">
-                        <p className="text-sm text-neutral-600">Progress</p>
-                        <p className="font-medium">{pipeline.progress}%</p>
+                        <p className="text-xs text-gray-500">Progress</p>
+                        <p className="font-medium text-sm text-gray-900">{pipeline.progress}%</p>
                       </div>
                       <Badge
                         variant={
@@ -388,6 +431,7 @@ export default function DashboardPage() {
                             ? 'destructive'
                             : 'secondary'
                         }
+                        className="text-xs"
                       >
                         {pipeline.status}
                       </Badge>
@@ -400,23 +444,18 @@ export default function DashboardPage() {
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-6">
-          <ActivityFeed
-            activities={activityFeed}
-            maxItems={15}
-            showHeader={false}
-            compact={false}
-          />
+          <ProfessionalActivity activities={activities} maxItems={20} />
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Deployment Frequency Chart */}
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                Deployment Frequency (Last 7 Days)
-              </h3>
-              <SimpleChart
-                type="area"
+            {/* Deployment Frequency Chart - Professional */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-semibold text-blue-600">Deployment Frequency</h3>
+                <span className="text-xs text-gray-500">Last 7 Days</span>
+              </div>
+              <ProfessionalAreaChart
                 data={[
                   { label: "Mon", value: 12 },
                   { label: "Tue", value: 19 },
@@ -426,94 +465,95 @@ export default function DashboardPage() {
                   { label: "Sat", value: 8 },
                   { label: "Sun", value: 5 },
                 ]}
-                height={200}
-                showGrid={true}
+                height={260}
               />
             </div>
 
-            {/* Pipeline Success Rate */}
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                Pipeline Status Distribution
-              </h3>
-              <PieChart
+            {/* Pipeline Distribution - Professional */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-semibold text-blue-600">Pipeline Distribution</h3>
+                <span className="text-xs text-gray-500">Total: 188</span>
+              </div>
+              <ProfessionalPieChart
                 data={[
                   { label: "Success", value: 145, color: "#10b981" },
                   { label: "Failed", value: 23, color: "#ef4444" },
                   { label: "Running", value: 8, color: "#3b82f6" },
-                  { label: "Cancelled", value: 12, color: "#6b7280" },
+                  { label: "Cancelled", value: 12, color: "#9ca3af" },
                 ]}
-                size={220}
-                showLegend={true}
+                height={260}
               />
             </div>
 
-            {/* Test Results Trend */}
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                Test Pass Rate Trend
-              </h3>
-              <SimpleChart
-                type="line"
+            {/* Test Pass Rate - Professional */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-semibold text-blue-600">Test Pass Rate</h3>
+                <span className="text-xs text-gray-500">Monthly Trend</span>
+              </div>
+              <ProfessionalLineChart
                 data={[
                   { label: "Week 1", value: 78 },
                   { label: "Week 2", value: 82 },
                   { label: "Week 3", value: 85 },
                   { label: "Week 4", value: 88 },
                 ]}
-                height={200}
-                showGrid={true}
-                showValues={true}
+                height={260}
               />
             </div>
 
-            {/* Build Duration */}
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                Average Build Duration (minutes)
-              </h3>
-              <SimpleChart
-                type="bar"
+            {/* Build Duration - Professional */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-semibold text-blue-600">Build Duration</h3>
+                <span className="text-xs text-gray-500">Average (min)</span>
+              </div>
+              <ProfessionalBarChart
                 data={[
-                  { label: "Frontend", value: 4.2, color: "bg-blue-500" },
-                  { label: "Backend", value: 6.8, color: "bg-green-500" },
-                  { label: "Mobile", value: 8.5, color: "bg-purple-500" },
-                  { label: "Analytics", value: 5.3, color: "bg-orange-500" },
+                  { label: "Frontend", value: 4.2 },
+                  { label: "Backend", value: 6.8 },
+                  { label: "Mobile", value: 8.5 },
+                  { label: "Analytics", value: 5.3 },
                 ]}
-                height={200}
-                showGrid={true}
-                showValues={true}
+                height={260}
               />
             </div>
           </div>
 
-          {/* Additional Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-2">
+          {/* Additional Metrics - Clean */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium text-gray-600">Avg Response Time</h4>
-                <Clock className="w-4 h-4 text-blue-500" />
+                <div className="w-9 h-9 rounded-md bg-gray-100 flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-gray-600" />
+                </div>
               </div>
-              <p className="text-2xl font-bold text-gray-900">234ms</p>
-              <p className="text-xs text-green-600 mt-1">↓ 12% from last week</p>
+              <p className="text-2xl font-semibold text-gray-900">234ms</p>
+              <p className="text-xs text-gray-500 mt-1">12% faster than last week</p>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-2">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium text-gray-600">Code Coverage</h4>
-                <Shield className="w-4 h-4 text-green-500" />
+                <div className="w-9 h-9 rounded-md bg-gray-100 flex items-center justify-center">
+                  <Target className="w-4 h-4 text-gray-600" />
+                </div>
               </div>
-              <p className="text-2xl font-bold text-gray-900">87.3%</p>
-              <p className="text-xs text-green-600 mt-1">↑ 3.2% from last week</p>
+              <p className="text-2xl font-semibold text-gray-900">87.3%</p>
+              <p className="text-xs text-gray-500 mt-1">3.2% increase from last week</p>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium text-gray-600">Uptime</h4>
-                <Rocket className="w-4 h-4 text-purple-500" />
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-medium text-gray-600">System Uptime</h4>
+                <div className="w-9 h-9 rounded-md bg-gray-100 flex items-center justify-center">
+                  <Activity className="w-4 h-4 text-gray-600" />
+                </div>
               </div>
-              <p className="text-2xl font-bold text-gray-900">99.97%</p>
-              <p className="text-xs text-gray-600 mt-1">Last 30 days</p>
+              <p className="text-2xl font-semibold text-gray-900">99.97%</p>
+              <p className="text-xs text-gray-500 mt-1">Last 30 days</p>
             </div>
           </div>
         </TabsContent>

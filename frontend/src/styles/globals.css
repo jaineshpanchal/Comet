@@ -352,3 +352,44 @@ body {
 .sidebar-hover-no-scroll {
   overscroll-behavior: contain;
 }
+
+/* Smooth page transitions */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Prevent flash of white during page transitions */
+html {
+  background-color: rgb(250, 250, 250);
+}
+
+body {
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Smooth view transitions for Next.js navigation */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.25s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}

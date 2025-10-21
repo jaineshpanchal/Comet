@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { MetricsService, type Activity, type DashboardMetrics } from '@/services/metrics.service'
+import { websocketService } from '@/services/websocket'
+import { getAuthToken } from '@/lib/auth'
 
 interface KPIMetric {
   id: string
@@ -201,18 +203,75 @@ export function useMetrics(timeRange: string = '24h') {
     fetchDashboardData()
   }, [fetchDashboardData])
 
-  // WebSocket connection for real-time updates (optional - fallback to HTTP if unavailable)
+  // WebSocket connection for real-time updates
   useEffect(() => {
-    // For now, we'll use polling instead of WebSocket since the backend WebSocket is not yet implemented
-    // TODO: Implement WebSocket when backend supports it
+    const token = getAuthToken()
 
-    // Polling every 30 seconds
-    const pollInterval = setInterval(() => {
+    if (!token) {
+      console.warn('No auth token found, using polling mode')
+      // Fallback to polling if no token
+      const pollInterval = setInterval(() => {
+        fetchDashboardData()
+      }, 30000)
+      return () => clearInterval(pollInterval)
+    }
+
+    // Connect to WebSocket
+    const wsUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+    websocketService.connect({ url: wsUrl, token })
+
+    // Handle connection status
+    const handleConnectionStatus = (data: { connected: boolean }) => {
+      setWsConnected(data.connected)
+      if (data.connected) {
+        console.log('✅ WebSocket connected - Live updates enabled')
+      } else {
+        console.log('❌ WebSocket disconnected - Falling back to polling')
+      }
+    }
+
+    // Handle metrics updates
+    const handleMetricsUpdate = (data: any) => {
+      console.log('📊 Received metrics update via WebSocket')
       fetchDashboardData()
-    }, 30000)
+    }
 
+    // Handle pipeline updates
+    const handlePipelineUpdate = (data: any) => {
+      console.log('🚀 Received pipeline update via WebSocket')
+      fetchDashboardData()
+    }
+
+    // Handle deployment updates
+    const handleDeploymentUpdate = (data: any) => {
+      console.log('📦 Received deployment update via WebSocket')
+      fetchDashboardData()
+    }
+
+    // Register event listeners
+    websocketService.on('connection:status', handleConnectionStatus)
+    websocketService.on('metrics:update', handleMetricsUpdate)
+    websocketService.on('pipeline:run:update', handlePipelineUpdate)
+    websocketService.on('pipeline:status:change', handlePipelineUpdate)
+    websocketService.on('deployment:update', handleDeploymentUpdate)
+
+    // Fallback polling if WebSocket fails (every 60 seconds)
+    const pollInterval = setInterval(() => {
+      if (!websocketService.connected) {
+        console.log('WebSocket not connected, using HTTP polling')
+        fetchDashboardData()
+      }
+    }, 60000)
+
+    // Cleanup
     return () => {
       clearInterval(pollInterval)
+      websocketService.off('connection:status', handleConnectionStatus)
+      websocketService.off('metrics:update', handleMetricsUpdate)
+      websocketService.off('pipeline:run:update', handlePipelineUpdate)
+      websocketService.off('pipeline:status:change', handlePipelineUpdate)
+      websocketService.off('deployment:update', handleDeploymentUpdate)
+      // Don't disconnect WebSocket on cleanup - keep it alive for other components
     }
   }, [fetchDashboardData])
 
