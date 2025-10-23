@@ -15,6 +15,7 @@ import metricsRoutes from '../metrics';
 import auditLogsRoutes from '../auditLogs';
 import aiRoutes from '../ai';
 import proxyRoutes from '../proxy';
+import rateLimitRoutes from '../rateLimitRoutes';
 
 const v1Router = Router();
 
@@ -41,6 +42,7 @@ v1Router.use('/deployments', deploymentRoutes);
 v1Router.use('/metrics', metricsRoutes);
 v1Router.use('/audit-logs', auditLogsRoutes);
 v1Router.use('/ai', aiRoutes);
+v1Router.use('/rate-limits', rateLimitRoutes);
 
 // Microservice proxy routes
 v1Router.use('/', proxyRoutes);
