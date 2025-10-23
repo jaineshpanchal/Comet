@@ -143,6 +143,14 @@ export function initSentry(config?: Partial<SentryConfig>): void {
  * Must be used before any other middleware
  */
 export function sentryRequestHandler() {
+  const sentryDsn = process.env.SENTRY_DSN || '';
+  const environment = process.env.NODE_ENV || 'development';
+  const enabled = Boolean(sentryDsn) && environment !== 'test';
+
+  if (!enabled) {
+    return (req: Request, res: Response, next: NextFunction) => next();
+  }
+
   return Sentry.Handlers.requestHandler({
     user: ['id', 'email', 'username'],
     ip: true,
@@ -155,6 +163,14 @@ export function sentryRequestHandler() {
  * Must be used after request handler but before routes
  */
 export function sentryTracingHandler() {
+  const sentryDsn = process.env.SENTRY_DSN || '';
+  const environment = process.env.NODE_ENV || 'development';
+  const enabled = Boolean(sentryDsn) && environment !== 'test';
+
+  if (!enabled) {
+    return (req: Request, res: Response, next: NextFunction) => next();
+  }
+
   return Sentry.Handlers.tracingHandler();
 }
 
@@ -163,6 +179,14 @@ export function sentryTracingHandler() {
  * Must be used after all routes but before other error handlers
  */
 export function sentryErrorHandler() {
+  const sentryDsn = process.env.SENTRY_DSN || '';
+  const environment = process.env.NODE_ENV || 'development';
+  const enabled = Boolean(sentryDsn) && environment !== 'test';
+
+  if (!enabled) {
+    return (err: any, req: Request, res: Response, next: NextFunction) => next(err);
+  }
+
   return Sentry.Handlers.errorHandler({
     shouldHandleError(error) {
       // Capture all errors with status code >= 500
