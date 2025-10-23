@@ -547,9 +547,14 @@ export class AuthService {
 
   // Utility function to parse time strings to seconds
   private static parseTimeToSeconds(timeString: string): number {
-    const match = timeString.match(/^(\d+)([dhm])$/);
+    // If it's just a number, treat as seconds
+    if (/^\d+$/.test(timeString)) {
+      return parseInt(timeString);
+    }
+
+    const match = timeString.match(/^(\d+)([dhms])$/);
     if (!match) {
-      throw new Error('Invalid time format');
+      throw new Error('Invalid time format. Use format like: 24h, 7d, 30m, or plain seconds');
     }
 
     const value = parseInt(match[1]);
@@ -562,8 +567,10 @@ export class AuthService {
         return value * 60 * 60;
       case 'm':
         return value * 60;
+      case 's':
+        return value;
       default:
-        throw new Error('Invalid time unit');
+        throw new Error('Invalid time unit. Use d (days), h (hours), m (minutes), or s (seconds)');
     }
   }
 }
