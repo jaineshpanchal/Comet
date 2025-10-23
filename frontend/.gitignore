@@ -1,0 +1,5 @@
+# Playwright E2E Tests
+/frontend/playwright-report/
+/frontend/test-results/
+/frontend/.playwright/
+
