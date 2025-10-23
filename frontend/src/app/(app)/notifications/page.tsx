@@ -197,7 +197,7 @@ export default function NotificationsPage() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'CRITICAL': return 'bg-purple-50 border-purple-200'
+      case 'CRITICAL': return 'bg-purple-50 border-blue-200'
       case 'ERROR': return 'bg-red-50 border-red-200'
       case 'WARNING': return 'bg-orange-50 border-orange-200'
       case 'SUCCESS': return 'bg-green-50 border-green-200'
@@ -209,7 +209,7 @@ export default function NotificationsPage() {
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case 'CRITICAL':
-        return <BellAlertIcon className="h-5 w-5 text-purple-600" />
+        return <BellAlertIcon className="h-5 w-5 text-blue-600" />
       case 'ERROR':
         return <XCircleIcon className="h-5 w-5 text-red-600" />
       case 'WARNING':
@@ -227,7 +227,7 @@ export default function NotificationsPage() {
     switch (type) {
       case 'PIPELINE': return 'text-blue-700 bg-blue-100'
       case 'TEST': return 'text-green-700 bg-green-100'
-      case 'DEPLOYMENT': return 'text-purple-700 bg-purple-100'
+      case 'DEPLOYMENT': return 'text-blue-700 bg-purple-100'
       case 'SECURITY': return 'text-red-700 bg-red-100'
       case 'ALERT': return 'text-orange-700 bg-orange-100'
       case 'SYSTEM': return 'text-gray-700 bg-gray-100'
@@ -240,8 +240,7 @@ export default function NotificationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <BellIcon className="h-10 w-10 text-blue-600" />
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             Notifications
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -257,7 +256,7 @@ export default function NotificationsPage() {
           </Link>
           <Link
             href="/notifications/alerts"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
           >
             Alert Rules
           </Link>
@@ -283,9 +282,9 @@ export default function NotificationsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm text-gray-600 mb-2">Critical Alerts</div>
-                <div className="text-3xl font-bold text-purple-600">{criticalCount}</div>
+                <div className="text-3xl font-bold text-blue-600">{criticalCount}</div>
               </div>
-              <BellAlertIcon className="h-12 w-12 text-purple-600" />
+              <BellAlertIcon className="h-12 w-12 text-blue-600" />
             </div>
           </CardContent>
         </Card>

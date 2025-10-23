@@ -135,7 +135,7 @@ export default function DeploymentDetailPage() {
   const getEnvironmentColor = (env: string) => {
     const colors: Record<string, string> = {
       development: "bg-blue-100 text-blue-800 border-blue-300",
-      staging: "bg-purple-100 text-purple-800 border-purple-300",
+      staging: "bg-purple-100 text-purple-800 border-blue-300",
       production: "bg-red-100 text-red-800 border-red-300",
     }
     return colors[env] || "bg-gray-100 text-gray-800 border-gray-300"
@@ -183,7 +183,7 @@ export default function DeploymentDetailPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Deployment Details</h1>
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">Deployment Details</h1>
           <p className="text-lg text-gray-600">Version {deployment.version}</p>
         </div>
         <div className="flex items-center gap-3">

@@ -265,7 +265,7 @@ export default function SecurityDashboard() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'CRITICAL': return 'text-purple-600 bg-purple-50 border-purple-200'
+      case 'CRITICAL': return 'text-blue-600 bg-purple-50 border-blue-200'
       case 'HIGH': return 'text-red-600 bg-red-50 border-red-200'
       case 'MEDIUM': return 'text-orange-600 bg-orange-50 border-orange-200'
       case 'LOW': return 'text-yellow-600 bg-yellow-50 border-yellow-200'
@@ -303,24 +303,23 @@ export default function SecurityDashboard() {
     <div className="space-y-8 pb-12">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <ShieldExclamationIcon className="h-10 w-10 text-red-600" />
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             Security Dashboard
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-sm text-gray-500 font-normal tracking-wide">
             Monitor and manage security vulnerabilities across your projects
           </p>
         </div>
         <div className="flex gap-3">
           <Link
             href="/security/code-quality"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
           >
             Code Quality
           </Link>
           <Link
             href="/security/dependencies"
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
           >
             Dependencies
           </Link>
@@ -328,11 +327,11 @@ export default function SecurityDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <Card className="border-purple-200 bg-purple-50">
+        <Card className="border-blue-200 bg-purple-50">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-purple-700 font-medium">Critical</div>
-              <ShieldExclamationIcon className="h-5 w-5 text-purple-600" />
+              <div className="text-sm text-blue-700 font-medium">Critical</div>
+              <ShieldExclamationIcon className="h-5 w-5 text-blue-600" />
             </div>
             <div className="text-3xl font-bold text-purple-900">{stats.critical}</div>
           </CardContent>
@@ -452,7 +451,7 @@ export default function SecurityDashboard() {
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
-                <ShieldCheckIcon className="h-8 w-8 text-purple-600" />
+                <ShieldCheckIcon className="h-8 w-8 text-blue-600" />
                 <div>
                   <div className="font-semibold text-gray-900">Compliance</div>
                   <div className="text-sm text-gray-600">View compliance reports</div>
@@ -575,7 +574,7 @@ export default function SecurityDashboard() {
                       </div>
                     </div>
                     <div className="flex gap-2 ml-4">
-                      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                      <button className="px-3 py-1 text-sm bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold rounded shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200">
                         View Details
                       </button>
                       {vuln.status === 'OPEN' && (

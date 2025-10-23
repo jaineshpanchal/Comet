@@ -91,7 +91,7 @@ export default function AnalyticsOverviewPage() {
         </Link>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Analytics Overview
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -132,7 +132,7 @@ export default function AnalyticsOverviewPage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-600">Total Commits</span>
-              <CloudArrowUpIcon className="h-5 w-5 text-purple-600" />
+              <CloudArrowUpIcon className="h-5 w-5 text-blue-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900">{analytics.overall.totalCommits.toLocaleString()}</div>
           </CardContent>
@@ -298,7 +298,7 @@ export default function AnalyticsOverviewPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <CloudArrowUpIcon className="h-6 w-6 text-purple-600" />
+                <CloudArrowUpIcon className="h-6 w-6 text-blue-600" />
               </div>
               <div>
                 <CardTitle>Deployment Performance</CardTitle>
@@ -337,7 +337,7 @@ export default function AnalyticsOverviewPage() {
 
             <div>
               <div className="text-sm text-gray-600 mb-2">Avg Duration</div>
-              <div className="text-2xl font-bold text-purple-600">
+              <div className="text-2xl font-bold text-blue-600">
                 {formatDuration(analytics.deployments.avgDuration)}
               </div>
               <div className="text-xs text-gray-500 mt-2">Per deployment</div>
@@ -380,9 +380,9 @@ export default function AnalyticsOverviewPage() {
 
             <Link
               href="/deployments/analytics"
-              className="p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors"
+              className="p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-blue-50 transition-colors"
             >
-              <CloudArrowUpIcon className="h-6 w-6 text-purple-600 mb-2" />
+              <CloudArrowUpIcon className="h-6 w-6 text-blue-600 mb-2" />
               <div className="font-medium text-gray-900">Deployment Analytics</div>
               <div className="text-xs text-gray-500 mt-1">Deployment frequency</div>
             </Link>

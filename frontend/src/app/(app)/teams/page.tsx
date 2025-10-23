@@ -161,10 +161,10 @@ export default function TeamsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Teams
             </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+            <p className="text-sm font-normal text-gray-500 tracking-wide">
               Manage your <span className="text-gray-700 font-medium">teams</span> and{" "}
               <span className="text-gray-700 font-medium">collaborate</span> with your organization
             </p>
@@ -172,7 +172,7 @@ export default function TeamsPage() {
 
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
           >
             <PlusIcon className="w-5 h-5" />
             New Team
@@ -185,7 +185,7 @@ export default function TeamsPage() {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 rounded-lg">
-              <UserGroupIcon className="w-5 h-5 text-purple-600" />
+              <UserGroupIcon className="w-5 h-5 text-blue-600" />
             </div>
             <span className="text-sm font-medium text-gray-500">Total Teams</span>
           </div>
@@ -226,7 +226,7 @@ export default function TeamsPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search teams..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
           />
         </div>
       </div>
@@ -251,7 +251,7 @@ export default function TeamsPage() {
           {!searchTerm && (
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all inline-flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  transition-all inline-flex items-center gap-2"
             >
               <PlusIcon className="w-5 h-5" />
               Create Your First Team
@@ -268,10 +268,10 @@ export default function TeamsPage() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg">
-                    <UserGroupIcon className="w-6 h-6 text-purple-600" />
+                    <UserGroupIcon className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
+                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                       {team.name}
                     </h3>
                   </div>
@@ -330,7 +330,7 @@ export default function TeamsPage() {
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 rounded-t-2xl">
-              <h2 className="text-3xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                 Create New Team
               </h2>
               <p className="text-gray-600 mt-2">Set up a new team to collaborate with your organization</p>
@@ -357,7 +357,7 @@ export default function TeamsPage() {
                   onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
                   required
                   placeholder="Engineering Team"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 />
               </div>
 
@@ -372,7 +372,7 @@ export default function TeamsPage() {
                   onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
                   rows={3}
                   placeholder="A brief description of your team..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all resize-none"
                 />
               </div>
 
@@ -391,7 +391,7 @@ export default function TeamsPage() {
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 >
                   {createLoading ? (
                     <span className="flex items-center justify-center gap-2">

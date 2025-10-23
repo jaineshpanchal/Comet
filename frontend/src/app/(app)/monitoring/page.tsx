@@ -92,16 +92,16 @@ export default function MonitoringPage() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             Monitoring
           </h1>
-          <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+          <p className="text-sm font-normal text-gray-500 tracking-wide">
             Real-time system monitoring and performance analytics
           </p>
         </div>
         <div className="flex items-center gap-4">
           <RealTimeIndicator lastUpdate={lastUpdate} />
-          <button className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all flex items-center gap-2">
+          <button className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg  transition-all flex items-center gap-2">
             <CpuChipIcon className="w-4 h-4" />
             Configure
           </button>
@@ -116,7 +116,7 @@ export default function MonitoringPage() {
             onClick={() => setTimeRange(range.value)}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
               timeRange === range.value
-                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
@@ -265,13 +265,13 @@ export default function MonitoringPage() {
           </a>
           <a
             href="/monitoring/logs"
-            className="px-6 py-3 bg-white text-purple-600 border border-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition-all"
+            className="px-6 py-3 bg-white text-blue-600 border border-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-all"
           >
             Application Logs
           </a>
           <a
             href="/monitoring/alerts"
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  transition-all"
           >
             Alerts & Incidents
           </a>

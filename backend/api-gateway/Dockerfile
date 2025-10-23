@@ -1,57 +1,89 @@
-# Multi-stage build for optimized production image
-FROM node:18-alpine AS builder
+# ==================================================
+# Production Dockerfile for GoLive API Gateway
+# ==================================================
+# Multi-stage build for optimized image size and security
+#
+# Features:
+# - Multi-stage build (builder + production)
+# - Non-root user execution
+# - Minimal attack surface
+# - Security scanning compatible
+# - Health check included
+# - Build cache optimization
+# ==================================================
 
-# Set working directory
+# ==================================================
+# Stage 1: Dependencies
+# ==================================================
+FROM node:20-alpine AS deps
+
+# Install security updates
+RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
-COPY tsconfig.json ./
+COPY prisma ./prisma/
 
-# Install dependencies
-RUN npm ci --only=production && \
-    npm cache clean --force
+# Install dependencies (including devDependencies for build)
+RUN npm ci --legacy-peer-deps
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# ==================================================
+# Stage 2: Builder
+# ==================================================
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/prisma ./prisma
 
 # Copy source code
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
-
 # Build TypeScript
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine
+# Remove devDependencies
+RUN npm prune --production --legacy-peer-deps
 
-# Set working directory
-WORKDIR /app
+# ==================================================
+# Stage 3: Production Runner
+# ==================================================
+FROM node:20-alpine AS runner
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+WORKDIR /app
 
-# Copy built application from builder
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
-COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 golive
+
+# Copy built application
+COPY --from=builder --chown=golive:nodejs /app/dist ./dist
+COPY --from=builder --chown=golive:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=golive:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=golive:nodejs /app/package*.json ./
 
 # Switch to non-root user
-USER nodejs
+USER golive
 
 # Expose port
 EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:8000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+    CMD node -e "require('http').get('http://localhost:8000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start application
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/index.js"]

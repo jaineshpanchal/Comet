@@ -162,8 +162,7 @@ export default function NotificationPreferencesPage() {
         </Link>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <BellIcon className="h-10 w-10 text-green-600" />
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Notification Preferences
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">

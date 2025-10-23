@@ -119,7 +119,7 @@ export default function UserProfilePage() {
     switch (type) {
       case 'PIPELINE': return <RocketLaunchIcon className="h-5 w-5 text-blue-600" />
       case 'TEST': return <BeakerIcon className="h-5 w-5 text-green-600" />
-      case 'DEPLOYMENT': return <RocketLaunchIcon className="h-5 w-5 text-purple-600" />
+      case 'DEPLOYMENT': return <RocketLaunchIcon className="h-5 w-5 text-blue-600" />
       case 'CODE_REVIEW': return <CodeBracketIcon className="h-5 w-5 text-orange-600" />
       case 'COMMIT': return <CodeBracketIcon className="h-5 w-5 text-gray-600" />
       default: return <ChartBarIcon className="h-5 w-5 text-gray-600" />
@@ -149,8 +149,7 @@ export default function UserProfilePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <UserCircleIcon className="h-10 w-10 text-blue-600" />
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             My Profile
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -257,7 +256,7 @@ export default function UserProfilePage() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-sm text-gray-600 mb-1">Deployments</div>
-                <div className="text-2xl font-bold text-purple-600">{user.stats.deploymentsCompleted}</div>
+                <div className="text-2xl font-bold text-blue-600">{user.stats.deploymentsCompleted}</div>
               </CardContent>
             </Card>
             <Card>
@@ -381,7 +380,7 @@ export default function UserProfilePage() {
                 />
               </div>
               <div className="flex gap-3 pt-4">
-                <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200">
                   Save Changes
                 </button>
                 <button className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">

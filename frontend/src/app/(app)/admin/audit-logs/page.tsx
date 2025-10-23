@@ -134,7 +134,7 @@ export default function AuditLogsPage() {
     if (action.includes("delete")) return "text-red-600 bg-red-50"
     if (action.includes("create")) return "text-green-600 bg-green-50"
     if (action.includes("update") || action.includes("edit")) return "text-blue-600 bg-blue-50"
-    if (action.includes("login")) return "text-purple-600 bg-purple-50"
+    if (action.includes("login")) return "text-blue-600 bg-purple-50"
     return "text-gray-600 bg-gray-50"
   }
 
@@ -205,10 +205,10 @@ export default function AuditLogsPage() {
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Audit Logs
             </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+            <p className="text-sm text-gray-500 font-normal tracking-wide">
               Track all <span className="text-gray-700 font-medium">user actions</span> and <span className="text-gray-700 font-medium">system events</span>
             </p>
           </div>
@@ -225,7 +225,7 @@ export default function AuditLogsPage() {
             <button
               onClick={exportToJSON}
               disabled={logs.length === 0}
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium  disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
             >
               <ArrowDownTrayIcon className="w-5 h-5" />
               Export JSON
@@ -240,7 +240,7 @@ export default function AuditLogsPage() {
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <ChartBarIcon className="w-5 h-5 text-purple-600" />
+                <ChartBarIcon className="w-5 h-5 text-blue-600" />
               </div>
               <span className="text-sm font-medium text-gray-500">Total Logs</span>
             </div>
@@ -301,7 +301,7 @@ export default function AuditLogsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search logs..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               />
             </div>
           </div>
@@ -312,7 +312,7 @@ export default function AuditLogsPage() {
               setActionFilter(e.target.value)
               setPage(1)
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
           >
             <option value="">All Actions</option>
             <option value="login">Login</option>
@@ -327,7 +327,7 @@ export default function AuditLogsPage() {
               setResourceFilter(e.target.value)
               setPage(1)
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
           >
             <option value="">All Resources</option>
             <option value="user">User</option>
@@ -362,7 +362,7 @@ export default function AuditLogsPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : logs.length === 0 ? (
           <div className="text-center py-12">

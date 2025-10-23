@@ -71,10 +71,10 @@ export default function TestingPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             Testing
           </h1>
-          <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+          <p className="text-sm font-normal text-gray-500 tracking-wide">
             Manage <span className="text-gray-700 font-medium">test suites</span>, view{" "}
             <span className="text-gray-700 font-medium">test results</span>, and track{" "}
             <span className="text-gray-700 font-medium">code coverage</span>
@@ -97,7 +97,7 @@ export default function TestingPage() {
           </Link>
           <Link
             href="/testing/suites/new"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all shadow-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  transition-all shadow-sm"
           >
             <PlusIcon className="w-5 h-5" />
             Create Test Suite
@@ -113,7 +113,7 @@ export default function TestingPage() {
         >
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 bg-purple-100 rounded-lg">
-              <BeakerIcon className="w-8 h-8 text-purple-600" />
+              <BeakerIcon className="w-8 h-8 text-blue-600" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Test Suites</h3>
@@ -181,7 +181,7 @@ export default function TestingPage() {
           <h2 className="text-lg font-semibold text-gray-900">Recent Test Suites</h2>
           <Link
             href="/testing/suites"
-            className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
           >
             View All
           </Link>
@@ -195,7 +195,7 @@ export default function TestingPage() {
               <p className="text-gray-600 mb-4">No test suites yet</p>
               <Link
                 href="/testing/suites/new"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
               >
                 <PlusIcon className="w-4 h-4" />
                 Create Your First Test Suite
@@ -218,7 +218,7 @@ export default function TestingPage() {
                   }`}>
                     <BeakerIcon className={`w-5 h-5 ${
                       suite.type === 'UNIT' ? 'text-blue-600' :
-                      suite.type === 'INTEGRATION' ? 'text-purple-600' :
+                      suite.type === 'INTEGRATION' ? 'text-blue-600' :
                       suite.type === 'E2E' ? 'text-green-600' :
                       suite.type === 'PERFORMANCE' ? 'text-orange-600' :
                       'text-red-600'
@@ -252,7 +252,7 @@ export default function TestingPage() {
           href="/testing/suites"
           className="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all"
         >
-          <BeakerIcon className="w-8 h-8 text-purple-600 mb-3" />
+          <BeakerIcon className="w-8 h-8 text-blue-600 mb-3" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Manage Test Suites</h3>
           <p className="text-sm text-gray-600">Create, edit, and organize your test suites</p>
         </Link>

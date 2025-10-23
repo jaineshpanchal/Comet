@@ -198,7 +198,7 @@ export default function AdminUsersPage() {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
           <p className="text-gray-600 font-medium">Loading users...</p>
         </div>
       </div>
@@ -210,10 +210,10 @@ export default function AdminUsersPage() {
       {/* Header */}
       <div className="space-y-4">
         <div>
-          <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             User Management
           </h1>
-          <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+          <p className="text-sm text-gray-500 font-normal tracking-wide">
             Manage roles and permissions across your team
           </p>
         </div>
@@ -242,7 +242,7 @@ export default function AdminUsersPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center">
-              <UserGroupIcon className="h-6 w-6 text-purple-600" />
+              <UserGroupIcon className="h-6 w-6 text-blue-600" />
             </div>
             <div>
               <p className="text-sm text-gray-500">Total Users</p>
@@ -261,7 +261,7 @@ export default function AdminUsersPage() {
             placeholder="Search users by name, email, or username..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
           />
         </div>
         <div className="relative">
@@ -269,7 +269,7 @@ export default function AdminUsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="pl-10 pr-8 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none appearance-none cursor-pointer"
+            className="pl-10 pr-8 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none appearance-none cursor-pointer"
           >
             <option value="all">All Roles</option>
             <option value="ADMIN">Admin</option>
@@ -291,7 +291,7 @@ export default function AdminUsersPage() {
             <div
               key={user.id}
               className={`bg-white rounded-lg border p-6 transition-all hover:shadow-md ${
-                isCurrentUser ? "border-purple-300 ring-2 ring-purple-100" : "border-gray-200"
+                isCurrentUser ? "border-blue-300 ring-2 ring-purple-100" : "border-gray-200"
               }`}
             >
               <div className="flex items-center gap-6">
@@ -314,7 +314,7 @@ export default function AdminUsersPage() {
                       {user.firstName} {user.lastName}
                     </h3>
                     {isCurrentUser && (
-                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
+                      <span className="px-2 py-0.5 bg-purple-100 text-blue-700 text-xs font-semibold rounded-full">
                         You
                       </span>
                     )}
@@ -344,8 +344,8 @@ export default function AdminUsersPage() {
                     value={user.role}
                     onChange={(e) => handleRoleChange(user.id, e.target.value)}
                     disabled={isCurrentUser}
-                    className={`px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none ${
-                      isCurrentUser ? "cursor-not-allowed opacity-50 bg-gray-50" : "cursor-pointer hover:border-purple-300 bg-white"
+                    className={`px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none ${
+                      isCurrentUser ? "cursor-not-allowed opacity-50 bg-gray-50" : "cursor-pointer hover:border-blue-300 bg-white"
                     }`}
                   >
                     <option value="ADMIN">Admin</option>
@@ -431,7 +431,7 @@ export default function AdminUsersPage() {
                           className={`p-4 rounded-lg border-2 transition-all ${
                             hasPermission
                               ? isRole
-                                ? "border-purple-300 bg-purple-50"
+                                ? "border-blue-300 bg-purple-50"
                                 : "border-cyan-300 bg-cyan-50 hover:border-cyan-400 cursor-pointer"
                               : "border-gray-200 bg-white hover:border-gray-300 cursor-pointer"
                           } ${isRole ? "cursor-not-allowed" : ""}`}
@@ -440,7 +440,7 @@ export default function AdminUsersPage() {
                             <div className={`mt-0.5 h-5 w-5 rounded border-2 flex items-center justify-center transition-all ${
                               hasPermission
                                 ? isRole
-                                  ? "bg-purple-600 border-purple-600"
+                                  ? "bg-purple-600 border-blue-600"
                                   : "bg-cyan-600 border-cyan-600"
                                 : "border-gray-300"
                             }`}>

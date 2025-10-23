@@ -93,16 +93,16 @@ export default function TestSuitesPage() {
         </Link>
         <div className="flex items-end justify-between">
           <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Test Suites
             </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+            <p className="text-sm font-normal text-gray-500 tracking-wide">
               Create and manage <span className="text-gray-700 font-medium">test collections</span> for your projects
             </p>
           </div>
           <Link
             href="/testing/suites/new"
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
           >
             <PlusIcon className="w-5 h-5" />
             Create Test Suite
@@ -115,7 +115,7 @@ export default function TestSuitesPage() {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 rounded-lg">
-              <BeakerIcon className="w-5 h-5 text-purple-600" />
+              <BeakerIcon className="w-5 h-5 text-blue-600" />
             </div>
             <span className="text-sm font-medium text-gray-500">Total Suites</span>
           </div>
@@ -175,7 +175,7 @@ export default function TestSuitesPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search test suites..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               />
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function TestSuitesPage() {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
           >
             <option value="all">All Types</option>
             <option value="UNIT">Unit Tests</option>
@@ -196,7 +196,7 @@ export default function TestSuitesPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -217,7 +217,7 @@ export default function TestSuitesPage() {
           </p>
           <button
             onClick={() => alert('Create Test Suite functionality coming soon!')}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all inline-flex items-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  transition-all inline-flex items-center gap-2"
           >
             <PlusIcon className="w-5 h-5" />
             Create Your First Test Suite
@@ -235,11 +235,11 @@ export default function TestSuitesPage() {
                   <div className="flex items-center gap-3 flex-wrap">
                     <Link
                       href={`/testing/suites/${suite.id}`}
-                      className="text-xl font-semibold text-gray-900 hover:text-purple-600 transition-colors"
+                      className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                     >
                       {suite.name}
                     </Link>
-                    <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+                    <span className="text-xs px-2 py-1 bg-purple-100 text-blue-700 rounded-full font-medium">
                       {suite.type}
                     </span>
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${
@@ -286,7 +286,7 @@ export default function TestSuitesPage() {
                   </button>
                   <Link
                     href={`/testing/suites/${suite.id}`}
-                    className="px-4 py-2 border border-purple-600 text-purple-600 text-sm font-medium rounded-lg hover:bg-purple-50 transition-colors"
+                    className="px-4 py-2 border border-blue-600 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-50 transition-colors"
                   >
                     View Details
                   </Link>

@@ -185,7 +185,7 @@ export default function PipelineRunDetailsPage() {
       {run.pipeline && (
         <Link
           href={`/pipelines/${run.pipeline.id}`}
-          className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium"
+          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -216,7 +216,7 @@ export default function PipelineRunDetailsPage() {
             <span className="text-gray-900 font-medium">Run #{runId.slice(0, 8)}</span>
           </div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-4xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Pipeline Run Details
             </h1>
             {getStatusIcon(run.status)}

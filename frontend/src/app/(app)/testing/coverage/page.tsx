@@ -7,10 +7,10 @@ export default function TestCoveragePage() {
     <div className="space-y-8 pb-12">
       {/* Header */}
       <div>
-        <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+        <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
           Test Coverage
         </h1>
-        <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+        <p className="text-sm text-gray-500 font-normal tracking-wide">
           View <span className="text-gray-700 font-medium">code coverage</span> metrics and{" "}
           <span className="text-gray-700 font-medium">quality reports</span>
         </p>
@@ -31,9 +31,9 @@ export default function TestCoveragePage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mt-8">
-            <div className="bg-purple-50 rounded-lg p-6 border border-purple-200">
+            <div className="bg-purple-50 rounded-lg p-6 border border-blue-200">
               <h3 className="font-semibold text-purple-900 mb-2">Coverage Metrics</h3>
-              <ul className="text-sm text-purple-700 space-y-1">
+              <ul className="text-sm text-blue-700 space-y-1">
                 <li>• Line coverage percentage</li>
                 <li>• Branch coverage analysis</li>
                 <li>• Function coverage tracking</li>
@@ -75,7 +75,7 @@ export default function TestCoveragePage() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-500">
               In the meantime, you can run tests with coverage from your{" "}
-              <a href="/testing" className="text-purple-600 hover:text-purple-700 font-medium">
+              <a href="/testing" className="text-blue-600 hover:text-blue-700 font-medium">
                 Test Suites
               </a>{" "}
               page.

@@ -137,10 +137,10 @@ export default function IntegrationsPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+              <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
                 Integrations
               </h1>
-              <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+              <p className="text-sm font-normal text-gray-500 tracking-wide">
                 Connect your <span className="text-gray-700 font-medium">tools</span> and{' '}
                 <span className="text-gray-700 font-medium">services</span>
               </p>
@@ -171,10 +171,10 @@ export default function IntegrationsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Integrations
             </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+            <p className="text-sm text-gray-500 font-normal tracking-wide">
               Connect your <span className="text-gray-700 font-medium">tools</span> and{' '}
               <span className="text-gray-700 font-medium">services</span>
             </p>
@@ -182,7 +182,7 @@ export default function IntegrationsPage() {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
           >
             <PlusIcon className="w-5 h-5" />
             Add Integration
@@ -356,7 +356,7 @@ export default function IntegrationsPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => setSelectedType('GITHUB')}
-                      className="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-600 hover:bg-purple-50 transition-all text-left"
+                      className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-600 hover:bg-blue-50 transition-all text-left"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-3xl">{integrationIcons.GITHUB}</span>
@@ -420,7 +420,7 @@ export default function IntegrationsPage() {
                           value={githubToken}
                           onChange={e => setGitHubToken(e.target.value)}
                           placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                         />
                         <p className="text-xs text-gray-500 mt-2">
                           Create a token at{' '}
@@ -428,7 +428,7 @@ export default function IntegrationsPage() {
                             href="https://github.com/settings/tokens"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-purple-600 hover:underline"
+                            className="text-blue-600 hover:underline"
                           >
                             github.com/settings/tokens
                           </a>

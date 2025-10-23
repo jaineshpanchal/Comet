@@ -93,10 +93,10 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Analytics
             </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+            <p className="text-sm font-normal text-gray-500 tracking-wide">
               Insights into your <span className="text-gray-700 font-medium">CI/CD performance</span> and trends
             </p>
           </div>

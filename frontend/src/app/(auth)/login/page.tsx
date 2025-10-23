@@ -92,7 +92,7 @@ export default function LoginPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Email:</span>
-                  <span className="font-semibold text-blue-600">admin@golive.dev</span>
+                  <span className="font-semibold text-blue-600">demo@golive.dev</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Password:</span>

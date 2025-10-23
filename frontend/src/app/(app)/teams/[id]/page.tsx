@@ -211,7 +211,7 @@ export default function TeamDetailPage() {
   const getRoleBadgeColor = (role: string) => {
     const colors: Record<string, string> = {
       ADMIN: "bg-red-100 text-red-800 border-red-300",
-      MANAGER: "bg-purple-100 text-purple-800 border-purple-300",
+      MANAGER: "bg-purple-100 text-purple-800 border-blue-300",
       MEMBER: "bg-blue-100 text-blue-800 border-blue-300",
       VIEWER: "bg-gray-100 text-gray-800 border-gray-300",
     }
@@ -232,7 +232,7 @@ export default function TeamDetailPage() {
   if (error || !team) {
     return (
       <div className="space-y-8 pb-12">
-        <Link href="/teams" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700">
+        <Link href="/teams" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700">
           <ArrowLeftIcon className="w-4 h-4" />
           Back to Teams
         </Link>
@@ -246,7 +246,7 @@ export default function TeamDetailPage() {
   return (
     <div className="space-y-8 pb-12">
       {/* Back Button */}
-      <Link href="/teams" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium">
+      <Link href="/teams" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
         <ArrowLeftIcon className="w-4 h-4" />
         Back to Teams
       </Link>
@@ -256,7 +256,7 @@ export default function TeamDetailPage() {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+              <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
                 {team.name}
               </h1>
             </div>
@@ -331,7 +331,7 @@ export default function TeamDetailPage() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
-                      ? "border-purple-600 text-purple-600"
+                      ? "border-blue-600 text-blue-600"
                       : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
                 >
@@ -366,7 +366,7 @@ export default function TeamDetailPage() {
                     >
                       <div className="flex items-center gap-4">
                         <div className="p-2 bg-purple-100 rounded-full">
-                          <UserIcon className="w-5 h-5 text-purple-600" />
+                          <UserIcon className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">
@@ -500,7 +500,7 @@ export default function TeamDetailPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
             <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 rounded-t-2xl">
-              <h2 className="text-2xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                 Add Team Member
               </h2>
               <p className="text-gray-600 mt-2">Invite a user to join this team</p>
@@ -524,7 +524,7 @@ export default function TeamDetailPage() {
                   onChange={(e) => setAddMemberForm({ ...addMemberForm, email: e.target.value })}
                   required
                   placeholder="user@example.com"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 />
               </div>
 
@@ -537,7 +537,7 @@ export default function TeamDetailPage() {
                   value={addMemberForm.role}
                   onChange={(e) => setAddMemberForm({ ...addMemberForm, role: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 >
                   <option value="MEMBER">Member</option>
                   <option value="MANAGER">Manager</option>
@@ -559,7 +559,7 @@ export default function TeamDetailPage() {
                 <button
                   type="submit"
                   disabled={addMemberLoading}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 shadow-lg"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  transition-all disabled:opacity-50 shadow-lg"
                 >
                   {addMemberLoading ? "Adding..." : "Add Member"}
                 </button>

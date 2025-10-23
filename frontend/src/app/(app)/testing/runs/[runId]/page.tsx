@@ -117,7 +117,7 @@ export default function TestRunDetailsPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-purple-600"></div>
           <p className="mt-4 text-gray-600">Loading test run...</p>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function TestRunDetailsPage() {
           <p className="text-gray-600 mb-6">The test run you're looking for doesn't exist.</p>
           <Link
             href="/testing/suites"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
           >
             <ArrowLeftIcon className="w-5 h-5" />
             Back to Test Suites
@@ -159,14 +159,14 @@ export default function TestRunDetailsPage() {
           </Link>
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold text-gray-900">Test Run Details</h1>
+              <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">Test Run Details</h1>
               <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(testRun.status)}`}>
                 {getStatusIcon(testRun.status)}
                 {testRun.status}
               </div>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span>Suite: <Link href={`/testing/suites/${testRun.testSuiteId}`} className="font-medium text-purple-600 hover:text-purple-700">{testRun.testSuite?.name}</Link></span>
+              <span>Suite: <Link href={`/testing/suites/${testRun.testSuiteId}`} className="font-medium text-blue-600 hover:text-blue-700">{testRun.testSuite?.name}</Link></span>
               <span>"</span>
               <span>Started: <span className="font-medium text-gray-700">{new Date(testRun.startedAt).toLocaleString()}</span></span>
               {testRun.finishedAt && (
@@ -236,10 +236,10 @@ export default function TestRunDetailsPage() {
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-2">
-            <ChartBarIcon className="w-5 h-5 text-purple-600" />
+            <ChartBarIcon className="w-5 h-5 text-blue-600" />
             <span className="text-sm font-medium text-gray-500">Coverage</span>
           </div>
-          <p className="text-3xl font-bold text-purple-600">
+          <p className="text-3xl font-bold text-blue-600">
             {testRun.coverage !== null && testRun.coverage !== undefined ? `${testRun.coverage.toFixed(1)}%` : 'N/A'}
           </p>
         </div>
@@ -334,9 +334,9 @@ export default function TestRunDetailsPage() {
 
             {/* AI Analysis Results */}
             {aiAnalysis && (
-              <div className="mb-6 p-5 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
+              <div className="mb-6 p-5 bg-gradient-to-br from-purple-50 to-pink-50 border border-blue-200 rounded-lg">
                 <div className="flex items-center gap-2 mb-4">
-                  <SparklesIcon className="w-5 h-5 text-purple-600" />
+                  <SparklesIcon className="w-5 h-5 text-blue-600" />
                   <h3 className="text-lg font-semibold text-purple-900">AI Failure Analysis</h3>
                   <span className={`ml-auto px-2 py-1 text-xs font-medium rounded ${
                     aiAnalysis.severity === 'high' ? 'bg-red-100 text-red-700' :

@@ -181,10 +181,10 @@ export default function PipelinesPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Pipelines
             </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+            <p className="text-sm text-gray-500 font-normal tracking-wide">
               Automate your <span className="text-gray-700 font-medium">CI/CD workflows</span> and{" "}
               <span className="text-gray-700 font-medium">deployments</span>
             </p>
@@ -192,7 +192,7 @@ export default function PipelinesPage() {
 
           <button
             onClick={() => router.push("/pipelines/create")}
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
           >
             <PlusIcon className="w-5 h-5" />
             New Pipeline
@@ -205,7 +205,7 @@ export default function PipelinesPage() {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-100 rounded-lg">
-              <BoltIcon className="w-5 h-5 text-purple-600" />
+              <BoltIcon className="w-5 h-5 text-blue-600" />
             </div>
             <span className="text-sm font-medium text-gray-500">Total Pipelines</span>
           </div>
@@ -265,7 +265,7 @@ export default function PipelinesPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search pipelines..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               />
             </div>
           </div>
@@ -273,7 +273,7 @@ export default function PipelinesPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
           >
             <option value="all">All Status</option>
             <option value="RUNNING">Running</option>
@@ -305,7 +305,7 @@ export default function PipelinesPage() {
           {!searchTerm && filterStatus === "all" && (
             <button
               onClick={() => {}}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all inline-flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  transition-all inline-flex items-center gap-2"
             >
               <PlusIcon className="w-5 h-5" />
               Create Your First Pipeline
@@ -322,10 +322,10 @@ export default function PipelinesPage() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3 flex-1">
                   <div className="p-3 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg">
-                    <BoltIcon className="w-6 h-6 text-purple-600" />
+                    <BoltIcon className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
+                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                       {pipeline.name}
                     </h3>
                     <span

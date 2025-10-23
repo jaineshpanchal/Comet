@@ -2,18 +2,28 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { LayoutDashboard, Shield } from "lucide-react";
+import { useSidebar } from "@/contexts/SidebarContext";
+import { cn } from "@/lib/utils";
 
 export function AppHeader() {
   const router = useRouter();
+  const { collapsed } = useSidebar();
   const [user, setUser] = React.useState<any>(null);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    // Load user from localStorage
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    // Load user from localStorage with error handling
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+      console.error("Failed to parse user data from localStorage:", error);
+      // Clear corrupted data
+      localStorage.removeItem("user");
     }
 
     // Close dropdown when clicking outside
@@ -24,6 +34,7 @@ export function AppHeader() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -41,60 +52,48 @@ export function AppHeader() {
   };
 
   return (
-    <header className="fixed top-0 right-0 z-40 h-16 border-b border-slate-200/50 bg-gradient-to-r from-slate-50/50 to-white/50 backdrop-blur-sm shadow-sm box-border"
-            style={{
-              left: 'var(--sidebar-width, 320px)'
-            }}>
-      <div className="flex h-16 items-center justify-between px-3">
+    <header className={cn(
+      "hidden lg:fixed lg:block top-0 right-0 z-40 h-16 border-b border-slate-200/50 bg-gradient-to-r from-slate-50/50 to-white/50 backdrop-blur-sm shadow-sm transition-all duration-300",
+      collapsed ? "left-16" : "left-64"
+    )}>
+      <div className="flex h-16 items-center justify-between pr-6 pl-6">
+        {/* Logo and Branding */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 flex-shrink-0 relative overflow-hidden">
-            <img
-              src="/GoLive.png"
-              alt="GoLive Logo"
-              className="w-10 h-10 object-contain"
-              style={{
-                mixBlendMode: 'multiply',
-                filter: 'brightness(0) invert(1)'
-              }}
-            />
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold shadow-md shadow-blue-500/30">
+            <span>GL</span>
           </div>
-          <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-sm font-bold tracking-tight text-slate-900 truncate">GoLive DevOps</span>
-            <span className="text-[10px] font-medium tracking-wide text-slate-500 truncate">DEVOPS PLATFORM</span>
+          <div>
+            <h1 className="text-base font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">GoLive DevOps</h1>
+            <p className="text-[10px] text-gray-500 tracking-wider font-semibold">PLATFORM</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden items-center gap-2 rounded-full border border-emerald-200/60 bg-emerald-50/80 px-3 py-1.5 text-xs font-medium text-emerald-700 md:flex">
-            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500"></div>
-            Operational
-          </div>
+          {/* Dashboard Button */}
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40"
+          >
+            <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} />
+            Dashboard
+          </button>
 
-          {/* User Dropdown */}
+          {/* Admin Portal Button */}
+          <button
+            onClick={() => router.push("/admin/users")}
+            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40"
+          >
+            <Shield className="w-4 h-4" strokeWidth={2.5} />
+            Admin Portal
+          </button>
+
+          {/* User Avatar */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              className="hidden md:flex items-center justify-center min-w-[44px] px-3 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-bold transition-all duration-200 shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40"
             >
-              {user?.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.username || "User"}
-                  className="h-8 w-8 rounded-full border-2 border-gray-200"
-                />
-              ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xs font-semibold text-white">
-                  {getInitials(user?.firstName, user?.lastName)}
-                </div>
-              )}
-              <svg
-                className={`h-4 w-4 text-gray-600 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
+              {getInitials(user?.firstName, user?.lastName)}
             </button>
 
             {/* Dropdown Menu */}

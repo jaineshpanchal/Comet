@@ -1,0 +1,310 @@
+#
+# Sentry Alert Rules Configuration for GoLive Platform
+#
+# This file defines alert rules that can be imported into Sentry.
+# Alerts help you stay informed about critical errors and performance issues.
+#
+# How to use:
+# 1. Go to Sentry Dashboard → Alerts → Create Alert Rule
+# 2. Use the configurations below as a guide
+#
+
+# ===== CRITICAL ERRORS =====
+
+# Alert: High Error Rate
+# Triggers when error rate exceeds threshold
+alert_high_error_rate:
+  name: "High Error Rate Detected"
+  conditions:
+    - type: "event_frequency"
+      value: 100  # errors
+      interval: "1m"  # per minute
+  actions:
+    - type: "slack"
+      channel: "#alerts-critical"
+    - type: "pagerduty"
+      service: "golive-production"
+  environment: "production"
+  projects:
+    - "golive-backend"
+    - "golive-frontend"
+
+# Alert: Database Connection Failures
+alert_database_errors:
+  name: "Database Connection Failures"
+  conditions:
+    - type: "event.type"
+      value: "error"
+    - type: "event.message"
+      contains: ["database", "prisma", "postgres", "connection"]
+    - type: "event_frequency"
+      value: 5
+      interval: "5m"
+  actions:
+    - type: "slack"
+      channel: "#alerts-database"
+    - type: "email"
+      recipients: ["ops@golive.dev"]
+  environment: "production"
+
+# Alert: Authentication Failures
+alert_auth_failures:
+  name: "Multiple Authentication Failures"
+  conditions:
+    - type: "event.message"
+      contains: ["authentication", "unauthorized", "JWT", "token"]
+    - type: "event_frequency"
+      value: 50
+      interval: "5m"
+  actions:
+    - type: "slack"
+      channel: "#security-alerts"
+    - type: "email"
+      recipients: ["security@golive.dev"]
+  environment: "production"
+
+# ===== PERFORMANCE ISSUES =====
+
+# Alert: Slow API Responses
+alert_slow_responses:
+  name: "Slow API Response Times"
+  conditions:
+    - type: "transaction.duration"
+      comparison: ">"
+      value: 3000  # milliseconds
+    - type: "event_frequency"
+      value: 20
+      interval: "5m"
+  actions:
+    - type: "slack"
+      channel: "#performance-alerts"
+  environment: "production"
+
+# Alert: Memory Usage Spike
+alert_memory_spike:
+  name: "High Memory Usage"
+  conditions:
+    - type: "custom_metric"
+      metric: "memory.usage"
+      comparison: ">"
+      value: 80  # percent
+  actions:
+    - type: "slack"
+      channel: "#infrastructure-alerts"
+    - type: "email"
+      recipients: ["ops@golive.dev"]
+  environment: "production"
+
+# ===== BUSINESS LOGIC ERRORS =====
+
+# Alert: Pipeline Failures
+alert_pipeline_failures:
+  name: "CI/CD Pipeline Failures"
+  conditions:
+    - type: "event.tags.component"
+      value: "pipeline"
+    - type: "event.level"
+      value: "error"
+    - type: "event_frequency"
+      value: 3
+      interval: "10m"
+  actions:
+    - type: "slack"
+      channel: "#devops-alerts"
+  environment: "production"
+
+# Alert: Test Suite Failures
+alert_test_failures:
+  name: "Test Suite Execution Failures"
+  conditions:
+    - type: "event.tags.component"
+      value: "testing"
+    - type: "event.level"
+      value: "error"
+    - type: "event_frequency"
+      value: 5
+      interval: "15m"
+  actions:
+    - type: "slack"
+      channel: "#qa-alerts"
+  environment: "production"
+
+# Alert: Deployment Failures
+alert_deployment_failures:
+  name: "Deployment Failures"
+  conditions:
+    - type: "event.tags.component"
+      value: "deployment"
+    - type: "event.level"
+      value: "error"
+  actions:
+    - type: "slack"
+      channel: "#deployment-alerts"
+    - type: "pagerduty"
+      service: "golive-deployments"
+  environment: "production"
+
+# ===== USER EXPERIENCE ISSUES =====
+
+# Alert: Frontend JavaScript Errors
+alert_frontend_errors:
+  name: "High Frontend Error Rate"
+  conditions:
+    - type: "event.platform"
+      value: "javascript"
+    - type: "event_frequency"
+      value: 50
+      interval: "5m"
+  actions:
+    - type: "slack"
+      channel: "#frontend-alerts"
+  environment: "production"
+  projects:
+    - "golive-frontend"
+
+# Alert: API 500 Errors
+alert_500_errors:
+  name: "Internal Server Errors (500)"
+  conditions:
+    - type: "event.tags.http.status_code"
+      value: "500"
+    - type: "event_frequency"
+      value: 10
+      interval: "5m"
+  actions:
+    - type: "slack"
+      channel: "#alerts-critical"
+    - type: "email"
+      recipients: ["ops@golive.dev"]
+  environment: "production"
+
+# ===== SECURITY ALERTS =====
+
+# Alert: CSRF Token Failures
+alert_csrf_failures:
+  name: "CSRF Protection Failures"
+  conditions:
+    - type: "event.message"
+      contains: ["CSRF", "csrf"]
+    - type: "event_frequency"
+      value: 10
+      interval: "5m"
+  actions:
+    - type: "slack"
+      channel: "#security-alerts"
+  environment: "production"
+
+# Alert: Rate Limit Exceeded
+alert_rate_limit:
+  name: "Rate Limit Exceeded"
+  conditions:
+    - type: "event.message"
+      contains: ["rate limit", "too many requests", "429"]
+    - type: "event_frequency"
+      value: 100
+      interval: "5m"
+  actions:
+    - type: "slack"
+      channel: "#security-alerts"
+  environment: "production"
+
+# ===== NOTIFICATION CHANNELS =====
+
+# Slack Integration
+slack_channels:
+  - name: "#alerts-critical"
+    webhook: "${SLACK_WEBHOOK_CRITICAL}"
+    description: "Critical production issues"
+  - name: "#alerts-database"
+    webhook: "${SLACK_WEBHOOK_DATABASE}"
+    description: "Database-related alerts"
+  - name: "#security-alerts"
+    webhook: "${SLACK_WEBHOOK_SECURITY}"
+    description: "Security and authentication issues"
+  - name: "#performance-alerts"
+    webhook: "${SLACK_WEBHOOK_PERFORMANCE}"
+    description: "Performance degradation alerts"
+  - name: "#devops-alerts"
+    webhook: "${SLACK_WEBHOOK_DEVOPS}"
+    description: "DevOps pipeline and infrastructure"
+  - name: "#frontend-alerts"
+    webhook: "${SLACK_WEBHOOK_FRONTEND}"
+    description: "Frontend JavaScript errors"
+
+# PagerDuty Integration
+pagerduty_services:
+  - name: "golive-production"
+    integration_key: "${PAGERDUTY_INTEGRATION_KEY_PROD}"
+    description: "Production critical incidents"
+  - name: "golive-deployments"
+    integration_key: "${PAGERDUTY_INTEGRATION_KEY_DEPLOY}"
+    description: "Deployment failures"
+
+# Email Recipients
+email_groups:
+  - name: "ops-team"
+    recipients:
+      - "ops@golive.dev"
+      - "devops@golive.dev"
+  - name: "security-team"
+    recipients:
+      - "security@golive.dev"
+      - "infosec@golive.dev"
+  - name: "engineering-leads"
+    recipients:
+      - "tech-lead@golive.dev"
+      - "engineering-manager@golive.dev"
+
+# ===== ALERT SCHEDULE =====
+
+# Define when alerts should be active
+alert_schedule:
+  business_hours:
+    enabled: true
+    timezone: "America/New_York"
+    days: ["monday", "tuesday", "wednesday", "thursday", "friday"]
+    start_time: "09:00"
+    end_time: "18:00"
+
+  after_hours:
+    enabled: true
+    severity: "critical"  # Only critical alerts after hours
+
+  weekends:
+    enabled: true
+    severity: "critical"  # Only critical alerts on weekends
+
+# ===== ALERT THROTTLING =====
+
+# Prevent alert fatigue
+throttling:
+  max_alerts_per_hour: 10
+  cooldown_period: "15m"  # Don't send same alert within 15 minutes
+  escalation:
+    - level: 1
+      threshold: 3
+      action: "slack"
+    - level: 2
+      threshold: 10
+      action: "pagerduty"
+    - level: 3
+      threshold: 50
+      action: "email"
+
+# ===== NOTES =====
+
+# To import these alerts into Sentry:
+# 1. Navigate to your Sentry project
+# 2. Go to Alerts → Create Alert Rule
+# 3. Configure based on the specifications above
+# 4. Test each alert to ensure proper notification delivery
+
+# Environment Variables Required:
+# - SLACK_WEBHOOK_CRITICAL
+# - SLACK_WEBHOOK_DATABASE
+# - SLACK_WEBHOOK_SECURITY
+# - SLACK_WEBHOOK_PERFORMANCE
+# - SLACK_WEBHOOK_DEVOPS
+# - SLACK_WEBHOOK_FRONTEND
+# - PAGERDUTY_INTEGRATION_KEY_PROD
+# - PAGERDUTY_INTEGRATION_KEY_DEPLOY

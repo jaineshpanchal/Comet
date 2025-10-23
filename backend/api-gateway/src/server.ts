@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import Table from 'cli-table3';
@@ -11,10 +12,14 @@ import { createServer, Server as HttpServer } from 'http';
 import { APP_CONFIG } from './config/services';
 import { connectDatabase } from './config/database';
 import { redis, checkRedisConnection } from './config/redis';
+import { initSentry, sentryRequestHandler, sentryTracingHandler, sentryErrorHandler, sentryUserContextMiddleware, sentryContextMiddleware } from './config/sentry';
 import { errorHandler, notFoundHandler, timeoutHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { authenticateToken } from './middleware/auth';
 import { auditMiddleware } from './middleware/audit';
+import { metricsMiddleware, metricsHandler } from './middleware/metrics';
+import { conditionalCsrfProtection, csrfTokenHandler, csrfErrorHandler } from './middleware/csrf';
+import { apiVersionMiddleware, apiVersionInfoHandler, deprecationWarningMiddleware } from './middleware/apiVersion';
 import { ServiceProxy } from './services/serviceProxy';
 import { websocketService } from './services/websocketService';
 import { queueService } from './services/queueService';
@@ -25,6 +30,7 @@ import { ApiResponse } from './types';
 import authRoutes from './routes/auth';
 import healthRoutes from './routes/health';
 import proxyRoutes from './routes/proxy';
+import v1Router from './routes/v1';
 import projectRoutes from './routes/projects';
 import pipelineRoutes from './routes/pipelines';
 import testRoutes from './routes/tests';
@@ -48,6 +54,10 @@ class APIGateway {
     this.app = express();
     this.httpServer = createServer(this.app);
     this.port = APP_CONFIG.PORT;
+
+    // Initialize Sentry FIRST - must be before all other middleware
+    initSentry();
+
     this.initializeMiddleware();
     this.initializeSwagger();
     this.initializeRoutes();
@@ -55,6 +65,12 @@ class APIGateway {
   }
 
   private initializeMiddleware(): void {
+    // Sentry request handler - must be FIRST middleware
+    this.app.use(sentryRequestHandler());
+
+    // Sentry tracing - must be AFTER request handler
+    this.app.use(sentryTracingHandler());
+
     // Security middleware
     this.app.use(helmet({
       contentSecurityPolicy: {
@@ -108,11 +124,17 @@ class APIGateway {
     this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+    // Cookie parser (required for CSRF protection)
+    this.app.use(cookieParser());
+
     // Compression
     this.app.use(compression());
 
     // Request timeout
     this.app.use(timeoutHandler(30000));
+
+    // Prometheus metrics collection
+    this.app.use(metricsMiddleware);
 
     // Request logging
     this.app.use(requestLogger);
@@ -267,8 +289,30 @@ class APIGateway {
       res.json(response);
     });
 
-    // API routes
+    // System endpoints (no versioning needed)
+    this.app.get('/metrics', metricsHandler); // Prometheus metrics endpoint
+    this.app.get('/api/csrf-token', csrfTokenHandler); // CSRF token endpoint
+    this.app.get('/api/versions', apiVersionInfoHandler); // API version info
+
+    // Health check (accessible without version for monitoring)
     this.app.use('/api/health', healthRoutes);
+
+    // Apply API versioning middleware to all /api routes
+    this.app.use('/api', apiVersionMiddleware);
+    this.app.use('/api', deprecationWarningMiddleware);
+
+    // Apply conditional CSRF protection (automatically exempts certain routes and GET requests)
+    this.app.use(conditionalCsrfProtection);
+
+    // Sentry context middleware - add custom context and user tracking
+    this.app.use(sentryUserContextMiddleware);
+    this.app.use(sentryContextMiddleware);
+
+    // API v1 Routes (versioned)
+    this.app.use('/api/v1', v1Router);
+
+    // Legacy routes (backward compatibility - maps to v1)
+    // These allow existing clients to continue working without /v1 prefix
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/users', usersRoutes);
     this.app.use('/api/teams', teamsRoutes);
@@ -353,6 +397,12 @@ class APIGateway {
   private initializeErrorHandling(): void {
     // 404 handler for unmatched routes
     this.app.use(notFoundHandler);
+
+    // Sentry error handler - must be BEFORE other error handlers
+    this.app.use(sentryErrorHandler());
+
+    // CSRF error handler (before global error handler)
+    this.app.use(csrfErrorHandler);
 
     // Global error handler
     this.app.use(errorHandler);

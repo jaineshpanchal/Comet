@@ -1,28 +1,18 @@
 "use client";
 
 import React from "react";
-import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 
 interface PageTransitionProps {
   children: React.ReactNode;
 }
 
-export function PageTransition({ children }: PageTransitionProps) {
-  const pathname = usePathname();
+/**
+ * No Animation Page Transition
+ *
+ * Instant page changes - NProgress bar provides the only visual feedback.
+ * This is how GitHub, YouTube, and Linear actually work.
+ */
 
-  return (
-    <motion.div
-      key={pathname}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{
-        duration: 0.15,
-        ease: "easeOut",
-      }}
-      className="h-full"
-    >
-      {children}
-    </motion.div>
-  );
+export function PageTransition({ children }: PageTransitionProps) {
+  return <div className="h-full">{children}</div>;
 }

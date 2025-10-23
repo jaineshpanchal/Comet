@@ -166,10 +166,10 @@ export default function CreatePipelinePage() {
               <ArrowLeftIcon className="w-5 h-5" />
               Back to Pipelines
             </button>
-            <h1 className="text-5xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-none mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Create Pipeline
             </h1>
-            <p className="text-gray-600">Define your CI/CD pipeline configuration</p>
+            <p className="text-sm text-gray-500 font-normal tracking-wide">Define your CI/CD pipeline configuration</p>
           </div>
           <RocketLaunchIcon className="w-16 h-16 text-blue-500 opacity-20" />
         </div>
@@ -363,7 +363,7 @@ export default function CreatePipelinePage() {
             <Button
               type="submit"
               disabled={loading || formData.stages.length === 0}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-gradient-to-r from-blue-600 to-blue-500 "
             >
               {loading ? "Creating..." : "Create Pipeline"}
             </Button>

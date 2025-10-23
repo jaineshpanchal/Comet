@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -37,6 +37,9 @@ model User {
   deployments      Deployment[]   @relation("DeploymentDeployedBy")
   customPermissions UserPermission[]
 
+  @@index([role, isActive])
+  @@index([createdAt])
+  @@index([lastLoginAt])
   @@map("users")
 }
 
@@ -57,6 +60,8 @@ model RefreshToken {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([expiresAt])
   @@map("refresh_tokens")
 }
 
@@ -72,6 +77,8 @@ model Team {
   members  TeamMember[]
   projects Project[]
 
+  @@index([isActive])
+  @@index([createdAt])
   @@map("teams")
 }
 
@@ -84,6 +91,8 @@ model TeamMember {
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@unique([userId, teamId])
+  @@index([userId])
+  @@index([teamId])
   @@map("team_members")
 }
 
@@ -111,6 +120,10 @@ model Project {
   secrets     ProjectSecret[]
   securityScans SecurityScan[]
 
+  @@index([ownerId])
+  @@index([teamId])
+  @@index([isActive])
+  @@index([createdAt])
   @@map("projects")
 }
 
@@ -129,6 +142,8 @@ model ProjectSecret {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, key, environment])
+  @@index([projectId])
+  @@index([environment])
   @@map("project_secrets")
 }
 
@@ -149,6 +164,10 @@ model SecurityScan {
   // Relations
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  @@index([projectId])
+  @@index([status])
+  @@index([scanType])
+  @@index([startedAt])
   @@map("security_scans")
 }
 
@@ -183,6 +202,10 @@ model Pipeline {
   project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
   pipelineRuns PipelineRun[]
 
+  @@index([projectId])
+  @@index([status])
+  @@index([isActive])
+  @@index([lastRunAt])
   @@map("pipelines")
 }
 
@@ -219,6 +242,11 @@ model PipelineRun {
   triggeredByUser User? @relation("PipelineRunTriggeredBy", fields: [triggeredBy], references: [id])
   stages   StageRun[]
 
+  @@index([pipelineId])
+  @@index([status])
+  @@index([triggeredBy])
+  @@index([startedAt])
+  @@index([pipelineId, status])
   @@map("pipeline_runs")
 }
 
@@ -246,6 +274,9 @@ model StageRun {
   // Relations
   pipelineRun PipelineRun @relation(fields: [pipelineRunId], references: [id], onDelete: Cascade)
 
+  @@index([pipelineRunId])
+  @@index([status])
+  @@index([stageType])
   @@map("stage_runs")
 }
 
@@ -285,6 +316,9 @@ model TestSuite {
   project  Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   testRuns TestRun[]
 
+  @@index([projectId])
+  @@index([type])
+  @@index([isActive])
   @@map("test_suites")
 }
 
@@ -320,6 +354,11 @@ model TestRun {
   testSuite TestSuite @relation(fields: [testSuiteId], references: [id], onDelete: Cascade)
   triggeredByUser User? @relation("TestRunTriggeredBy", fields: [triggeredBy], references: [id])
 
+  @@index([testSuiteId])
+  @@index([status])
+  @@index([environment])
+  @@index([startedAt])
+  @@index([testSuiteId, status])
   @@map("test_runs")
 }
 
@@ -356,6 +395,11 @@ model Deployment {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   deployedByUser User @relation("DeploymentDeployedBy", fields: [deployedBy], references: [id])
 
+  @@index([projectId])
+  @@index([environment])
+  @@index([status])
+  @@index([deployedAt])
+  @@index([projectId, environment])
   @@map("deployments")
 }
 
@@ -387,6 +431,12 @@ model Integration {
   webhooks      Webhook[]
   notifications IntegrationNotification[]
 
+  @@index([userId])
+  @@index([teamId])
+  @@index([projectId])
+  @@index([type])
+  @@index([status])
+  @@index([isActive])
   @@map("integrations")
 }
 
@@ -430,6 +480,9 @@ model Webhook {
   integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
   deliveries  WebhookDelivery[]
 
+  @@index([integrationId])
+  @@index([projectId])
+  @@index([isActive])
   @@map("webhooks")
 }
 
@@ -447,6 +500,9 @@ model WebhookDelivery {
   // Relations
   webhook Webhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
 
+  @@index([webhookId])
+  @@index([status])
+  @@index([deliveredAt])
   @@map("webhook_deliveries")
 }
 
@@ -470,6 +526,8 @@ model IntegrationNotification {
   // Relations
   integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
 
+  @@index([integrationId])
+  @@index([isActive])
   @@map("integration_notifications")
 }
 
@@ -487,6 +545,11 @@ model AuditLog {
   // Relations
   user User? @relation(fields: [userId], references: [id])
 
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([timestamp])
+  @@index([resource, resourceId])
   @@map("audit_logs")
 }
 
@@ -534,6 +597,8 @@ model UserPermission {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, permission])
+  @@index([userId])
+  @@index([permission])
   @@map("user_permissions")
 }
 

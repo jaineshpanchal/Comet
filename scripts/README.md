@@ -1,192 +1,240 @@
-# GoLive DevOps Platform - Service Management Scripts
+# GoLive Scripts
 
-Simple scripts to manage all services with single commands.
+Quick reference for all platform scripts.
 
-## Quick Start
+## Database Backup Scripts
 
-### Start All Services
+### backup-database.sh
+Create automated PostgreSQL backups with compression and verification.
+
 ```bash
-npm start
-# or
+./scripts/backup-database.sh [environment]
+
+# Examples
+./scripts/backup-database.sh production
+./scripts/backup-database.sh staging
+./scripts/backup-database.sh development
+```
+
+**Features**:
+- Timestamped backups with gzip compression
+- 30-day retention with automatic cleanup
+- Integrity verification
+- Optional S3 upload
+- Slack notifications
+
+**Output**: `backups/database/golive_{env}_{timestamp}.sql.gz`
+
+---
+
+### restore-database.sh
+Restore database from backup with safety checks.
+
+```bash
+./scripts/restore-database.sh [backup_file] [environment]
+
+# Interactive mode (recommended)
+./scripts/restore-database.sh
+
+# Direct restore
+./scripts/restore-database.sh golive_production_20250123_143000.sql.gz production
+```
+
+**Features**:
+- Interactive backup selection
+- Pre-restore safety backup
+- Connection termination
+- Restore verification
+- Automatic migrations
+
+**Safety**: Creates pre-restore backup for rollback
+
+---
+
+### setup-backup-schedule.sh
+Configure automated backup scheduling.
+
+```bash
+sudo ./scripts/setup-backup-schedule.sh [method] [environment]
+
+# Cron setup
+sudo ./scripts/setup-backup-schedule.sh cron production
+
+# Systemd setup
+sudo ./scripts/setup-backup-schedule.sh systemd production
+
+# Custom schedule
+BACKUP_SCHEDULE="0 */6 * * *" sudo ./scripts/setup-backup-schedule.sh cron production
+```
+
+**Methods**:
+- **cron**: Traditional Unix scheduling
+- **systemd**: Modern Linux timers
+
+**Default**: Daily at 2:00 AM
+
+---
+
+### monitor-backups.sh
+Monitor backup health and send alerts.
+
+```bash
+./scripts/monitor-backups.sh [environment]
+
+# Check production backups
+./scripts/monitor-backups.sh production
+
+# View logs
+cat logs/monitor_*.log
+```
+
+**Checks**:
+- Recent backup exists (< 24h)
+- Backup integrity (gzip test)
+- Storage capacity (< 80%)
+- Log errors
+- Size trends
+
+**Alerts**: Slack, Email, PagerDuty
+
+---
+
+## Service Management Scripts
+
+### start-all.sh
+Start all GoLive services.
+
+```bash
 ./scripts/start-all.sh
 ```
 
-### Stop All Services
+Starts: Backend API Gateway + Frontend
+
+---
+
+### stop-all.sh
+Stop all GoLive services.
+
 ```bash
-npm stop
-# or
 ./scripts/stop-all.sh
 ```
 
-### Restart All Services
+Stops all running services gracefully.
+
+---
+
+### restart-all.sh
+Restart all GoLive services.
+
 ```bash
-npm run restart
-# or
 ./scripts/restart-all.sh
 ```
 
-### Check Service Status
+Stops and restarts all services.
+
+---
+
+### status.sh
+Check status of all services.
+
 ```bash
-npm run status
-# or
 ./scripts/status.sh
 ```
 
-## What Gets Started?
+Shows running status and port information.
 
-The `start-all.sh` script starts:
+---
 
-1. **Backend Services** (Port 8000)
-   - API Gateway
-   - Pipeline Service (8001)
-   - Project Service (8002)
-   - Testing Service
-   - Quality Service (8005)
-   - User Service
-   - Metrics Service
+## Quick Commands
 
-2. **Frontend** (Port 3030)
-   - Next.js development server
-
-3. **AI Services** (Port 9000)
-   - FastAPI with Uvicorn
-
-4. **Prisma Studio** (Port 5555)
-   - Database management interface
-
-## Logs
-
-All logs are saved to the `logs/` directory in the project root:
-
-- `logs/backend.log` - Backend services output
-- `logs/frontend.log` - Frontend output
-- `logs/ai-services.log` - AI services output
-- `logs/prisma.log` - Prisma Studio output
-
-### View Logs
+### Backup Operations
 
 ```bash
-# View backend logs
-tail -f logs/backend.log
+# Create backup
+./scripts/backup-database.sh production
 
-# View frontend logs
-tail -f logs/frontend.log
+# List backups
+ls -lh backups/database/
 
-# View AI services logs
-tail -f logs/ai-services.log
+# Test backup integrity
+gzip -t backups/database/golive_production_*.sql.gz
 
-# View all logs
-tail -f logs/*.log
+# Restore latest
+./scripts/restore-database.sh
+
+# Monitor health
+./scripts/monitor-backups.sh production
 ```
 
-## Port Management
-
-The scripts automatically manage these ports:
-
-- **3030** - Frontend (Next.js)
-- **8000** - API Gateway
-- **8001** - Pipeline Service
-- **8002** - Project Service
-- **8005** - Quality Service
-- **9000** - AI Services
-- **9090** - Metrics Service
-- **5555** - Prisma Studio
-
-## Troubleshooting
-
-### Services Won't Start
-
-If services fail to start, try:
+### Service Operations
 
 ```bash
-# Stop all services
-npm stop
+# Start services
+./scripts/start-all.sh
 
-# Wait a few seconds
-sleep 3
+# Check status
+./scripts/status.sh
 
-# Start again
-npm start
+# Restart all
+./scripts/restart-all.sh
+
+# Stop all
+./scripts/stop-all.sh
 ```
 
-### Port Already in Use
-
-The stop script automatically cleans up all ports, but if you still have issues:
+### Scheduling
 
 ```bash
-# Kill specific port (e.g., 8000)
-lsof -ti:8000 | xargs kill -9
+# Setup automated backups
+sudo ./scripts/setup-backup-schedule.sh cron production
 
-# Or use the stop script which cleans all ports
-npm stop
+# View cron jobs
+crontab -l
+
+# View systemd timers
+systemctl list-timers golive-backup.timer
 ```
 
-### Check What's Running
+---
+
+## Configuration
+
+### Environment Variables
+
+Required in `backend/api-gateway/.env`:
 
 ```bash
-# Check service status
-npm run status
+# Database
+DATABASE_URL=postgresql://user:password@host:5432/dbname
 
-# Check specific port
-lsof -ti:8000
+# Optional - Cloud Storage
+AWS_S3_BACKUP_BUCKET=golive-backups-prod
+
+# Optional - Notifications
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+ALERT_EMAIL=ops@example.com
+PAGERDUTY_INTEGRATION_KEY=your_key
+
+# Optional - Custom Paths
+BACKUP_DIR=/path/to/backups
+LOG_DIR=/path/to/logs
+RETENTION_DAYS=30
 ```
 
-## Scripts Overview
+---
 
-| Script | Description | Command |
-|--------|-------------|---------|
-| `start-all.sh` | Start all services | `npm start` |
-| `stop-all.sh` | Stop all services | `npm stop` |
-| `restart-all.sh` | Restart all services | `npm run restart` |
-| `status.sh` | Check service status | `npm run status` |
+## Documentation
 
-## Features
+- **[DATABASE_BACKUP_GUIDE.md](../DATABASE_BACKUP_GUIDE.md)** - Complete backup system guide
+- **[BACKUP_SYSTEM_COMPLETE.md](../BACKUP_SYSTEM_COMPLETE.md)** - Implementation summary
+- **[CI_CD_SETUP_COMPLETE.md](../CI_CD_SETUP_COMPLETE.md)** - CI/CD pipeline guide
 
-- ✅ **One-command** start/stop/restart
-- 📋 **Centralized logging** in `logs/` directory
-- 🔄 **Automatic port cleanup** on stop
-- 📊 **Service health checks** with status command
-- 🎯 **PID tracking** for clean process management
-- 🎨 **Colorful output** for better readability
+---
 
-## URLs
+## Support
 
-After starting services, access them at:
+**Scripts Location**: `/scripts/`
+**Logs Location**: `/logs/`
+**Backups Location**: `/backups/database/`
 
-- **Dashboard**: http://localhost:3030/dashboard
-- **API Gateway**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/api/docs
-- **Health Check**: http://localhost:8000/api/health
-- **AI Services**: http://localhost:9000
-- **Prisma Studio**: http://localhost:5555
-
-## Development Workflow
-
-```bash
-# Morning - Start everything
-npm start
-
-# During development - Check status
-npm run status
-
-# View logs while working
-tail -f logs/backend.log
-
-# Evening - Stop everything
-npm stop
-```
-
-## Tips
-
-1. **Always use `npm stop` before `npm start`** to ensure clean startup
-2. **Check logs** if services aren't behaving as expected
-3. **Use `npm run status`** to verify all services are running
-4. **Logs directory** is automatically created if it doesn't exist
-
-## Architecture
-
-The scripts use:
-- **PID files** (`.pid`) to track running processes
-- **Background processes** (`&`) for non-blocking execution
-- **Port checking** (`lsof`) to verify service availability
-- **Health endpoints** to confirm service readiness
+For detailed help, see the documentation links above.

@@ -139,7 +139,7 @@ export default function DashboardPage() {
           <p className="text-neutral-600 mb-4">{error}</p>
           <button
             onClick={refresh}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
           >
             Retry Connection
           </button>
@@ -153,11 +153,11 @@ export default function DashboardPage() {
       {/* Header - Clean & Professional */}
       <div className="space-y-4">
         <div>
-          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-2 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             Dashboard
           </h1>
-          <p className="text-base text-gray-600 tracking-normal leading-relaxed">
-            Real-time insights into your <span className="text-gray-800 font-medium">DevOps</span> performance
+          <p className="text-sm text-gray-500 font-normal tracking-wide leading-relaxed">
+            Real-time insights into your <span className="text-gray-700 font-medium">DevOps</span> performance
           </p>
         </div>
 

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import { ToastProvider } from "@/components/ui/toast";
+import { CsrfProvider } from "@/components/providers/CsrfProvider";
+import { ProgressBarProvider } from "@/components/providers/ProgressBarProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,12 +24,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="antialiased font-sans" suppressHydrationWarning>
-        <ToastProvider>
-          <div className="min-h-screen bg-white text-gray-900">
-            {/* Global shell for marketing pages; app sections provide their own layouts */}
-            {children}
-          </div>
-        </ToastProvider>
+        <ProgressBarProvider />
+        <CsrfProvider>
+          <ToastProvider>
+            <div className="min-h-screen bg-white text-gray-900">
+              {/* Global shell for marketing pages; app sections provide their own layouts */}
+              {children}
+            </div>
+          </ToastProvider>
+        </CsrfProvider>
       </body>
     </html>
   );

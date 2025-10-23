@@ -125,10 +125,10 @@ export default function DeploymentsPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+              <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
                 Deployments
               </h1>
-              <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+              <p className="text-sm font-normal text-gray-500 tracking-wide">
                 Track and manage <span className="text-gray-700 font-medium">deployments</span> across{" "}
                 <span className="text-gray-700 font-medium">environments</span>
               </p>
@@ -162,10 +162,10 @@ export default function DeploymentsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Deployments
             </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+            <p className="text-sm text-gray-500 font-normal tracking-wide">
               Track and manage <span className="text-gray-700 font-medium">deployments</span> across{" "}
               <span className="text-gray-700 font-medium">environments</span>
             </p>

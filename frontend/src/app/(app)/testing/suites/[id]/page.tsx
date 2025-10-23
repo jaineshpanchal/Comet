@@ -127,7 +127,7 @@ export default function TestSuiteDetailsPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-purple-600"></div>
           <p className="mt-4 text-gray-600">Loading test suite...</p>
         </div>
       </div>
@@ -143,7 +143,7 @@ export default function TestSuiteDetailsPage() {
           <p className="text-gray-600 mb-6">The test suite you're looking for doesn't exist.</p>
           <Link
             href="/testing/suites"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
           >
             <ArrowLeftIcon className="w-5 h-5" />
             Back to Test Suites
@@ -169,13 +169,13 @@ export default function TestSuiteDetailsPage() {
           </Link>
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold text-gray-900">{suite.name}</h1>
+              <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">{suite.name}</h1>
               <span className={`px-3 py-1 text-sm font-medium rounded-full ${
                 suite.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
               }`}>
                 {suite.isActive ? 'Active' : 'Inactive'}
               </span>
-              <span className="px-3 py-1 text-sm font-medium rounded-full bg-purple-100 text-purple-700">
+              <span className="px-3 py-1 text-sm font-medium rounded-full bg-purple-100 text-blue-700">
                 {suite.type}
               </span>
             </div>

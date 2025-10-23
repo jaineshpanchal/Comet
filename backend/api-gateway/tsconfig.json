@@ -34,6 +34,7 @@
     "dist",
     "prisma",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/__tests__/**"
   ]
 }

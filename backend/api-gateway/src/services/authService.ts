@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { APP_CONFIG } from '../config/services';
 import { db } from '../config/database';
 import { setCache, getCache, deleteCache } from '../config/redis';
+import { recordAuthAttempt } from '../middleware/metrics';
 import { 
   User, 
   AuthTokens, 
@@ -101,11 +102,21 @@ export class AuthService {
   static async login(loginRequest: LoginRequest): Promise<{ user: User; tokens: AuthTokens }> {
     const { email, password } = loginRequest;
 
-    // Demo mode: Allow demo credentials without database
-    if (email === 'demo@golive.dev' && password === 'Demo#2025!GoLive') {
+    // Demo mode: Only enabled if environment variable is set (DEVELOPMENT ONLY)
+    const isDemoModeEnabled = process.env.ENABLE_DEMO_MODE === 'true';
+    const demoEmail = process.env.DEMO_USER_EMAIL;
+    const demoPassword = process.env.DEMO_USER_PASSWORD;
+
+    if (isDemoModeEnabled && demoEmail && demoPassword &&
+        email === demoEmail && password === demoPassword) {
+      // Only allow in development
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Demo mode is not available in production');
+      }
+
       const demoUser = {
         id: 'demo-user-id',
-        email: 'demo@golive.dev',
+        email: demoEmail,
         username: 'demo',
         firstName: 'Demo',
         lastName: 'User',
@@ -130,14 +141,19 @@ export class AuthService {
     });
 
     if (!user || !user.isActive) {
+      recordAuthAttempt('failure', 'login');
       throw new Error('Invalid credentials');
     }
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
+      recordAuthAttempt('failure', 'login');
       throw new Error('Invalid credentials');
     }
+
+    // Record successful login attempt
+    recordAuthAttempt('success', 'login');
 
     // Update last login
     await db.user.update({
@@ -177,6 +193,7 @@ export class AuthService {
     });
 
     if (existingUser) {
+      recordAuthAttempt('failure', 'register');
       throw new Error('User already exists with this email or username');
     }
 
@@ -207,6 +224,9 @@ export class AuthService {
       `${newUser.firstName} ${newUser.lastName}`,
       emailVerificationToken
     );
+
+    // Record successful registration
+    recordAuthAttempt('success', 'register');
 
     // Generate tokens
     const tokens = await this.generateTokens(newUser);
@@ -280,11 +300,15 @@ export class AuthService {
     try {
       const decoded = jwt.verify(token, APP_CONFIG.JWT_SECRET) as JWTPayload;
 
-      // Demo mode: Return demo user for demo token
+      // Demo mode: Return demo user for demo token (development only)
       if (decoded.userId === 'demo-user-id') {
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error('Demo mode is not available in production');
+        }
+
         const demoUser = {
           id: 'demo-user-id',
-          email: 'demo@golive.dev',
+          email: process.env.DEMO_USER_EMAIL || 'demo@golive.dev',
           username: 'demo',
           firstName: 'Demo',
           lastName: 'User',

@@ -235,10 +235,10 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="space-y-4">
         <div>
-          <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+          <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
             Settings
           </h1>
-          <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
+          <p className="text-sm text-gray-500 font-normal tracking-wide">
             Manage your account settings and preferences
           </p>
         </div>
@@ -301,7 +301,7 @@ export default function SettingsPage() {
                 }}
                 className={`flex items-center gap-2 pb-4 px-1 border-b-2 font-medium transition-colors ${
                   activeTab === tab.id
-                    ? "border-purple-600 text-purple-600"
+                    ? "border-blue-600 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
@@ -331,7 +331,7 @@ export default function SettingsPage() {
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
                   required
                 />
               </div>
@@ -343,7 +343,7 @@ export default function SettingsPage() {
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
                   required
                 />
               </div>
@@ -379,7 +379,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Saving..." : "Save Changes"}
               </button>
@@ -405,7 +405,7 @@ export default function SettingsPage() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
                 required
               />
             </div>
@@ -418,7 +418,7 @@ export default function SettingsPage() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
                 required
               />
               <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters long</p>
@@ -432,7 +432,7 @@ export default function SettingsPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
                 required
               />
             </div>
@@ -441,7 +441,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Changing..." : "Change Password"}
               </button>
@@ -477,7 +477,7 @@ export default function SettingsPage() {
                     onChange={(e) => item.setState(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-blue-500"></div>
                 </label>
               </div>
             ))}
@@ -486,7 +486,7 @@ export default function SettingsPage() {
           <div className="flex justify-end pt-6">
             <button
               onClick={handlePreferencesSave}
-              className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
             >
               Save Preferences
             </button>
@@ -510,7 +510,7 @@ export default function SettingsPage() {
               <select
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
               >
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
@@ -525,7 +525,7 @@ export default function SettingsPage() {
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
               >
                 <option value="en">English</option>
                 <option value="es">Spanish</option>
@@ -541,7 +541,7 @@ export default function SettingsPage() {
               <select
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
               >
                 <option value="UTC">UTC</option>
                 <option value="America/New_York">Eastern Time (ET)</option>
@@ -558,7 +558,7 @@ export default function SettingsPage() {
           <div className="flex justify-end pt-6">
             <button
               onClick={handlePreferencesSave}
-              className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all duration-200"
             >
               Save Preferences
             </button>
@@ -576,7 +576,7 @@ export default function SettingsPage() {
 
           {activityLoading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
             </div>
           ) : activityLogs.length === 0 ? (
             <div className="text-center py-12">
@@ -645,7 +645,7 @@ export default function SettingsPage() {
     if (action.includes("delete")) return { text: "text-red-600", bg: "bg-red-50", badge: "text-red-600 bg-red-50" }
     if (action.includes("create")) return { text: "text-green-600", bg: "bg-green-50", badge: "text-green-600 bg-green-50" }
     if (action.includes("update") || action.includes("edit")) return { text: "text-blue-600", bg: "bg-blue-50", badge: "text-blue-600 bg-blue-50" }
-    if (action.includes("login")) return { text: "text-purple-600", bg: "bg-purple-50", badge: "text-purple-600 bg-purple-50" }
+    if (action.includes("login")) return { text: "text-blue-600", bg: "bg-purple-50", badge: "text-blue-600 bg-purple-50" }
     return { text: "text-gray-600", bg: "bg-gray-50", badge: "text-gray-600 bg-gray-50" }
   }
 }

@@ -213,18 +213,17 @@ export default function ProjectsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-tight pb-1 mb-2">
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Projects
             </h1>
-            <p className="text-lg font-normal text-gray-500 tracking-normal leading-relaxed">
-              Manage your <span className="text-gray-700 font-medium">repositories</span> and{" "}
-              <span className="text-gray-700 font-medium">CI/CD pipelines</span>
+            <p className="text-sm text-gray-500 font-normal tracking-wide">
+              Manage your repositories and CI/CD pipelines
             </p>
           </div>
 
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all shadow-lg flex items-center gap-2"
           >
             <PlusIcon className="w-5 h-5" />
             New Project
@@ -236,8 +235,8 @@ export default function ProjectsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <CodeBracketIcon className="w-5 h-5 text-purple-600" />
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <CodeBracketIcon className="w-5 h-5 text-blue-600" />
             </div>
             <span className="text-sm font-medium text-gray-500">Total Projects</span>
           </div>
@@ -297,7 +296,7 @@ export default function ProjectsPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search projects..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               />
             </div>
           </div>
@@ -305,7 +304,7 @@ export default function ProjectsPage() {
           <select
             value={filterLanguage}
             onChange={(e) => setFilterLanguage(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
           >
             <option value="all">All Languages</option>
             <option value="javascript">JavaScript</option>
@@ -319,7 +318,7 @@ export default function ProjectsPage() {
           <div className="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-2 rounded ${viewMode === "grid" ? "bg-purple-100 text-purple-600" : "text-gray-600"}`}
+              className={`p-2 rounded ${viewMode === "grid" ? "bg-blue-100 text-blue-600" : "text-gray-600"}`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -327,7 +326,7 @@ export default function ProjectsPage() {
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-2 rounded ${viewMode === "list" ? "bg-purple-100 text-purple-600" : "text-gray-600"}`}
+              className={`p-2 rounded ${viewMode === "list" ? "bg-blue-100 text-blue-600" : "text-gray-600"}`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -357,7 +356,7 @@ export default function ProjectsPage() {
           {!searchTerm && filterLanguage === "all" && (
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all inline-flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transition-all inline-flex items-center gap-2"
             >
               <PlusIcon className="w-5 h-5" />
               Create Your First Project
@@ -375,7 +374,7 @@ export default function ProjectsPage() {
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{getLanguageIcon(project.language)}</span>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
+                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                       {project.name}
                     </h3>
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border ${getLanguageColor(project.language)} mt-1`}>
@@ -426,7 +425,7 @@ export default function ProjectsPage() {
               <div className="flex items-center gap-2">
                 <Link
                   href={`/projects/${project.id}`}
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors text-center"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors text-center"
                 >
                   View Details
                 </Link>
@@ -485,7 +484,7 @@ export default function ProjectsPage() {
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         href={`/projects/${project.id}`}
-                        className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                         <PencilIcon className="w-4 h-4" />
                       </Link>
@@ -507,7 +506,7 @@ export default function ProjectsPage() {
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 rounded-t-2xl">
-              <h2 className="text-3xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                 Create New Project
               </h2>
               <p className="text-gray-600 mt-2">Set up a new project to start building and deploying</p>
@@ -534,7 +533,7 @@ export default function ProjectsPage() {
                   onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
                   required
                   placeholder="my-awesome-project"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 />
               </div>
 
@@ -549,7 +548,7 @@ export default function ProjectsPage() {
                   onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
                   rows={3}
                   placeholder="A brief description of your project..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all resize-none"
                 />
               </div>
 
@@ -565,7 +564,7 @@ export default function ProjectsPage() {
                   onChange={(e) => setCreateForm({ ...createForm, repositoryUrl: e.target.value })}
                   required
                   placeholder="https://github.com/username/repo"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 />
                 <p className="text-xs text-gray-500 mt-1">GitHub, GitLab, or Bitbucket URL</p>
               </div>
@@ -584,7 +583,7 @@ export default function ProjectsPage() {
                     onChange={(e) => setCreateForm({ ...createForm, branch: e.target.value })}
                     required
                     placeholder="main"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -598,7 +597,7 @@ export default function ProjectsPage() {
                     value={createForm.language}
                     onChange={(e) => setCreateForm({ ...createForm, language: e.target.value })}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                   >
                     <option value="javascript">JavaScript</option>
                     <option value="typescript">TypeScript</option>
@@ -624,7 +623,7 @@ export default function ProjectsPage() {
                   value={createForm.framework}
                   onChange={(e) => setCreateForm({ ...createForm, framework: e.target.value })}
                   placeholder="React, Next.js, Django, Spring Boot, etc."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 />
               </div>
 
@@ -643,7 +642,7 @@ export default function ProjectsPage() {
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 >
                   {createLoading ? (
                     <span className="flex items-center justify-center gap-2">

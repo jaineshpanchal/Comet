@@ -225,7 +225,7 @@ export default function PipelineDetailPage() {
     const colors: Record<string, string> = {
       BUILD: "bg-blue-100 text-blue-800 border-blue-300",
       TEST: "bg-cyan-100 text-cyan-800 border-cyan-300",
-      SECURITY_SCAN: "bg-purple-100 text-purple-800 border-purple-300",
+      SECURITY_SCAN: "bg-purple-100 text-purple-800 border-blue-300",
       DEPLOY: "bg-green-100 text-green-800 border-green-300",
       ROLLBACK: "bg-red-100 text-red-800 border-red-300",
     }
@@ -246,7 +246,7 @@ export default function PipelineDetailPage() {
   if (error || !pipeline) {
     return (
       <div className="space-y-8 pb-12">
-        <Link href="/pipelines" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700">
+        <Link href="/pipelines" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700">
           <ArrowLeftIcon className="w-4 h-4" />
           Back to Pipelines
         </Link>
@@ -260,7 +260,7 @@ export default function PipelineDetailPage() {
   return (
     <div className="space-y-8 pb-12">
       {/* Back Button */}
-      <Link href="/pipelines" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium">
+      <Link href="/pipelines" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
         <ArrowLeftIcon className="w-4 h-4" />
         Back to Pipelines
       </Link>
@@ -270,7 +270,7 @@ export default function PipelineDetailPage() {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+              <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
                 {pipeline.name}
               </h1>
               <span
@@ -346,7 +346,7 @@ export default function PipelineDetailPage() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
-                      ? "border-purple-600 text-purple-600"
+                      ? "border-blue-600 text-blue-600"
                       : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
                 >
@@ -364,7 +364,7 @@ export default function PipelineDetailPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                   <div className="flex items-center gap-2 mb-2">
-                    <BoltIcon className="w-5 h-5 text-purple-600" />
+                    <BoltIcon className="w-5 h-5 text-blue-600" />
                     <span className="text-sm font-medium text-gray-500">Trigger</span>
                   </div>
                   <p className="text-lg font-semibold text-gray-900 capitalize">
@@ -413,7 +413,7 @@ export default function PipelineDetailPage() {
                       <div key={stage.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
-                            <div className="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-full font-bold">
+                            <div className="flex items-center justify-center w-10 h-10 bg-purple-100 text-blue-600 rounded-full font-bold">
                               {index + 1}
                             </div>
                             <div>
@@ -452,7 +452,7 @@ export default function PipelineDetailPage() {
               {pipeline.pipelineRuns && pipeline.pipelineRuns.length > 0 ? (
                 <div className="space-y-4">
                   {pipeline.pipelineRuns.map((run) => (
-                    <div key={run.id} className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
+                    <div key={run.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-4">
                           <span
@@ -466,7 +466,7 @@ export default function PipelineDetailPage() {
                           <div>
                             <Link
                               href={`/pipelines/runs/${run.id}`}
-                              className="font-medium text-purple-600 hover:text-purple-800 hover:underline"
+                              className="font-medium text-blue-600 hover:text-purple-800 hover:underline"
                             >
                               Run #{run.id.substring(0, 8)}
                             </Link>
@@ -530,7 +530,7 @@ export default function PipelineDetailPage() {
                   <button
                     onClick={handleRunPipeline}
                     disabled={runningPipeline}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all inline-flex items-center gap-2"
+                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-semibold  transition-all inline-flex items-center gap-2"
                   >
                     <PlayIcon className="w-5 h-5" />
                     Run Now

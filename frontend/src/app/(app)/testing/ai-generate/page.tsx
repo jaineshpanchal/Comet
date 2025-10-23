@@ -79,7 +79,7 @@ export default function AITestGenerationPage() {
                 <SparklesIcon className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
                   AI Test Generation
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">

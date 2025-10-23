@@ -258,7 +258,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                   <span className="text-xs font-medium text-gray-600">Email:</span>
-                  <code className="text-sm font-mono text-blue-700 font-semibold">admin@golive.dev</code>
+                  <code className="text-sm font-mono text-blue-700 font-semibold">demo@golive.dev</code>
                 </div>
                 <div className="flex items-center justify-between p-2 bg-white rounded-lg">
                   <span className="text-xs font-medium text-gray-600">Password:</span>

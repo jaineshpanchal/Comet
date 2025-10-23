@@ -1,6 +1,7 @@
 'use client';
 
 import { getAuthToken, setAuthToken } from './auth';
+import { csrfStorage } from '@/hooks/useCsrf';
 
 export interface ApiRequestOptions {
   body?: unknown;
@@ -8,6 +9,7 @@ export interface ApiRequestOptions {
   query?: Record<string, unknown>;
   token?: string | null;
   withAuth?: boolean;
+  withCsrf?: boolean; // Enable CSRF protection (default: true for state-changing methods)
   signal?: AbortSignal;
   method?: string;
 }
@@ -67,9 +69,13 @@ class ApiClient {
   private async request<T>(
     method: string,
     path: string,
-    options: ApiRequestOptions = {}
+    options: ApiRequestOptions = {},
+    retryOnCsrfError = true
   ): Promise<ApiResponse<T>> {
-    const { body, headers = {}, query, token, withAuth = true, signal } = options;
+    const { body, headers = {}, query, token, withAuth = true, withCsrf, signal } = options;
+
+    // Determine if CSRF protection should be applied
+    const needsCsrf = withCsrf ?? ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method.toUpperCase());
 
     const url = this.buildUrl(path, query);
     const finalHeaders = new Headers(headers);
@@ -82,6 +88,7 @@ class ApiClient {
       finalHeaders.set('Content-Type', 'application/json');
     }
 
+    // Add Authorization header
     let authToken = token ?? null;
     if (withAuth && !authToken) {
       authToken = getAuthToken();
@@ -91,11 +98,27 @@ class ApiClient {
       finalHeaders.set('Authorization', `Bearer ${authToken}`);
     }
 
+    // Add CSRF token for state-changing requests
+    if (needsCsrf) {
+      let csrfToken = csrfStorage.getToken();
+
+      // If no token in memory, fetch one
+      if (!csrfToken) {
+        csrfToken = await csrfStorage.fetchToken();
+      }
+
+      if (csrfToken) {
+        finalHeaders.set('X-CSRF-Token', csrfToken);
+      } else {
+        console.warn('CSRF token not available for state-changing request');
+      }
+    }
+
     const requestInit: RequestInit = {
       method,
       headers: finalHeaders,
       signal,
-      credentials: 'include',
+      credentials: 'include', // Required for CSRF cookie
     };
 
     if (body !== undefined && body !== null) {
@@ -113,6 +136,19 @@ class ApiClient {
         }
       } catch (error) {
         console.warn('Failed to parse API response as JSON', error);
+      }
+
+      // Handle CSRF token validation failure
+      if (response.status === 403 && payload?.error === 'Invalid CSRF token' && retryOnCsrfError && needsCsrf) {
+        console.warn('CSRF token invalid, refreshing and retrying request');
+
+        // Fetch new CSRF token
+        const newToken = await csrfStorage.fetchToken();
+
+        if (newToken) {
+          // Retry request once with new token (retryOnCsrfError = false to prevent infinite loop)
+          return this.request<T>(method, path, options, false);
+        }
       }
 
       if (!response.ok) {

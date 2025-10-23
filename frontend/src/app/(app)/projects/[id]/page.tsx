@@ -182,7 +182,7 @@ export default function ProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="space-y-8 pb-12">
-        <Link href="/projects" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700">
+        <Link href="/projects" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700">
           <ArrowLeftIcon className="w-4 h-4" />
           Back to Projects
         </Link>
@@ -196,7 +196,7 @@ export default function ProjectDetailPage() {
   return (
     <div className="space-y-8 pb-12">
       {/* Back Button */}
-      <Link href="/projects" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium">
+      <Link href="/projects" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
         <ArrowLeftIcon className="w-4 h-4" />
         Back to Projects
       </Link>
@@ -206,7 +206,7 @@ export default function ProjectDetailPage() {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+              <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
                 {project.name}
               </h1>
               {project.isActive ? (
@@ -312,7 +312,7 @@ export default function ProjectDetailPage() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 pb-4 px-1 border-b-2 font-medium transition-colors ${
                   activeTab === tab.id
-                    ? "border-purple-600 text-purple-600"
+                    ? "border-blue-600 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
@@ -336,7 +336,7 @@ export default function ProjectDetailPage() {
                   href={project.repositoryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-purple-600 hover:text-purple-700 font-mono"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-mono"
                 >
                   {project.repositoryUrl}
                 </a>

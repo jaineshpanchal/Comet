@@ -152,8 +152,7 @@ export default function TestAnalyticsPage() {
         </Link>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <BeakerIcon className="h-10 w-10 text-green-600" />
+            <h1 className="text-5xl font-bold text-blue-600 tracking-tight leading-tight mb-1 [text-shadow:_2px_2px_4px_rgb(37_99_235_/_20%),_4px_4px_8px_rgb(37_99_235_/_10%)]">
               Test Analytics
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -217,7 +216,7 @@ export default function TestAnalyticsPage() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-sm text-gray-600 mb-2">Avg Duration</div>
-            <div className="text-3xl font-bold text-purple-600">{formatDuration(currentMetrics.avgDuration)}</div>
+            <div className="text-3xl font-bold text-blue-600">{formatDuration(currentMetrics.avgDuration)}</div>
             <div className="text-xs text-gray-500 mt-2">Per test run</div>
           </CardContent>
         </Card>
@@ -353,7 +352,7 @@ export default function TestAnalyticsPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-sm text-gray-600">Duration</div>
-                      <div className="font-medium text-purple-600">{formatDuration(suite.avgDuration)}</div>
+                      <div className="font-medium text-blue-600">{formatDuration(suite.avgDuration)}</div>
                     </div>
                     <TrendIndicator value={suite.trend} />
                   </div>
