@@ -1,0 +1,69 @@
+config:
+  target: "http://localhost:8000"
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm-up"
+
+    # Ramp-up phase
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp-up to 50 users/sec"
+
+    # Sustained load
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustained load - 50 users/sec"
+
+    # Peak load
+    - duration: 60
+      arrivalRate: 100
+      name: "Peak load - 100 users/sec"
+
+    # Cool-down
+    - duration: 30
+      arrivalRate: 10
+      name: "Cool-down"
+
+  plugins:
+    metrics-by-endpoint:
+      stripQueryString: true
+      metricsNamespace: "golive_health_check"
+
+  processor: "../processors/auth.js"
+
+  variables:
+    baseUrl: "http://localhost:8000"
+
+scenarios:
+  - name: "Health Check Load Test"
+    weight: 100
+    flow:
+      - get:
+          url: "/api/health"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: data.status
+          capture:
+            - json: "$.data.status"
+              as: "healthStatus"
+
+      - think: 1
+
+      - get:
+          url: "/api/health/detailed"
+          expect:
+            - statusCode: 200
+
+      - think: 2
+
+      - loop:
+          - get:
+              url: "/api/health/services/api-gateway"
+              expect:
+                - statusCode: 200
+          - think: 1
+        count: 3

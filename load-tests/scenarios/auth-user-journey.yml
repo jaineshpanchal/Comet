@@ -1,0 +1,109 @@
+config:
+  target: "http://localhost:8000"
+  phases:
+    # Realistic user load
+    - duration: 60
+      arrivalRate: 5
+      name: "Light load - 5 users/sec"
+
+    - duration: 120
+      arrivalRate: 20
+      name: "Normal load - 20 users/sec"
+
+    - duration: 60
+      arrivalRate: 50
+      name: "Peak load - 50 users/sec"
+
+  plugins:
+    metrics-by-endpoint:
+      stripQueryString: false
+      metricsNamespace: "golive_user_journey"
+
+  processor: "../processors/auth.js"
+
+  variables:
+    userEmail: "demo@golive.dev"
+    userPassword: "password123"
+
+scenarios:
+  - name: "Authenticated User Complete Journey"
+    weight: 100
+    flow:
+      # Step 1: Login
+      - post:
+          url: "/api/auth/login"
+          beforeRequest: "loginUser"
+          afterResponse: "processLoginResponse"
+          expect:
+            - statusCode: [200, 429]
+          capture:
+            - json: "$.data.accessToken"
+              as: "accessToken"
+            - json: "$.data.refreshToken"
+              as: "refreshToken"
+
+      - think: 2
+
+      # Step 2: Get user profile
+      - get:
+          url: "/api/auth/profile"
+          beforeRequest: "setAuthHeader"
+          expect:
+            - statusCode: [200, 401, 429]
+
+      - think: 1
+
+      # Step 3: View dashboard metrics
+      - get:
+          url: "/api/metrics/dashboard?timeRange=24h"
+          beforeRequest: "setAuthHeader"
+          afterResponse: "measureMetric"
+          expect:
+            - statusCode: [200, 401, 429]
+
+      - think: 3
+
+      # Step 4: View pipelines
+      - get:
+          url: "/api/pipelines"
+          beforeRequest: "setAuthHeader"
+          expect:
+            - statusCode: [200, 401, 429]
+
+      - think: 2
+
+      # Step 5: View test suites
+      - get:
+          url: "/api/tests"
+          beforeRequest: "setAuthHeader"
+          expect:
+            - statusCode: [200, 401, 429]
+
+      - think: 2
+
+      # Step 6: View deployments
+      - get:
+          url: "/api/deployments"
+          beforeRequest: "setAuthHeader"
+          expect:
+            - statusCode: [200, 401, 429]
+
+      - think: 1
+
+      # Step 7: View pipeline metrics
+      - get:
+          url: "/api/metrics/pipelines?timeRange=24h"
+          beforeRequest: "setAuthHeader"
+          expect:
+            - statusCode: [200, 401, 429]
+
+      - think: 2
+
+      # Step 8: View activities
+      - get:
+          url: "/api/metrics/activities?limit=20&type=all"
+          beforeRequest: "setAuthHeader"
+          expect:
+            - statusCode: [200, 401, 429]
+
+      - think: 5

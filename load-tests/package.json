@@ -1,0 +1,22 @@
+{
+  "name": "load-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "artillery run scenarios/baseline-health-check.yml",
+    "test:health": "artillery run scenarios/baseline-health-check.yml",
+    "test:rate-limit": "artillery run scenarios/rate-limit-stress-test.yml",
+    "test:journey": "artillery run scenarios/auth-user-journey.yml",
+    "test:all": "npm run test:health && npm run test:journey && npm run test:rate-limit",
+    "test:quick": "artillery quick --count 10 --num 50 http://localhost:8000/api/health"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "artillery": "^2.0.26",
+    "artillery-plugin-metrics-by-endpoint": "^1.20.0"
+  }
+}

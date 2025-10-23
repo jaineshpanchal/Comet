@@ -1,0 +1,88 @@
+config:
+  target: "http://localhost:8000"
+  phases:
+    # Test rate limiting with gradual increase
+    - duration: 30
+      arrivalRate: 20
+      name: "Phase 1: Under limit (20 req/sec)"
+
+    - duration: 30
+      arrivalRate: 50
+      name: "Phase 2: Approaching limit (50 req/sec)"
+
+    - duration: 30
+      arrivalRate: 150
+      name: "Phase 3: Over limit (150 req/sec)"
+
+    - duration: 30
+      arrivalRate: 300
+      name: "Phase 4: Way over limit (300 req/sec)"
+
+  plugins:
+    metrics-by-endpoint:
+      stripQueryString: false
+      metricsNamespace: "golive_rate_limiting"
+
+  variables:
+    baseUrl: "http://localhost:8000"
+
+scenarios:
+  - name: "Rate Limiting - Public Endpoint Test"
+    weight: 40
+    flow:
+      - get:
+          url: "/api/health"
+          headers:
+            X-Test-User: "anonymous-{{ $randomString() }}"
+          capture:
+            - header: "X-RateLimit-Limit"
+              as: "rateLimit"
+            - header: "X-RateLimit-Remaining"
+              as: "rateLimitRemaining"
+            - header: "X-RateLimit-Reset"
+              as: "rateLimitReset"
+          afterResponse: "validateRateLimitHeaders"
+
+      - think: 0.5
+
+  - name: "Rate Limiting - Auth Endpoint Stress"
+    weight: 30
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test{{ $randomNumber(1, 10000) }}@example.com"
+            password: "invalid-password"
+          expect:
+            - statusCode: [400, 401, 429]
+          capture:
+            - header: "X-RateLimit-Limit"
+              as: "authRateLimit"
+            - header: "X-RateLimit-Remaining"
+              as: "authRemaining"
+
+      - think: 1
+
+  - name: "Rate Limiting - API Endpoint Mix"
+    weight: 30
+    flow:
+      - get:
+          url: "/api/metrics/dashboard?timeRange=24h"
+          capture:
+            - header: "X-RateLimit-Limit"
+              as: "apiLimit"
+
+      - think: 0.3
+
+      - get:
+          url: "/api/pipelines"
+          capture:
+            - header: "X-RateLimit-Remaining"
+              as: "apiRemaining"
+
+      - think: 0.5
+
+      - get:
+          url: "/api/tests"
+          expect:
+            - statusCode: [200, 401, 429]
