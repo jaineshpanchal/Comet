@@ -137,3 +137,8 @@ y/
 
 # Images
 *.png
+
+# Playwright E2E Tests
+playwright-report/
+test-results/
+.playwright/
