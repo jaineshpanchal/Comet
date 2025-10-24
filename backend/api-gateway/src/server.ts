@@ -6,8 +6,8 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
-import swaggerJsdoc from 'swagger-jsdoc';
 import Table from 'cli-table3';
+import { swaggerSpec } from './config/swagger';
 import { createServer, Server as HttpServer } from 'http';
 import { APP_CONFIG } from './config/services';
 import { connectDatabase } from './config/database';
@@ -147,120 +147,21 @@ class APIGateway {
   }
 
   private initializeSwagger(): void {
-    const swaggerOptions = {
-      definition: {
-        openapi: '3.0.0',
-        info: {
-          title: 'GoLive DevOps Platform API',
-          version: '1.0.0',
-          description: 'Enterprise DevOps Platform API Gateway',
-          contact: {
-            name: 'GoLive DevOps Team',
-            email: 'api@golive-devops.com'
-          },
-          license: {
-            name: 'MIT',
-            url: 'https://opensource.org/licenses/MIT'
-          }
-        },
-        servers: [
-          {
-            url: `http://localhost:${this.port}`,
-            description: 'Development server'
-          },
-          {
-            url: 'https://api.golive-devops.com',
-            description: 'Production server'
-          }
-        ],
-        components: {
-          securitySchemes: {
-            bearerAuth: {
-              type: 'http',
-              scheme: 'bearer',
-              bearerFormat: 'JWT'
-            }
-          },
-          schemas: {
-            ApiResponse: {
-              type: 'object',
-              properties: {
-                success: {
-                  type: 'boolean',
-                  description: 'Indicates if the request was successful'
-                },
-                data: {
-                  type: 'object',
-                  description: 'Response data'
-                },
-                message: {
-                  type: 'string',
-                  description: 'Human-readable message'
-                },
-                error: {
-                  type: 'string',
-                  description: 'Error message if request failed'
-                },
-                timestamp: {
-                  type: 'string',
-                  format: 'date-time',
-                  description: 'Request timestamp'
-                },
-                path: {
-                  type: 'string',
-                  description: 'Request path'
-                },
-                statusCode: {
-                  type: 'integer',
-                  description: 'HTTP status code'
-                }
-              }
-            },
-            User: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                email: { type: 'string' },
-                username: { type: 'string' },
-                firstName: { type: 'string' },
-                lastName: { type: 'string' },
-                avatar: { type: 'string' },
-                role: { 
-                  type: 'string',
-                  enum: ['ADMIN', 'MANAGER', 'DEVELOPER', 'TESTER', 'VIEWER']
-                },
-                isActive: { type: 'boolean' },
-                lastLoginAt: { type: 'string', format: 'date-time' },
-                createdAt: { type: 'string', format: 'date-time' },
-                updatedAt: { type: 'string', format: 'date-time' }
-              }
-            },
-            AuthTokens: {
-              type: 'object',
-              properties: {
-                accessToken: { type: 'string' },
-                refreshToken: { type: 'string' },
-                expiresIn: { type: 'number' },
-                tokenType: { type: 'string', default: 'Bearer' }
-              }
-            }
-          }
-        },
-        security: [
-          {
-            bearerAuth: []
-          }
-        ]
-      },
-      apis: ['./src/routes/*.ts']
-    };
-
-    const swaggerSpec = swaggerJsdoc(swaggerOptions);
-    
+    // Swagger UI setup with comprehensive API documentation
     this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
       explorer: true,
-      customCss: '.swagger-ui .topbar { display: none }',
-      customSiteTitle: 'GoLive DevOps API Documentation'
+      customCss: `
+        .swagger-ui .topbar { display: none }
+        .swagger-ui .info { margin: 50px 0 }
+        .swagger-ui .scheme-container { background: #fafafa; padding: 20px; }
+      `,
+      customSiteTitle: 'GoLive API Documentation',
+      swaggerOptions: {
+        persistAuthorization: true,
+        displayRequestDuration: true,
+        filter: true,
+        tryItOutEnabled: true,
+      },
     }));
 
     // Serve raw swagger JSON
