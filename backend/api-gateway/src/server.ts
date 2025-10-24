@@ -44,6 +44,7 @@ import secretsRoutes from './routes/secrets';
 import securityScansRoutes from './routes/securityScans';
 import integrationsRoutes from './routes/integrations';
 import aiRoutes from './routes/ai';
+import jobsRoutes from './routes/jobs';
 
 class APIGateway {
   private app: Express;
