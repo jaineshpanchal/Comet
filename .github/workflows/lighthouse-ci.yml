@@ -1,0 +1,133 @@
+name: Lighthouse CI
+
+on:
+  # Run on PRs to main/master branch
+  pull_request:
+    branches:
+      - master
+      - main
+  # Run on pushes to main/master
+  push:
+    branches:
+      - master
+      - main
+  # Allow manual trigger
+  workflow_dispatch:
+  # Run on schedule (weekly on Sundays at 00:00 UTC)
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: |
+            frontend/package-lock.json
+            backend/api-gateway/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+
+      - name: Install backend dependencies
+        run: cd backend/api-gateway && npm ci
+
+      - name: Build frontend
+        run: cd frontend && npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_WS_URL: ws://localhost:8000
+          NODE_ENV: production
+
+      - name: Setup PostgreSQL
+        uses: ikalnytskyi/action-setup-postgres@v6
+        with:
+          username: postgres
+          password: postgres
+          database: golive_test
+          port: 5432
+        id: postgres
+
+      - name: Setup Redis
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: '7.x'
+
+      - name: Run database migrations
+        run: cd backend/api-gateway && npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/golive_test
+
+      - name: Seed database with test data
+        run: cd backend/api-gateway && npx prisma db seed
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/golive_test
+
+      - name: Start backend server
+        run: cd backend/api-gateway && npm run dev &
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/golive_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test-jwt-secret-for-ci
+          JWT_EXPIRATION: 24h
+          REFRESH_TOKEN_EXPIRATION: 7d
+          NODE_ENV: production
+          PORT: 8000
+
+      - name: Wait for backend to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:8000/api/health; do sleep 2; done'
+
+      - name: Start frontend server
+        run: cd frontend && npm run start &
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_WS_URL: ws://localhost:8000
+          NODE_ENV: production
+          PORT: 3030
+
+      - name: Wait for frontend to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3030; do sleep 2; done'
+
+      - name: Run Lighthouse CI
+        run: cd frontend && npx lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: frontend/.lighthouseci/
+          retention-days: 30
+
+      - name: Comment PR with Lighthouse scores
+        if: github.event_name == 'pull_request'
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:3030
+            http://localhost:3030/dashboard
+            http://localhost:3030/pipelines
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Stop servers
+        if: always()
+        run: |
+          pkill -f "npm run dev" || true
+          pkill -f "npm run start" || true

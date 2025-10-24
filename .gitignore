@@ -142,3 +142,6 @@ y/
 playwright-report/
 test-results/
 .playwright/
+
+# Lighthouse CI
+.lighthouseci/
